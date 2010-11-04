@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FluentHttp.cs" />
+    <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="HttpHeader\FluentHttpRequest.cs" />
+    <Compile Include="HttpHeader\FluentHttpHeader.cs" />
+    <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

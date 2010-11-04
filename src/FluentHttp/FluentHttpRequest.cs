@@ -1,9 +1,10 @@
 ﻿namespace FluentHttp
 {
+
     /// <summary>
     /// Fluent Http Wrapper
     /// </summary>
-    public class FluentHttp
+    public partial class FluentHttpRequest
     {
         /// <summary>
         /// Url to make request at.
@@ -16,7 +17,7 @@
         private readonly string _method;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttp"/> class.
+        /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         /// <param name="url">
         /// The url to make request at.
@@ -24,19 +25,19 @@
         /// <param name="method">
         /// The method.
         /// </param>
-        public FluentHttp(string url, string method)
+        public FluentHttpRequest(string url, string method)
         {
             _url = url;
             _method = method;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttp"/> class.
+        /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         /// <param name="url">
         /// The url to make request at.
         /// </param>
-        public FluentHttp(string url)
+        public FluentHttpRequest(string url)
             : this(url, "GET")
         {
         }
@@ -56,5 +57,6 @@
         {
             get { return _url; }
         }
+
     }
 }
