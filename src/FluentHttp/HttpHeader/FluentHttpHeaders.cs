@@ -11,7 +11,27 @@ namespace FluentHttp
         /// <summary>
         /// List of http headers.
         /// </summary>
-        private readonly List<FluentHttpHeader> _headers;
+        /// <remarks>
+        /// Since headers can be non unique, we need to make it list rather than dictionary.
+        /// </remarks>
+        private readonly List<FluentHttpHeader> _customHeaders;
+
+        // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
+        private Dictionary<string, string> SpecialHeaders = new Dictionary<string, string>
+                                                       {
+                                                           {"accept",            null}, // Set by the Accept property.
+                                                           {"connection",        null}, // Set by the Connection property and KeepAlive property.
+                                                           {"content-length",    null}, // Set by the ContentLength property.
+                                                           {"content-type",      null}, // Set by the ContentType property
+                                                           {"expect",            null}, // Set by the Expect property.
+                                                           {"date",              null}, // Set by the Date property.
+                                                           {"host",              null}, // Set by the Host property.
+                                                           {"if-modified-since", null}, // Set by the IfModifiedSince property.
+                                                           {"range",             null}, // Set by the AddRange method.
+                                                           {"referer",           null}, // Set by the Referer property.
+                                                           {"transfer-encoding", null}, // Set by the TransferEncoding property (the SendChunked property must be true).
+                                                           {"user-agent",        null}  // Set by the UserAgent property.
+                                                       };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpHeaders"/> class.
@@ -30,7 +50,7 @@ namespace FluentHttp
         public FluentHttpHeaders(List<FluentHttpHeader> headers)
         {
             // need to do copy ctor
-            _headers = headers ?? new List<FluentHttpHeader>();
+            _customHeaders = headers ?? new List<FluentHttpHeader>();
         }
 
         /// <summary>
@@ -44,7 +64,13 @@ namespace FluentHttp
         /// </returns>
         public FluentHttpHeaders Add(FluentHttpHeader httpHeader)
         {
-            _headers.Add(httpHeader);
+            var name = httpHeader.Name.ToLower();
+
+            if (SpecialHeaders.ContainsKey(name))
+                SpecialHeaders[name] = httpHeader.Value;
+            else
+                _customHeaders.Add(httpHeader);
+
             return this;
         }
 
@@ -78,19 +104,26 @@ namespace FluentHttp
         /// </returns>
         public FluentHttpHeaders Append(string name, string value)
         {
-            for (int i = 0; i < _headers.Count; i++)
+            var lName = name.ToLower();
+            if (SpecialHeaders.ContainsKey(lName))
             {
-                var header = _headers[i];
+                SpecialHeaders[name] += value;
+                return this;
+            }
+
+            for (int i = 0; i < _customHeaders.Count; i++)
+            {
+                var header = _customHeaders[i];
                 if (header.Name == name)
                 {
                     // adds to the first header found.
-                    _headers[i] = new FluentHttpHeader(name, header.Value + value);
+                    _customHeaders[i] = new FluentHttpHeader(name, header.Value + value);
                     return this;
                 }
             }
 
             // if header didn't exisit, add it as new one.
-            _headers.Add(new FluentHttpHeader(name, value));
+            _customHeaders.Add(new FluentHttpHeader(name, value));
             return this;
         }
 
@@ -105,7 +138,7 @@ namespace FluentHttp
         /// <filterpriority>1</filterpriority>
         public IEnumerator<FluentHttpHeader> GetEnumerator()
         {
-            return _headers.GetEnumerator();
+            return _customHeaders.GetEnumerator();
         }
 
         /// <summary>
