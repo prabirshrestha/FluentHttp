@@ -1,5 +1,6 @@
 ﻿namespace FluentHttp
 {
+    using System;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -7,55 +8,62 @@
     public partial class FluentHttpRequest
     {
         /// <summary>
-        /// Url to make request at.
+        /// Base url of the request.
         /// </summary>
-        private readonly string _url;
+        private readonly string _baseUrl;
 
         /// <summary>
-        /// Http Method.
+        /// Name of the method
         /// </summary>
-        private readonly string _method;
+        private string _method;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
-        /// <param name="url">
+        /// <param name="baseUrl">
         /// The url to make request at.
         /// </param>
+        public FluentHttpRequest(string baseUrl)
+        {
+            if (string.IsNullOrEmpty(baseUrl))
+                throw new ArgumentNullException("baseUrl");
+
+            _baseUrl = baseUrl;
+            _method = "GET";
+        }
+
+        /// <summary>
+        /// Gets the base url to make request at.
+        /// </summary>
+        public string BaseUrl
+        {
+            get { return _baseUrl; }
+        }
+
+        /// <summary>
+        /// Sets the http method.
+        /// </summary>
         /// <param name="method">
-        /// The method.
+        /// The http method.
         /// </param>
-        public FluentHttpRequest(string url, string method)
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Throws <see cref="ArgumentNullException"/> if method is null or empty.
+        /// </exception>
+        public FluentHttpRequest Method(string method)
         {
-            _url = url;
+            if (string.IsNullOrEmpty(method))
+                throw new ArgumentNullException("method");
+
             _method = method;
+
+            return this;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
-        /// </summary>
-        /// <param name="url">
-        /// The url to make request at.
-        /// </param>
-        public FluentHttpRequest(string url)
-            : this(url, "GET")
+        public string GetMethod()
         {
-        }
-
-        /// <summary>
-        /// Gets Method.
-        /// </summary>
-        public string Method
-        {
-            get { return _method; }
-        }
-
-        /// <summary>
-        /// Gets the url to make request at.
-        /// </summary>
-        public string Url
-        {
-            get { return _url; }
+            return _method;
         }
 
     }
