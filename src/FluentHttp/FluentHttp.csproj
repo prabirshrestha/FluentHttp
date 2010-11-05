@@ -45,6 +45,9 @@
     <Compile Include="HttpHeader\FluentHttpHeader.cs" />
     <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryString\FluentHttpRequest.cs" />
+    <Compile Include="QueryString\FluentQueryStrings.cs" />
+    <Compile Include="QueryString\FluentQueryString.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
