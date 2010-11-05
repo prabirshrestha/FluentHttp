@@ -29,6 +29,7 @@ namespace FluentHttp
         /// </param>
         public FluentHttpHeaders(List<FluentHttpHeader> headers)
         {
+            // need to do copy ctor
             _headers = headers ?? new List<FluentHttpHeader>();
         }
 
@@ -62,6 +63,35 @@ namespace FluentHttp
         public FluentHttpHeaders Add(string name, string value)
         {
             return Add(new FluentHttpHeader(name, value));
+        }
+
+        /// <summary>
+        /// Appends the value of the http header if exists otherwise create a new one.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public FluentHttpHeaders Append(string name, string value)
+        {
+            for (int i = 0; i < _headers.Count; i++)
+            {
+                var header = _headers[i];
+                if (header.Name == name)
+                {
+                    // adds to the first header found.
+                    _headers[i] = new FluentHttpHeader(name, header.Value + value);
+                    return this;
+                }
+            }
+
+            // if header didn't exisit, add it as new one.
+            _headers.Add(new FluentHttpHeader(name, value));
+            return this;
         }
 
         #region Implementation of IEnumerable
