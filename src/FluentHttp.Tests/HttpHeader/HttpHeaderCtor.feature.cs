@@ -27,7 +27,8 @@ namespace FluentHttp.Tests.HttpHeader
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "FluentHttpHeader ctor", "Check if ctor assings value corrently", GenerationTargetLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "FluentHttpHeader ctor", "Check if ctor assings value corrently\nand FluentHttpHeader is constructed correct" +
+                    "ly.", GenerationTargetLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -63,17 +64,20 @@ namespace FluentHttp.Tests.HttpHeader
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name and header value as ctor params", new string[] {
                         "important"});
-#line 5
-this.ScenarioSetup(scenarioInfo);
 #line 6
- testRunner.Given("a new fluent http header with ctor params (\"header-name\" and \"header-value\")");
+this.ScenarioSetup(scenarioInfo);
 #line 7
- testRunner.When("I get name");
+ testRunner.Given("a null fluent http header");
 #line 8
- testRunner.And("I get value");
+ testRunner.When("I create a new fluent http header with ctor params (\"header-name\" and \"header-val" +
+                    "ue\")");
 #line 9
- testRunner.Then("name should be \"header-name\"");
+ testRunner.And("I get name");
 #line 10
+ testRunner.And("I get value");
+#line 11
+ testRunner.Then("name should be \"header-name\"");
+#line 12
  testRunner.And("value should be \"header-value\"");
 #line hidden
             testRunner.CollectScenarioErrors();

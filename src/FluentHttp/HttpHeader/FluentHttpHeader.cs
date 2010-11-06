@@ -1,6 +1,7 @@
-
 namespace FluentHttp
 {
+    using System;
+
     /// <summary>
     /// Http Header for Fluent Http
     /// </summary>
@@ -17,6 +18,10 @@ namespace FluentHttp
         /// </param>
         public FluentHttpHeader(string name, string value)
         {
+#if AGGRESSIVE_CHECK
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(name.Trim()))
+                throw new ArgumentNullException("name");
+#endif
             Name = name;
             Value = value;
         }

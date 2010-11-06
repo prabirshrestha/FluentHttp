@@ -1,43 +1,101 @@
 ﻿namespace FluentHttp.Tests.HttpHeader
 {
+    using System;
     using TechTalk.SpecFlow;
     using Xunit;
 
     [Binding]
     public class HttpHeaderCtor
     {
-        private FluentHttpHeader fluentHttpHeader;
-        private string name;
-        private string value;
+        private FluentHttpHeader _fluentHttpHeader;
+        private string _headerName;
+        private string _headerValue;
+        
 
-        [Given(@"a new fluent http header with ctor params \(""(.*)"" and ""(.*)""\)")]
-        public void GivenANewFluentHttpHeaderWithCtorParamsHeader_NameAndHeader_Value(string headerName, string headerValue)
+        [Given(@"a null fluent http header")]
+        public void GivenANullFluentHttpHeader()
         {
-            fluentHttpHeader = new FluentHttpHeader(headerName, headerValue);
-        }
-
-        [When(@"I get name")]
-        public void WhenIGetName()
-        {
-            name = fluentHttpHeader.Name;
-        }
-
-        [When(@"I get value")]
-        public void WhenIGetValue()
-        {
-            value = fluentHttpHeader.Value;
+            _fluentHttpHeader = null;
         }
 
         [Then(@"name should be ""(.*)""")]
         public void ThenNameShouldBeHeader_Name(string headerName)
         {
-            Assert.Equal(headerName, name);
+            Assert.Equal(headerName, _headerName);
         }
 
         [Then(@"value should be ""(.*)""")]
         public void ThenValueShouldBeHeader_Value(string headerValue)
         {
-            Assert.Equal(headerValue, value);
+            Assert.Equal(headerValue, _headerValue);
         }
+
+        [When(@"I create a new fluent http header with ctor params \(""(.*)"" and ""(.*)""\)")]
+        public void WhenICreateANewFluentHttpHeaderWithCtorParamsHeader_NameAndHeader_Value(string headerName, string headerValue)
+        {
+            _fluentHttpHeader = new FluentHttpHeader(headerName, headerValue);
+        }
+
+        [When(@"I get name")]
+        public void WhenIGetName()
+        {
+            _headerName = _fluentHttpHeader.Name;
+        }
+
+        [When(@"I get value")]
+        public void WhenIGetValue()
+        {
+            _headerValue = _fluentHttpHeader.Value;
+        }
+
+#if AGGRESSIVE_CHECK
+        private Exception _exception;
+
+        [Then(@"it should throw ArgumentNullException")]
+        public void ThenItShouldThrowArgumentNullException()
+        {
+            Assert.Equal(typeof(ArgumentNullException), _exception.GetType());
+        }
+
+        [When(@"I create a new fluent http header with http header as null")]
+        public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAsNull()
+        {
+            try
+            {
+                _fluentHttpHeader = new FluentHttpHeader(null, "header-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+        [When(@"I create a new fluent http header with http header as string\.Empty")]
+        public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAsString_Empty()
+        {
+            try
+            {
+                _fluentHttpHeader = new FluentHttpHeader(null, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+        [When(@"I create a new fluent http header with http header as """"")]
+        public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAs()
+        {
+            try
+            {
+                _fluentHttpHeader = new FluentHttpHeader(null, "");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+#endif
+
     }
 }
