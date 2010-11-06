@@ -38,6 +38,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TechTalk.SpecFlow">
+      <HintPath>..\..\libs\specflow\TechTalk.SpecFlow.dll</HintPath>
+    </Reference>
     <Reference Include="xunit">
       <HintPath>..\..\libs\xunit\xunit.dll</HintPath>
     </Reference>
@@ -46,6 +49,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpHeader\HttpHeaderCtor.cs" />
+    <Compile Include="HttpHeader\HttpHeaderCtor.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HttpHeaderCtor.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +62,13 @@
       <Project>{3AD95B76-5086-406A-BE3F-54825CFF25EB}</Project>
       <Name>FluentHttp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="HttpHeader\HttpHeaderCtor.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>HttpHeaderCtor.feature.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
