@@ -56,6 +56,12 @@
       <DependentUpon>HttpHeaderCtor.feature</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryString\QueryStringCtor.cs" />
+    <Compile Include="QueryString\QueryStringCtor.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QueryStringCtor.feature</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentHttp\FluentHttp.csproj">
@@ -68,6 +74,10 @@
     <None Include="HttpHeader\HttpHeaderCtor.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>HttpHeaderCtor.feature.cs</LastGenOutput>
+    </None>
+    <None Include="QueryString\QueryStringCtor.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>QueryStringCtor.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

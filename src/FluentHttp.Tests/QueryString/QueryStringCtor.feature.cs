@@ -9,30 +9,30 @@
 //  </auto-generated>
 // ------------------------------------------------------------------------------
 #region Designer generated code
-namespace FluentHttp.Tests.HttpHeader
+namespace FluentHttp.Tests.QueryString
 {
     using TechTalk.SpecFlow;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "1.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class FluentHttpHeaderCtorFeature : Xunit.IUseFixture<FluentHttpHeaderCtorFeature.FixtureData>, System.IDisposable
+    public partial class FluentQueryStringCtorFeature : Xunit.IUseFixture<FluentQueryStringCtorFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "HttpHeaderCtor.feature"
+#line 1 "QueryStringCtor.feature"
 #line hidden
         
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "FluentHttpHeader ctor", "Check if ctor assings value correctly\nand FluentHttpHeader is constructed correct" +
-                    "ly.", GenerationTargetLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "FluentQueryString ctor", "Check if ctor assigns value correctly\nand FluentQueryString is constructed correc" +
+                    "tly.", GenerationTargetLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
-        public virtual void SetFixture(FluentHttpHeaderCtorFeature.FixtureData fixtureData)
+        public virtual void SetFixture(FluentQueryStringCtorFeature.FixtureData fixtureData)
         {
         }
         
@@ -58,27 +58,26 @@ namespace FluentHttp.Tests.HttpHeader
         }
         
         [Xunit.FactAttribute()]
-        [Xunit.TraitAttribute("FeatureTitle", "FluentHttpHeader ctor")]
-        [Xunit.TraitAttribute("Description", "Pass header name and header value as ctor params")]
-        public virtual void PassHeaderNameAndHeaderValueAsCtorParams()
+        [Xunit.TraitAttribute("FeatureTitle", "FluentQueryString ctor")]
+        [Xunit.TraitAttribute("Description", "Pass querystring name and value as ctor params")]
+        public virtual void PassQuerystringNameAndValueAsCtorParams()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name and header value as ctor params", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass querystring name and value as ctor params", new string[] {
                         "important"});
 #line 6
 this.ScenarioSetup(scenarioInfo);
 #line 7
- testRunner.Given("a null fluent http header");
+ testRunner.Given("a null fluent querystring header");
 #line 8
- testRunner.When("I create a new fluent http header with ctor params (\"header-name\" and \"header-val" +
-                    "ue\")");
+ testRunner.When("I create a new fluent querystring with ctor params (\"qs-name\" and \"qs-value\")");
 #line 9
   testRunner.And("I get name");
 #line 10
   testRunner.And("I get value");
 #line 11
- testRunner.Then("name should be \"header-name\"");
+ testRunner.Then("name should be \"qs-name\"");
 #line 12
-  testRunner.And("value should be \"header-value\"");
+  testRunner.And("value should be \"qs-value\"");
 #line hidden
             testRunner.CollectScenarioErrors();
         }
@@ -90,12 +89,12 @@ this.ScenarioSetup(scenarioInfo);
             
             public FixtureData()
             {
-                FluentHttpHeaderCtorFeature.FeatureSetup();
+                FluentQueryStringCtorFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                FluentHttpHeaderCtorFeature.FeatureTearDown();
+                FluentQueryStringCtorFeature.FeatureTearDown();
             }
         }
     }

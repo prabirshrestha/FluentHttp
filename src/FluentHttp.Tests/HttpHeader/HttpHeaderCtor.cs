@@ -5,6 +5,7 @@
     using Xunit;
 
     [Binding]
+    [StepScope(Feature = "FluentHttpHeader ctor")]
     public class HttpHeaderCtor
     {
         private FluentHttpHeader _fluentHttpHeader;
