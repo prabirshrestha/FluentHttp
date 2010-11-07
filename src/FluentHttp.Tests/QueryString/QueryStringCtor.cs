@@ -1,4 +1,6 @@
-﻿namespace FluentHttp.Tests.QueryString
+﻿using System;
+
+namespace FluentHttp.Tests.QueryString
 {
     using TechTalk.SpecFlow;
     using Xunit;
@@ -11,7 +13,7 @@
         private string _qsName;
         private string _qsValue;
 
-        [Given(@"a null fluent querystring header")]
+        [Given(@"a null fluent querystring")]
         public void GivenANullFluentQuerystringHeader()
         {
             _fluentQueryString = null;
@@ -46,5 +48,70 @@
         {
             Assert.Equal(_qsValue, qsValue);
         }
+
+#if AGGRESSIVE_CHECK
+        private Exception _exception;
+
+        [When(@"I create a new fluent querystring with querystring name as null")]
+        public void WhenICreateANewFluentQuerystringWithQuerystringNameAsNull()
+        {
+            try
+            {
+                _fluentQueryString = new FluentQueryString(null, "qs-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+        [Then(@"it should throw ArgumentOutOfRangeException")]
+        public void ThenItShouldThrowArgumentNullException()
+        {
+            Assert.Equal(typeof(ArgumentOutOfRangeException), _exception.GetType());
+        }
+
+        [When(@"I create a new fluent querystring with querystring name as string\.Empty")]
+        public void WhenICreateANewFluentQuerystringWithQuerystringNameAsString_Empty()
+        {
+            try
+            {
+                _fluentQueryString = new FluentQueryString(string.Empty, "qs-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+        [When(@"I create a new fluent querystring with querystring name as """"")]
+        public void WhenICreateANewFluentQuerystringWithQuerystringNameAs()
+        {
+            try
+            {
+                _fluentQueryString = new FluentQueryString("", "qs-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+        [When(@"I create a new fluent querystring with querystring name as "" """)]
+        public void WhenICreateANewFluentQuerystringWithQuerystringNameAsWhiteSpace()
+        {
+            try
+            {
+                _fluentQueryString = new FluentQueryString(" ", "qs-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
+
+
+#endif
     }
 }

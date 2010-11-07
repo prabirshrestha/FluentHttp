@@ -11,7 +11,7 @@
         private FluentHttpHeader _fluentHttpHeader;
         private string _headerName;
         private string _headerValue;
-        
+
 
         [Given(@"a null fluent http header")]
         public void GivenANullFluentHttpHeader()
@@ -52,13 +52,13 @@
 #if AGGRESSIVE_CHECK
         private Exception _exception;
 
-        [Then(@"it should throw ArgumentNullException")]
+        [Then(@"it should throw ArgumentOutOfRangeException")]
         public void ThenItShouldThrowArgumentNullException()
         {
-            Assert.Equal(typeof(ArgumentNullException), _exception.GetType());
+            Assert.Equal(typeof(ArgumentOutOfRangeException), _exception.GetType());
         }
 
-        [When(@"I create a new fluent http header with http header as null")]
+        [When(@"I create a new fluent http header with http header name as null")]
         public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAsNull()
         {
             try
@@ -71,12 +71,12 @@
             }
         }
 
-        [When(@"I create a new fluent http header with http header as string\.Empty")]
+        [When(@"I create a new fluent http header with http header name as string\.Empty")]
         public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAsString_Empty()
         {
             try
             {
-                _fluentHttpHeader = new FluentHttpHeader(null, string.Empty);
+                _fluentHttpHeader = new FluentHttpHeader(null, "header-value");
             }
             catch (Exception ex)
             {
@@ -84,18 +84,32 @@
             }
         }
 
-        [When(@"I create a new fluent http header with http header as """"")]
+        [When(@"I create a new fluent http header with http header name as """"")]
         public void WhenICreateANewFluentHttpHeaderWithHttpHeaderAs()
         {
             try
             {
-                _fluentHttpHeader = new FluentHttpHeader(null, "");
+                _fluentHttpHeader = new FluentHttpHeader("", "header-value");
             }
             catch (Exception ex)
             {
                 _exception = ex;
             }
         }
+
+        [When(@"I create a new fluent http header with http header name as "" """)]
+        public void WhenICreateANewFluentHttpHeaderWithHttpHeaderNameAs()
+        {
+            try
+            {
+                _fluentHttpHeader = new FluentHttpHeader(" ", "header-value");
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+        }
+
 #endif
 
     }

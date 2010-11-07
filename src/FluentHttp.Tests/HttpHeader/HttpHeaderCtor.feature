@@ -12,17 +12,22 @@ Scenario: Pass header name and header value as ctor params
 		And value should be "header-value"
 
 # if aggressive check
-#Scenario: Pass header name as null
-#	Given a null fluent http header
-#	When I create a new fluent http header with http header as null
-#	Then it should throw ArgumentNullException
-#
-#Scenario: Pass header name as string.Empty
-#	Given a null fluent http header
-#	When I create a new fluent http header with http header as string.Empty
-#	Then it should throw ArgumentNullException
-#
-#Scenario: Pass header name as ""
-#	Given a null fluent http header
-#	When I create a new fluent http header with http header as ""
-#	Then it should throw ArgumentNullException
+Scenario: Pass header name as null
+	Given a null fluent http header
+	When I create a new fluent http header with http header name as null
+	Then it should throw ArgumentOutOfRangeException
+
+Scenario: Pass header name as string.Empty
+	Given a null fluent http header
+	When I create a new fluent http header with http header name as string.Empty
+	Then it should throw ArgumentOutOfRangeException
+
+Scenario: Pass header name as ""
+	Given a null fluent http header
+	When I create a new fluent http header with http header name as ""
+	Then it should throw ArgumentOutOfRangeException
+
+Scenario: Pass header name as white space.
+	Given a null fluent http header
+	When I create a new fluent http header with http header name as " "
+	Then it should throw ArgumentOutOfRangeException

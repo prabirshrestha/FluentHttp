@@ -1,5 +1,7 @@
 namespace FluentHttp
 {
+    using System;
+
     public class FluentQueryString : INameValue
     {
         /// <summary>
@@ -13,6 +15,11 @@ namespace FluentHttp
         /// </param>
         public FluentQueryString(string name, string value)
         {
+#if AGGRESSIVE_CHECK
+            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
+                throw new ArgumentOutOfRangeException("name");
+#endif
+
             Name = name;
             Value = value;
         }

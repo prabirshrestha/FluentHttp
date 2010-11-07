@@ -53,8 +53,10 @@
         /// </exception>
         public FluentHttpRequest Method(string method)
         {
-            if (string.IsNullOrEmpty(method))
-                throw new ArgumentNullException("method");
+#if AGGRESSIVE_CHECK
+            if (string.IsNullOrEmpty(method) || method.Trim().Length == 0)
+                throw new ArgumentOutOfRangeException("method");
+#endif
 
             _method = method;
 

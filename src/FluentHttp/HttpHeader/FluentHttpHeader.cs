@@ -19,9 +19,10 @@ namespace FluentHttp
         public FluentHttpHeader(string name, string value)
         {
 #if AGGRESSIVE_CHECK
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(name.Trim()))
-                throw new ArgumentNullException("name");
+            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
+                throw new ArgumentOutOfRangeException("name");
 #endif
+
             Name = name;
             Value = value;
         }

@@ -67,7 +67,7 @@ namespace FluentHttp.Tests.QueryString
 #line 6
 this.ScenarioSetup(scenarioInfo);
 #line 7
- testRunner.Given("a null fluent querystring header");
+ testRunner.Given("a null fluent querystring");
 #line 8
  testRunner.When("I create a new fluent querystring with ctor params (\"qs-name\" and \"qs-value\")");
 #line 9
@@ -78,6 +78,78 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Then("name should be \"qs-name\"");
 #line 12
   testRunner.And("value should be \"qs-value\"");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [Xunit.FactAttribute()]
+        [Xunit.TraitAttribute("FeatureTitle", "FluentQueryString ctor")]
+        [Xunit.TraitAttribute("Description", "Pass querystring name as null")]
+        public virtual void PassQuerystringNameAsNull()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass querystring name as null", ((string[])(null)));
+#line 15
+this.ScenarioSetup(scenarioInfo);
+#line 16
+ testRunner.Given("a null fluent querystring");
+#line 17
+ testRunner.When("I create a new fluent querystring with querystring name as null");
+#line 18
+ testRunner.Then("it should throw ArgumentOutOfRangeException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [Xunit.FactAttribute()]
+        [Xunit.TraitAttribute("FeatureTitle", "FluentQueryString ctor")]
+        [Xunit.TraitAttribute("Description", "Pass querystring as string.Empty")]
+        public virtual void PassQuerystringAsString_Empty()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass querystring as string.Empty", ((string[])(null)));
+#line 20
+this.ScenarioSetup(scenarioInfo);
+#line 21
+ testRunner.Given("a null fluent querystring");
+#line 22
+ testRunner.When("I create a new fluent querystring with querystring name as string.Empty");
+#line 23
+ testRunner.Then("it should throw ArgumentOutOfRangeException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [Xunit.FactAttribute()]
+        [Xunit.TraitAttribute("FeatureTitle", "FluentQueryString ctor")]
+        [Xunit.TraitAttribute("Description", "Pass querystring as \"\"")]
+        public virtual void PassQuerystringAs()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass querystring as \"\"", ((string[])(null)));
+#line 25
+this.ScenarioSetup(scenarioInfo);
+#line 26
+ testRunner.Given("a null fluent querystring");
+#line 27
+ testRunner.When("I create a new fluent querystring with querystring name as \"\"");
+#line 28
+ testRunner.Then("it should throw ArgumentOutOfRangeException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [Xunit.FactAttribute()]
+        [Xunit.TraitAttribute("FeatureTitle", "FluentQueryString ctor")]
+        [Xunit.TraitAttribute("Description", "Pass querystring as white space.")]
+        public virtual void PassQuerystringAsWhiteSpace_()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass querystring as white space.", ((string[])(null)));
+#line 30
+this.ScenarioSetup(scenarioInfo);
+#line 31
+ testRunner.Given("a null fluent querystring");
+#line 32
+ testRunner.When("I create a new fluent querystring with querystring name as \" \"");
+#line 33
+ testRunner.Then("it should throw ArgumentOutOfRangeException");
 #line hidden
             testRunner.CollectScenarioErrors();
         }
