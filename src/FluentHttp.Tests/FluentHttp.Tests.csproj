@@ -75,6 +75,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QueryStringCtor.feature</DependentUpon>
     </Compile>
+    <Compile Include="TimeoutTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentHttp\FluentHttp.csproj">

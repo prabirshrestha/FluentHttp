@@ -18,6 +18,11 @@
         private string _method;
 
         /// <summary>
+        /// Timeout
+        /// </summary>
+        private int _timeout;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         /// <param name="baseUrl">
@@ -63,9 +68,38 @@
             return this;
         }
 
+        /// <summary>
+        /// Gets the type of Http Method
+        /// </summary>
+        /// <returns>
+        /// </returns>
         public string GetMethod()
         {
             return _method;
+        }
+
+        /// <summary>
+        /// Sets the timeout.
+        /// </summary>
+        /// <param name="timeout">
+        /// The timeout.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public FluentHttpRequest Timeout(int timeout)
+        {
+            _timeout = timeout;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the timeout.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public int GetTimeout()
+        {
+            return _timeout;
         }
 
     }
