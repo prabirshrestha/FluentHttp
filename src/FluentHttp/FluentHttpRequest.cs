@@ -22,6 +22,8 @@
         /// </summary>
         private int _timeout;
 
+        private string _resourcePath;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
@@ -43,6 +45,40 @@
         public string BaseUrl
         {
             get { return _baseUrl; }
+        }
+
+        /// <summary>
+        /// Set resource path
+        /// </summary>
+        /// <param name="resourcePath">
+        /// The resource path.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public FluentHttpRequest ResourcePath(string resourcePath)
+        {
+            if (!(string.IsNullOrEmpty(resourcePath) || (resourcePath = resourcePath.Trim()).Length == 0))
+            {
+                // if not null or empty
+                if (resourcePath[0] != '/')
+                {
+                    // if doesn't start with / then add /
+                    resourcePath = "/" + resourcePath;
+                }
+            }
+
+            _resourcePath = resourcePath;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the resource path.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public string GetResourcePath()
+        {
+            return _resourcePath;
         }
 
         /// <summary>
