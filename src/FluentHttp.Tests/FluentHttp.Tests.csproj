@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authenticators\IAuthenticators\OAuth2Authenticators.cs" />
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.cs" />
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature.cs">
       <AutoGen>True</AutoGen>
@@ -61,6 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OAuth2AuthorizationHeader.feature</DependentUpon>
     </Compile>
+    <Compile Include="CredentialsTests.cs" />
     <Compile Include="HttpHeader\HttpHeaderCtor.cs" />
     <Compile Include="HttpHeader\HttpHeaderCtor.feature.cs">
       <AutoGen>True</AutoGen>

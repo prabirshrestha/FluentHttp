@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
-    <Compile Include="Authenticator\OAuth2Authenticators.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="HttpHeader\FluentHttpRequest.cs" />
