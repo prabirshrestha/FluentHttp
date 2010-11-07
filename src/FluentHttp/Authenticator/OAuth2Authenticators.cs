@@ -1,4 +1,6 @@
 
+using System;
+
 namespace FluentHttp
 {
     /// <summary>
@@ -39,6 +41,43 @@ namespace FluentHttp
         /// The fluent http request.
         /// </param>
         public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
+
+        #endregion
+    }
+
+    /// <summary>
+    /// The OAuth 2 authenticator using the authorization request header field.
+    /// </summary>
+    /// <remarks>
+    /// Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.1
+    /// </remarks>
+    public class OAuth2AuthorizationRequestHeaderAuthenticator : OAuth2Authenticator
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderAuthenticator"/> class.
+        /// </summary>
+        /// <param name="accessToken">
+        /// The access token.
+        /// </param>
+        public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken)
+            : base(accessToken)
+        {
+        }
+
+        #region Overrides of OAuth2Authenticator
+
+        /// <summary>
+        /// Authenticate the fluent http request using OAuth2 request header.
+        /// </summary>
+        /// <param name="fluentHttpRequest">
+        /// The fluent http request.
+        /// </param>
+        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
+        {
+            fluentHttpRequest.Headers(headers =>
+                                      headers
+                                          .Add("Authorization", "OAuth " + OAuthToken));
+        }
 
         #endregion
     }
