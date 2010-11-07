@@ -25,6 +25,12 @@
             Assert.Equal(headerName, _headerName);
         }
 
+        [Then(@"there should be no exception thrown")]
+        public void ThenThereShouldBeNoExceptionThrown()
+        {
+            Assert.Null(_exception);
+        }
+
         [Then(@"value should be ""(.*)""")]
         public void ThenValueShouldBeHeader_Value(string headerValue)
         {

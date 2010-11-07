@@ -49,6 +49,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.cs" />
+    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OAuth2AuthenticatorCtor.feature</DependentUpon>
+    </Compile>
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.cs" />
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.feature.cs">
       <AutoGen>True</AutoGen>
@@ -78,6 +84,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>OAuth2AuthenticatorCtor.feature.cs</LastGenOutput>
+    </None>
     <None Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>OAuth2AuthorizationHeader.feature.cs</LastGenOutput>

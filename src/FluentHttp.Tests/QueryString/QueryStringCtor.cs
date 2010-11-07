@@ -43,6 +43,12 @@ namespace FluentHttp.Tests.QueryString
             Assert.Equal(_qsName, qsName);
         }
 
+        [Then(@"there should be no exception thrown")]
+        public void ThenThereShouldBeNoExceptionThrown()
+        {
+            Assert.Null(_exception);
+        }
+
         [Then(@"value should be ""(.*)""")]
         public void ThenValueShouldBeQsValue(string qsValue)
         {

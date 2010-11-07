@@ -22,6 +22,10 @@ namespace FluentHttp
         /// </param>
         public OAuth2Authenticator(string oauthToken)
         {
+#if AGGRESSIVE_CHECK
+            if (string.IsNullOrEmpty(oauthToken) || oauthToken.Trim().Length == 0)
+                throw new ArgumentOutOfRangeException("oauthToken");
+#endif
             _oauthToken = oauthToken;
         }
 

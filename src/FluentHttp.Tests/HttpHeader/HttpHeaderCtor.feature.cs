@@ -76,8 +76,10 @@ this.ScenarioSetup(scenarioInfo);
 #line 10
   testRunner.And("I get value");
 #line 11
- testRunner.Then("name should be \"header-name\"");
+ testRunner.Then("there should be no exception thrown");
 #line 12
+  testRunner.And("name should be \"header-name\"");
+#line 13
   testRunner.And("value should be \"header-value\"");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -89,13 +91,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void PassHeaderNameAsNull()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name as null", ((string[])(null)));
-#line 15
-this.ScenarioSetup(scenarioInfo);
 #line 16
- testRunner.Given("a null fluent http header");
+this.ScenarioSetup(scenarioInfo);
 #line 17
- testRunner.When("I create a new fluent http header with http header name as null");
+ testRunner.Given("a null fluent http header");
 #line 18
+ testRunner.When("I create a new fluent http header with http header name as null");
+#line 19
  testRunner.Then("it should throw ArgumentOutOfRangeException");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -107,13 +109,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void PassHeaderNameAsString_Empty()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name as string.Empty", ((string[])(null)));
-#line 20
-this.ScenarioSetup(scenarioInfo);
 #line 21
- testRunner.Given("a null fluent http header");
+this.ScenarioSetup(scenarioInfo);
 #line 22
- testRunner.When("I create a new fluent http header with http header name as string.Empty");
+ testRunner.Given("a null fluent http header");
 #line 23
+ testRunner.When("I create a new fluent http header with http header name as string.Empty");
+#line 24
  testRunner.Then("it should throw ArgumentOutOfRangeException");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -125,13 +127,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void PassHeaderNameAs()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name as \"\"", ((string[])(null)));
-#line 25
-this.ScenarioSetup(scenarioInfo);
 #line 26
- testRunner.Given("a null fluent http header");
+this.ScenarioSetup(scenarioInfo);
 #line 27
- testRunner.When("I create a new fluent http header with http header name as \"\"");
+ testRunner.Given("a null fluent http header");
 #line 28
+ testRunner.When("I create a new fluent http header with http header name as \"\"");
+#line 29
  testRunner.Then("it should throw ArgumentOutOfRangeException");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -143,13 +145,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void PassHeaderNameAsWhiteSpace_()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Pass header name as white space.", ((string[])(null)));
-#line 30
-this.ScenarioSetup(scenarioInfo);
 #line 31
- testRunner.Given("a null fluent http header");
+this.ScenarioSetup(scenarioInfo);
 #line 32
- testRunner.When("I create a new fluent http header with http header name as \" \"");
+ testRunner.Given("a null fluent http header");
 #line 33
+ testRunner.When("I create a new fluent http header with http header name as \" \"");
+#line 34
  testRunner.Then("it should throw ArgumentOutOfRangeException");
 #line hidden
             testRunner.CollectScenarioErrors();

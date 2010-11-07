@@ -8,7 +8,8 @@ Scenario: Pass header name and header value as ctor params
 	When I create a new fluent http header with ctor params ("header-name" and "header-value")
 		And I get name
 		And I get value
-	Then name should be "header-name"
+	Then there should be no exception thrown
+		And name should be "header-name"
 		And value should be "header-value"
 
 # if aggressive check
