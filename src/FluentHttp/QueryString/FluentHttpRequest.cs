@@ -18,7 +18,7 @@
             return this;
         }
 
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public FluentQueryStrings GetQueryStrings()
         {
             return HttpQueryStrings;

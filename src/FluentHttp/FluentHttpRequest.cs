@@ -1,4 +1,6 @@
-﻿namespace FluentHttp
+﻿using System.ComponentModel;
+
+namespace FluentHttp
 {
     using System;
     using System.Net;
@@ -87,6 +89,7 @@
         /// </summary>
         /// <returns>
         /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public string GetResourcePath()
         {
             return _resourcePath;
@@ -120,6 +123,7 @@
         /// </summary>
         /// <returns>
         /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public string GetMethod()
         {
             return _method;
@@ -144,6 +148,7 @@
         /// </summary>
         /// <returns>
         /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public int GetTimeout()
         {
             return _timeout;
@@ -157,6 +162,7 @@
         /// </param>
         /// <returns>
         /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public FluentHttpRequest DecompressionMethods(DecompressionMethods decompressionMethods)
         {
             _decompressionMethods = decompressionMethods;
@@ -169,10 +175,41 @@
         /// <returns>
         /// Returns the decompression methods.
         /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public DecompressionMethods GetDecompressionMethods()
         {
             return _decompressionMethods;
         }
+
+        #region Hide defualt object methods
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+#pragma warning disable 0108
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public Type GetType()
+        {
+            return base.GetType();
+        }
+#pragma warning restore 0108
+
+        #endregion
 
     }
 }

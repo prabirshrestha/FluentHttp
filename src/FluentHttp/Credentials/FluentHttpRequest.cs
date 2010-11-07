@@ -28,7 +28,7 @@
         /// <returns>
         /// Returns ICredentials
         /// </returns>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public ICredentials GetCredentials()
         {
             return _credentials;

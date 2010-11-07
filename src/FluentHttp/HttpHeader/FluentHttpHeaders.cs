@@ -152,6 +152,7 @@ namespace FluentHttp
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
         /// <filterpriority>1</filterpriority>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public IEnumerator<FluentHttpHeader> GetEnumerator()
         {
             return _headers.GetEnumerator();
@@ -168,6 +169,36 @@ namespace FluentHttp
         {
             return GetEnumerator();
         }
+
+        #endregion
+
+        #region Hide defualt object methods
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+#pragma warning disable 0108
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public Type GetType()
+        {
+            return base.GetType();
+        }
+#pragma warning restore 0108
 
         #endregion
     }

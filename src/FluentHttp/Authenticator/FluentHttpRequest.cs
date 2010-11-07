@@ -20,7 +20,7 @@
             return this;
         }
 
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public IFluentAuthenticator GetAuthenticator()
         {
             return _fluentAuthenticator;
