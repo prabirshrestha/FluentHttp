@@ -3,6 +3,7 @@ namespace FluentHttp
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.ComponentModel;
 
     /// <summary>
     /// Http Headers for <see cref="FluentHttpRequest"/>
@@ -40,9 +41,10 @@ namespace FluentHttp
         /// The header name.
         /// </param>
         /// <returns>
-        /// Returns the zero-based index of the first occurance within the entire headers.
+        /// Returns the zero-based index of the first occurrence within the entire headers.
         /// </returns>
-        private static int IsSpecialHeader(string headerName)
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static int IsSpecialHeader(string headerName)
         {
             return SpecialHeaders.FindIndex(h => h.Equals(headerName, StringComparison.OrdinalIgnoreCase));
         }
@@ -54,7 +56,7 @@ namespace FluentHttp
         /// The header name.
         /// </param>
         /// <returns>
-        /// Returns the zero-based index of the first occurance within the entire headers.
+        /// Returns the zero-based index of the first occurrence within the entire headers.
         /// </returns>
         private int FindHeader(string headerName)
         {
