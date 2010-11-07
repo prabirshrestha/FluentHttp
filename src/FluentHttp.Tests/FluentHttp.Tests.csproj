@@ -63,6 +63,7 @@
       <DependentUpon>OAuth2AuthorizationHeader.feature</DependentUpon>
     </Compile>
     <Compile Include="CredentialsTests.cs" />
+    <Compile Include="DecompressionMethodsTest.cs" />
     <Compile Include="HttpHeader\HttpHeaderCtor.cs" />
     <Compile Include="HttpHeader\HttpHeaderCtor.feature.cs">
       <AutoGen>True</AutoGen>

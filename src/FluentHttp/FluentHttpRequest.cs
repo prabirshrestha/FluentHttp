@@ -1,6 +1,7 @@
 ﻿namespace FluentHttp
 {
     using System;
+    using System.Net;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -22,7 +23,17 @@
         /// </summary>
         private int _timeout;
 
+        /// <summary>
+        /// Resource Path
+        /// </summary>
         private string _resourcePath;
+
+        /// <summary>
+        /// Decompression Methods
+        /// </summary>
+        private DecompressionMethods _decompressionMethods = System.Net.DecompressionMethods.Deflate |
+                                                             System.Net.DecompressionMethods.GZip |
+                                                             System.Net.DecompressionMethods.None;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
@@ -136,6 +147,31 @@
         public int GetTimeout()
         {
             return _timeout;
+        }
+
+        /// <summary>
+        /// Sets the decompression methods.
+        /// </summary>
+        /// <param name="decompressionMethods">
+        /// The decompression methods.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public FluentHttpRequest DecompressionMethods(DecompressionMethods decompressionMethods)
+        {
+            _decompressionMethods = decompressionMethods;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the decompression methods.
+        /// </summary>
+        /// <returns>
+        /// Returns the decompression methods.
+        /// </returns>
+        public DecompressionMethods GetDecompressionMethods()
+        {
+            return _decompressionMethods;
         }
 
     }
