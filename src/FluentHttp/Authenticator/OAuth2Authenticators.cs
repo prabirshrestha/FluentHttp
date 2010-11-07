@@ -12,17 +12,17 @@ namespace FluentHttp
         /// <summary>
         /// The oauth_token
         /// </summary>
-        private readonly string _accessToken;
+        private readonly string _oauthToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2Authenticator"/> class.
         /// </summary>
-        /// <param name="accessToken">
-        /// The access token.
+        /// <param name="oauthToken">
+        /// The oauth token.
         /// </param>
-        public OAuth2Authenticator(string accessToken)
+        public OAuth2Authenticator(string oauthToken)
         {
-            _accessToken = accessToken;
+            _oauthToken = oauthToken;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace FluentHttp
         /// </summary>
         public string OAuthToken
         {
-            get { return _accessToken; }
+            get { return _oauthToken; }
         }
 
         #region Implementation of IFluentAuthenticator
@@ -57,11 +57,11 @@ namespace FluentHttp
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderAuthenticator"/> class.
         /// </summary>
-        /// <param name="accessToken">
-        /// The access token.
+        /// <param name="oauthToken">
+        /// The oauth token.
         /// </param>
-        public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken)
-            : base(accessToken)
+        public OAuth2AuthorizationRequestHeaderAuthenticator(string oauthToken)
+            : base(oauthToken)
         {
         }
 
@@ -76,7 +76,7 @@ namespace FluentHttp
         public override void Authenticate(FluentHttpRequest fluentHttpRequest)
         {
 #if AGGRESSIVE_CHECK
-            if (fluentHttpRequest.GetHeaders().Any(header => header.Name.Equals("Authorization")))
+            if (fluentHttpRequest.GetHeaders().Any(header => header.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
                 throw new Exception("fluentHttpRequest already contains 'Authorization' header");
 #endif
             fluentHttpRequest.Headers(headers =>
