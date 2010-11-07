@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authenticator\FluentHttpRequest.cs" />
+    <Compile Include="Authenticator\IFluentAuthenticator.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="HttpHeader\FluentHttpRequest.cs" />
     <Compile Include="HttpHeader\FluentHttpHeader.cs" />
