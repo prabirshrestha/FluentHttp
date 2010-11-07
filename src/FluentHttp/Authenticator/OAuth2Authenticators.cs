@@ -1,8 +1,9 @@
 
-using System;
-
 namespace FluentHttp
 {
+    using System;
+    using System.Linq;
+
     /// <summary>
     /// Base class for OAuth2 Authenticators.
     /// </summary>
@@ -74,6 +75,10 @@ namespace FluentHttp
         /// </param>
         public override void Authenticate(FluentHttpRequest fluentHttpRequest)
         {
+#if AGGRESSIVE_CHECK
+            if (fluentHttpRequest.GetHeaders().Any(header => header.Name.Equals("Authorization")))
+                throw new Exception("fluentHttpRequest already contains 'Authorization' header");
+#endif
             fluentHttpRequest.Headers(headers =>
                                       headers
                                           .Add("Authorization", "OAuth " + OAuthToken));
