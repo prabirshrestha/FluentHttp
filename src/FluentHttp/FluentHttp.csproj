@@ -61,6 +61,7 @@
     <Compile Include="QueryString\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentQueryStrings.cs" />
     <Compile Include="QueryString\FluentQueryString.cs" />
+    <Compile Include="ResponseStatus.cs" />
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
     <Compile Include="Utils\Utils.cs" />

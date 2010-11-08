@@ -45,6 +45,8 @@ namespace FluentHttp
 
         private static HttpWebResponse Get(FluentHttpRequest fluentHttpRequest, HttpWebRequest request)
         {
+            var fluentHtpResponse = new FluentHttpResponse();
+
             throw new NotImplementedException();
         }
     }
