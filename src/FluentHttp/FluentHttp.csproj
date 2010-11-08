@@ -57,6 +57,7 @@
     <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
     <Compile Include="INameValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxy\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentQueryStrings.cs" />
     <Compile Include="QueryString\FluentQueryString.cs" />

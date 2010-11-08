@@ -63,12 +63,14 @@ namespace FluentHttp
             webRequest.Timeout = fluentHttpRequest.GetTimeout();
 
             // set credentials
-            if (fluentHttpRequest.GetCredentials() != null)
-                webRequest.Credentials = fluentHttpRequest.GetCredentials();
+            webRequest.Credentials = fluentHttpRequest.GetCredentials();
 
             // set cookies
             foreach (var cookie in fluentHttpRequest.GetCookies())
                 webRequest.CookieContainer.Add(cookie);
+
+            // set proxy
+            webRequest.Proxy = fluentHttpRequest.GetProxy();
 
             return webRequest;
         }
