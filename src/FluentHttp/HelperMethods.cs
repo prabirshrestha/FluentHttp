@@ -49,7 +49,7 @@ namespace FluentHttp
 
             // todo append querystring
 
-            webRequest.Method = requestUrl;
+            webRequest.Method = fluentHttpRequest.GetMethod();
             webRequest = SetHeaders(fluentHttpRequest, webRequest);
 
             // this is required in case the file was added.
