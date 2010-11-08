@@ -1,5 +1,7 @@
 namespace FluentHttp
 {
+    using System.Net;
+
     public class FluentHttpResponse
     {
         public FluentHttpResponse()
@@ -8,5 +10,7 @@ namespace FluentHttp
         }
 
         public ResponseStatus ResponseStatus { get; set; }
+
+        public HttpWebResponse HttpWebResponse { get; set; }
     }
 }
