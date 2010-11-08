@@ -1,8 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace FluentHttp
+﻿namespace FluentHttp
 {
     using System;
+    using System.ComponentModel;
     using System.Net;
 
     /// <summary>

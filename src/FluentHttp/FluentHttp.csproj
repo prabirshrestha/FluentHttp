@@ -44,7 +44,12 @@
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
+    <Compile Include="Events.cs" />
+    <Compile Include="Execute.Sync.cs" />
     <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestEventArgs.cs" />
+    <Compile Include="FluentHttpResponse.cs" />
+    <Compile Include="HelperMethods.cs" />
     <Compile Include="HttpHeader\FluentHttpRequest.cs" />
     <Compile Include="HttpHeader\FluentHttpHeader.cs" />
     <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
