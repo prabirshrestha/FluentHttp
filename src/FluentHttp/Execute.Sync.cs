@@ -20,7 +20,7 @@ namespace FluentHttp
         public FluentHttpResponse Execute()
         {
             if (Executing != null)
-                Executing(this, new FluentHttpRequestEventArgs(this));
+                Executing(this, new ExecutingEventArgs(this));
 
             AuthenticateIfRequried();
 

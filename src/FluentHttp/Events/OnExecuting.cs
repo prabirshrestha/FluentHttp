@@ -11,15 +11,15 @@ namespace FluentHttp
         /// <summary>
         /// Occurs just before executing the web request.
         /// </summary>
-        public event EventHandler<FluentHttpRequestEventArgs> Executing;
+        public event EventHandler<ExecutingEventArgs> Executing;
 
-        public FluentHttpRequest OnExecutingDo(EventHandler<FluentHttpRequestEventArgs> eventHandler)
+        public FluentHttpRequest OnExecutingDo(EventHandler<ExecutingEventArgs> eventHandler)
         {
             return OnExecutingDo(eventHandler, false);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequest OnExecutingDo(EventHandler<FluentHttpRequestEventArgs> eventHandler, bool remove)
+        public FluentHttpRequest OnExecutingDo(EventHandler<ExecutingEventArgs> eventHandler, bool remove)
         {
             if (eventHandler != null)
             {
