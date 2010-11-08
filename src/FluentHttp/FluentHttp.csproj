@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;AGGRESSIVE_CHECK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;AGGRESSIVE_CHECK MOBILE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -60,6 +60,9 @@
     <Compile Include="QueryString\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentQueryStrings.cs" />
     <Compile Include="QueryString\FluentQueryString.cs" />
+    <Compile Include="Utils\HttpEncoder.cs" />
+    <Compile Include="Utils\HttpUtility.cs" />
+    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

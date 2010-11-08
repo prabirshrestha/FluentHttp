@@ -14,12 +14,30 @@ namespace FluentHttp
         /// The value of the querystring.
         /// </param>
         public FluentQueryString(string name, string value)
+            : this(name, value, true)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FluentQueryString"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="encode">
+        /// The encode.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// </exception>
+        public FluentQueryString(string name, string value, bool encode)
         {
 #if AGGRESSIVE_CHECK
             if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
                 throw new ArgumentOutOfRangeException("name");
 #endif
-
             Name = name;
             Value = value;
         }
