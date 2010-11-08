@@ -53,6 +53,7 @@ namespace FluentHttp
             var webRequest = (HttpWebRequest)WebRequest.Create(requestUrl);
 
             webRequest.Method = fluentHttpRequest.GetMethod();
+
             webRequest = SetHeaders(fluentHttpRequest, webRequest);
 
             // this is required in case the file was added and ...
@@ -60,6 +61,14 @@ namespace FluentHttp
 
             // set timeout
             webRequest.Timeout = fluentHttpRequest.GetTimeout();
+
+            // set credentials
+            if (fluentHttpRequest.GetCredentials() != null)
+                webRequest.Credentials = fluentHttpRequest.GetCredentials();
+
+            // set cookies
+            foreach (var cookie in fluentHttpRequest.GetCookies())
+                webRequest.CookieContainer.Add(cookie);
 
             return webRequest;
         }
