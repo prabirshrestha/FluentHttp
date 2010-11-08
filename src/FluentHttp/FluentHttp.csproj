@@ -46,7 +46,7 @@
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
-    <Compile Include="Events.cs" />
+    <Compile Include="Events\OnExecuting.cs" />
     <Compile Include="Execute.Sync.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="FluentHttpRequestEventArgs.cs" />
