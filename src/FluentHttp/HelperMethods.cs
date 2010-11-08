@@ -133,5 +133,19 @@ namespace FluentHttp
             // todo
             return webRequest;
         }
+
+        /// <summary>
+        /// Converts <see cref="HttpWebResponse"/> to <see cref="FluentHttpResponse"/>.
+        /// </summary>
+        /// <param name="httpWebResponse">
+        /// The http web response.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        internal static FluentHttpResponse ToFluentHttpResponse(HttpWebResponse httpWebResponse)
+        {
+            // todo
+            return new FluentHttpResponse();
+        }
     }
 }
