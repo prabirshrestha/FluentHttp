@@ -142,9 +142,15 @@ namespace FluentHttp
         /// </param>
         /// <returns>
         /// </returns>
-        internal static FluentHttpResponse ToFluentHttpResponse(HttpWebResponse httpWebResponse)
+        internal static FluentHttpResponse ToFluentHttpResponseAsync(HttpWebResponse httpWebResponse)
         {
-            // todo
+            var fResponse = new FluentHttpResponse();
+
+            fResponse.HttpWebResponse = httpWebResponse;
+            fResponse.ContentLength = httpWebResponse.ContentLength;
+
+            // todo copy more values
+
             return new FluentHttpResponse();
         }
     }

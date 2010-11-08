@@ -12,5 +12,7 @@ namespace FluentHttp
         public ResponseStatus ResponseStatus { get; set; }
 
         public HttpWebResponse HttpWebResponse { get; set; }
+
+        public long ContentLength { get; set; }
     }
 }

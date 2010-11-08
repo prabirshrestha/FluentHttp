@@ -40,7 +40,7 @@ namespace FluentHttp
             }
 
             // convert resonse to FluentHttpResponse and return response.
-            return ToFluentHttpResponse(response);
+            return ToFluentHttpResponseAsync(response);
         }
 
         private static HttpWebResponse Get(FluentHttpRequest fluentHttpRequest, HttpWebRequest request)

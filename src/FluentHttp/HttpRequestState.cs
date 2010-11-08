@@ -2,6 +2,11 @@ namespace FluentHttp
 {
     using System;
     using System.IO;
+    using System.Net;
+
+    public delegate void FluentHttpCallback(
+        FluentHttpResponseHeaderRecieved headerRecieved, FluentHttpResponseProgressChanged progressChanged,
+        FluentHttpResponseCompleted completed);
 
     public delegate void FluentHttpResponseHeaderRecieved(FluentHttpResponse fluentHttpResponse);
 
@@ -12,8 +17,11 @@ namespace FluentHttp
 
     public class HttpRequestState
     {
+        public int BufferSize { get; private set; }
+
         public HttpRequestState(int bufferSize)
         {
+            BufferSize = bufferSize;
             BufferRead = new byte[bufferSize];
         }
 
@@ -43,11 +51,11 @@ namespace FluentHttp
 
         public FluentHttpResponse Response { get; set; }
 
-        public Stream StreamResponse { get; set; }
+        public Stream ResponseStream { get; set; }
 
-        public FluentHttpResponseHeaderRecieved FluentHttpResponseHeaderRecieved;
-        public FluentHttpResponseProgressChanged FluentHttpResponseProgressChanged;
-        public FluentHttpResponseCompleted FluentHttpResponseCompleted;
+        public HttpWebRequest HttpWebRequest { get; set; }
+
+        public FluentHttpCallback FluentHttpCallback { get; set; }
 
 
     }
