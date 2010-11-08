@@ -71,6 +71,12 @@
         {
             if (!(string.IsNullOrEmpty(resourcePath) || (resourcePath = resourcePath.Trim()).Length == 0))
             {
+                if (resourcePath.EndsWith("/"))
+                {
+                    // if ends with trailing slash remove it.
+                    resourcePath = resourcePath.Substring(0, resourcePath.Length - 1);
+                }
+
                 // if not null or empty
                 if (resourcePath[0] != '/')
                 {

@@ -38,8 +38,16 @@ namespace FluentHttp
             if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
                 throw new ArgumentOutOfRangeException("name");
 #endif
-            Name = name;
-            Value = value;
+            if (encode)
+            {
+                Name = Utils.UrlEncode(name);
+                Value = Utils.UrlEncode(value);
+            }
+            else
+            {
+                Name = name;
+                Value = value;
+            }
         }
 
         /// <summary>

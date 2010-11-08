@@ -1,8 +1,10 @@
 namespace FluentHttp
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Text;
+    using System.Linq;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -28,8 +30,13 @@ namespace FluentHttp
 
             sb.Append(fluentHttpRequest.BaseUrl);
             sb.Append(fluentHttpRequest.GetResourcePath());
+            sb.Append("?");
 
-            // append querystrings
+            foreach (var qs in fluentHttpRequest.GetQueryStrings())
+                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value); // these querystrings are already url encoded.
+
+            // remove the last & or ?
+            --sb.Length;
 
             return sb.ToString();
         }

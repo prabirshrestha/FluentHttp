@@ -23,6 +23,5 @@ namespace FluentHttp
         {
             return HttpUtility.HtmlEncode(input);
         }
-
     }
 }

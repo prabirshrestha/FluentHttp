@@ -10,6 +10,7 @@ namespace FluentHttp
     {
         private readonly List<FluentQueryString> _queryStrings = new List<FluentQueryString>();
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public FluentQueryStrings Add(FluentQueryString queryString)
         {
             _queryStrings.Add(queryString);
@@ -18,7 +19,12 @@ namespace FluentHttp
 
         public FluentQueryStrings Add(string name, string value)
         {
-            _queryStrings.Add(new FluentQueryString(name, value));
+            return Add(name, value, true);
+        }
+
+        public FluentQueryStrings Add(string name,string value,bool encode)
+        {
+            _queryStrings.Add(new FluentQueryString(name, value, encode));
             return this;
         }
 
