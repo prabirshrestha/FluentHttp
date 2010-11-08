@@ -1,10 +1,8 @@
 namespace FluentHttp
 {
     using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Text;
-    using System.Linq;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -54,13 +52,14 @@ namespace FluentHttp
             var requestUrl = BuildUrl(fluentHttpRequest);
             var webRequest = (HttpWebRequest)WebRequest.Create(requestUrl);
 
-            // todo append querystring
-
             webRequest.Method = fluentHttpRequest.GetMethod();
             webRequest = SetHeaders(fluentHttpRequest, webRequest);
 
-            // this is required in case the file was added.
+            // this is required in case the file was added and ...
             webRequest = ResetContentLengthIfNeeded(fluentHttpRequest, webRequest);
+
+            // set timeout
+            webRequest.Timeout = fluentHttpRequest.GetTimeout();
 
             return webRequest;
         }
