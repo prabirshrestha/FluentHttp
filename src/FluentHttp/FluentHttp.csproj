@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
+    <Compile Include="Cookies\FluentCookies.cs" />
+    <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Execute.Sync.cs" />
