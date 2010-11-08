@@ -30,7 +30,7 @@ namespace FluentHttp
             switch (request.Method.ToUpperInvariant())
             {
                 case "GET":
-                    response = null;
+                    response = Get(this, request);
                     break;
                 case "POST":
                 case "PUT":
@@ -41,6 +41,11 @@ namespace FluentHttp
 
             // convert resonse to FluentHttpResponse and return response.
             return ToFluentHttpResponse(response);
+        }
+
+        private static HttpWebResponse Get(FluentHttpRequest fluentHttpRequest, HttpWebRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
