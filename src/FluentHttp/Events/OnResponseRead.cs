@@ -9,24 +9,24 @@ namespace FluentHttp
     public partial class FluentHttpRequest
     {
         /// <summary>
-        /// Occurs just before executing the web request.
+        /// Occurs when response is read.
         /// </summary>
-        public event EventHandler<ExecutingEventArgs> Executing;
+        public event EventHandler<ResponseReadEventArgs> ResponseRead;
 
-        public FluentHttpRequest OnExecuting(EventHandler<ExecutingEventArgs> eventHandler)
+        public FluentHttpRequest OnResponseRead(EventHandler<ResponseReadEventArgs> eventHandler)
         {
-            return OnExecuting(eventHandler, false);
+            return OnResponseRead(eventHandler, false);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequest OnExecuting(EventHandler<ExecutingEventArgs> eventHandler, bool remove)
+        public FluentHttpRequest OnResponseRead(EventHandler<ResponseReadEventArgs> eventHandler, bool remove)
         {
             if (eventHandler != null)
             {
                 if (remove)
-                    Executing -= eventHandler;
+                    ResponseRead -= eventHandler;
                 else
-                    Executing += eventHandler;
+                    ResponseRead += eventHandler;
             }
 
             return this;

@@ -30,5 +30,7 @@ namespace FluentHttp
         {
             get { return _fluentHttpRequest; }
         }
+
+        public object UserState { get; set; }
     }
 }

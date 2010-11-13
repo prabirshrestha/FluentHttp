@@ -11,22 +11,22 @@ namespace FluentHttp
         /// <summary>
         /// Occurs just before executing the web request.
         /// </summary>
-        public event EventHandler<ExecutingEventArgs> Executing;
+        public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
 
-        public FluentHttpRequest OnExecuting(EventHandler<ExecutingEventArgs> eventHandler)
+        public FluentHttpRequest OnResponseHeadersRecevied(EventHandler<ResponseHeadersReceivedEventArgs> eventHandler)
         {
-            return OnExecuting(eventHandler, false);
+            return OnResponseHeadersRecevied(eventHandler, false);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequest OnExecuting(EventHandler<ExecutingEventArgs> eventHandler, bool remove)
+        public FluentHttpRequest OnResponseHeadersRecevied(EventHandler<ResponseHeadersReceivedEventArgs> eventHandler, bool remove)
         {
             if (eventHandler != null)
             {
                 if (remove)
-                    Executing -= eventHandler;
+                    ResponseHeadersReceived -= eventHandler;
                 else
-                    Executing += eventHandler;
+                    ResponseHeadersReceived += eventHandler;
             }
 
             return this;

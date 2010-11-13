@@ -5,24 +5,15 @@ namespace FluentHttp
     using System.Net;
 
     public delegate void FluentHttpCallback(
-        FluentHttpResponseHeaderRecieved headerRecieved, FluentHttpResponseProgressChanged progressChanged,
-        FluentHttpResponseCompleted completed);
+        FluentHttpRequest fluentHttpRequest, FluentHttpResponse fluentHttpResponse, object userState);
 
-    public delegate void FluentHttpResponseHeaderRecieved(FluentHttpResponse fluentHttpResponse);
-
-    public delegate void FluentHttpResponseProgressChanged(
-        FluentHttpResponse fluentHttpResponse, int totalBytes, double percentageComplete, double transferRate);
-
-    public delegate void FluentHttpResponseCompleted(FluentHttpResponse fluentHttpResponse);
-
-    public class HttpRequestState
+    class HttpRequestState
     {
         public int BufferSize { get; private set; }
 
         public HttpRequestState(int bufferSize)
         {
             BufferSize = bufferSize;
-            BufferRead = new byte[bufferSize];
         }
 
         public long TotalBytes { get; set; }
@@ -33,14 +24,9 @@ namespace FluentHttp
         public long BytesRead { get; set; }
 
         /// <summary>
-        /// Gets or sets delta % for each buffer read.
-        /// </summary>
-        public double ProgressIncrement { get; set; }
-
-        /// <summary>
         /// Gets or sets buffer to read data into.
         /// </summary>
-        public byte[] BufferRead { get; set; }
+        public byte[] Buffer { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time the transfer started.
@@ -51,12 +37,12 @@ namespace FluentHttp
 
         public FluentHttpResponse Response { get; set; }
 
-        public Stream ResponseStream { get; set; }
+        public Stream Stream { get; set; }
 
         public HttpWebRequest HttpWebRequest { get; set; }
 
-        public FluentHttpCallback FluentHttpCallback { get; set; }
+        public AsyncCallback AsynCallback { get; set; }
 
-
+        public object UserState { get; set; }
     }
 }

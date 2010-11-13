@@ -16,17 +16,7 @@ namespace FluentHttp
             return this;
         }
 
-        public FluentCookies Add(string name, string value)
-        {
-            return Add(new Cookie(name, value));
-        }
-
-        public FluentCookies Add(string name, string value,string path)
-        {
-            return Add(new Cookie(name, value, path));
-        }
-
-        public FluentCookies Add(string name,string value,string path,string domain)
+        public FluentCookies Add(string name, string value, string path, string domain)
         {
             return Add(new Cookie(name, value, path, domain));
         }

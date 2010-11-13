@@ -36,6 +36,8 @@
                                                              System.Net.DecompressionMethods.GZip |
                                                              System.Net.DecompressionMethods.None;
 
+        private int _bufferSize;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
@@ -49,7 +51,10 @@
 
             _baseUrl = baseUrl;
             _method = "GET";
+            _bufferSize = 4096;
         }
+
+
 
         /// <summary>
         /// Gets the base url to make request at.
@@ -157,6 +162,34 @@
         public int GetTimeout()
         {
             return _timeout;
+        }
+
+        /// <summary>
+        /// Sets the buffer size.
+        /// </summary>
+        /// <param name="bufferSize">
+        /// The buffer size.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest BufferSize(int bufferSize)
+        {
+            if (bufferSize <= 0)
+                throw new ArgumentOutOfRangeException("bufferSize", "Buffer size must be greater than 0");
+            _bufferSize = bufferSize;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the buffer size.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public int GetBufferSize()
+        {
+            return _bufferSize;
         }
 
         /// <summary>
