@@ -2,7 +2,8 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Net;
+    using System.IO;
+    using System.Text;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -156,6 +157,48 @@
         {
             return _timeout;
         }
+
+        private IHttpBody _body;
+        public FluentHttpRequest Body(string bodyContent, Encoding encoding)
+        {
+            if (_body != null)
+            {
+                throw new InvalidOperationException("Body has already been set.");
+            }
+
+            _body = new HttpByteBody(bodyContent, encoding);
+            return this;
+        }
+
+        public FluentHttpRequest Body(string bodyContent)
+        {
+            if (_body != null)
+            {
+                throw new InvalidOperationException("Body has already been set.");
+            }
+            return Body(bodyContent, Encoding.UTF8);
+        }
+
+        public FluentHttpRequest Body(byte[] bytes)
+        {
+            if (_body != null && bytes != null)
+            {
+                throw new InvalidOperationException("Body has already been set.");
+            }
+
+            // allow bytes to be null, in order to clear the body.
+            // only this method can clear the body, not others.
+            // hidden gem.
+            _body = bytes == null ? null : new HttpByteBody(bytes);
+
+            return this;
+        }
+
+        //public FluentHttpRequest Body(Stream stream)
+        //{
+        //    TODO: should i support this 'Body(Stream)'?
+        //    return this;
+        //}
 
         /// <summary>
         /// Sets the buffer size.
