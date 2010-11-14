@@ -1,7 +1,6 @@
 namespace FluentHttp
 {
     using System;
-    using System.ComponentModel;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -15,20 +14,8 @@ namespace FluentHttp
 
         public FluentHttpRequest OnResponseRead(EventHandler<ResponseReadEventArgs> eventHandler)
         {
-            return OnResponseRead(eventHandler, false);
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequest OnResponseRead(EventHandler<ResponseReadEventArgs> eventHandler, bool remove)
-        {
             if (eventHandler != null)
-            {
-                if (remove)
-                    ResponseRead -= eventHandler;
-                else
-                    ResponseRead += eventHandler;
-            }
-
+                ResponseRead += eventHandler;
             return this;
         }
     }
