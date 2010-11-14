@@ -10,15 +10,10 @@ namespace FluentHttp
     {
         private readonly List<Cookie> _cookies = new List<Cookie>();
 
-        public FluentCookies Add(Cookie cookie)
+        public FluentCookies Add(string name, string value)
         {
-            _cookies.Add(cookie);
+            _cookies.Add(new Cookie(name, value));
             return this;
-        }
-
-        public FluentCookies Add(string name, string value, string path, string domain)
-        {
-            return Add(new Cookie(name, value, path, domain));
         }
 
         #region Implementation of IEnumerable

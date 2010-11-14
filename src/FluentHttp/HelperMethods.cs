@@ -69,9 +69,7 @@ namespace FluentHttp
             // set cookies
             webRequest.CookieContainer = new CookieContainer();
             foreach (var cookie in fluentHttpRequest.GetCookies())
-            {
-                webRequest.CookieContainer.Add(cookie);
-            }
+                webRequest.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value) { Domain = webRequest.RequestUri.Host });
 
             // set proxy
             webRequest.Proxy = fluentHttpRequest.GetProxy();
