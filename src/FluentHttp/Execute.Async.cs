@@ -56,7 +56,7 @@ namespace FluentHttp
             // propagate the exception to the one who calls EndRequest.
             if (ar.HttpRequestState.Exception != null)
             {
-                // TODO: clean up resources
+                ar.HttpRequestState.Response.ResponseStatus = ResponseStatus.Error;
                 throw ar.HttpRequestState.Exception;
             }
 
