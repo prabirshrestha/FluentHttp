@@ -7,7 +7,7 @@ namespace FluentHttp
     public delegate void FluentHttpCallback(
         FluentHttpRequest fluentHttpRequest, FluentHttpResponse fluentHttpResponse, object userState);
 
-    class HttpRequestState
+    class HttpRequestState : IDisposable
     {
         public int BufferSize { get; private set; }
 
@@ -29,11 +29,6 @@ namespace FluentHttp
         /// </summary>
         public byte[] Buffer { get; set; }
 
-        /// <summary>
-        /// Gets or sets the date and time the transfer started.
-        /// </summary>
-        public DateTime TransferStartedDate { get; set; }
-
         public FluentHttpRequest Request { get; set; }
 
         public FluentHttpResponse Response { get; set; }
@@ -46,5 +41,22 @@ namespace FluentHttp
         public FluentHttpAsyncResult AsyncResult { get; set; }
 
         public Exception Exception { get; set; }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            if (Stream != null)
+            {
+                Stream.Dispose();
+                Stream = null;
+            }
+        }
+
+        #endregion
     }
 }

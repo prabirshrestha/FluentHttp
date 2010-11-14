@@ -41,6 +41,14 @@ namespace FluentHttp
         internal void Complete()
         {
             _waitHandle.Set();
+
+            if (HttpRequestState != null)
+            {
+                // don't set the http request state to null.
+                // EndRequest method still needs to access it.
+                HttpRequestState.Dispose();
+            }
+
             if (_callback != null)
                 _callback(this);
         }
