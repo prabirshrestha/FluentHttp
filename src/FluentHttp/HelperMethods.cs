@@ -136,25 +136,5 @@ namespace FluentHttp
             // todo
             return webRequest;
         }
-
-        /// <summary>
-        /// Converts <see cref="HttpWebResponse"/> to <see cref="FluentHttpResponse"/>.
-        /// </summary>
-        /// <param name="httpWebResponse">
-        /// The http web response.
-        /// </param>
-        /// <returns>
-        /// </returns>
-        internal static FluentHttpResponse ToFluentHttpResponseAsync(HttpWebResponse httpWebResponse)
-        {
-            var fResponse = new FluentHttpResponse();
-
-            fResponse.HttpWebResponse = httpWebResponse;
-            fResponse.ContentLength = httpWebResponse.ContentLength;
-
-            // todo copy more values
-
-            return new FluentHttpResponse();
-        }
     }
 }

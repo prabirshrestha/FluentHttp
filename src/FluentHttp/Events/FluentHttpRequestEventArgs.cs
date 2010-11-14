@@ -12,15 +12,17 @@ namespace FluentHttp
         /// </summary>
         private readonly FluentHttpRequest _fluentHttpRequest;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExecutingEventArgs"/> class.
-        /// </summary>
-        /// <param name="fluentHttpRequest">
-        /// The fluent http request.
-        /// </param>
-        public ExecutingEventArgs(FluentHttpRequest fluentHttpRequest)
+        private readonly object _userState;
+
+        public ExecutingEventArgs(FluentHttpRequest fluentHttpRequest,object userState)
         {
             _fluentHttpRequest = fluentHttpRequest;
+            _userState = userState;
+        }
+
+        public object UserState
+        {
+            get { return _userState; }
         }
 
         /// <summary>
@@ -30,7 +32,5 @@ namespace FluentHttp
         {
             get { return _fluentHttpRequest; }
         }
-
-        public object UserState { get; set; }
     }
 }

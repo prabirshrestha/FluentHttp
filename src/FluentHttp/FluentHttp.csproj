@@ -54,7 +54,6 @@
     <Compile Include="Events\OnResponseHeadersReceived.cs" />
     <Compile Include="Events\OnExecuting.cs" />
     <Compile Include="Execute.Async.cs" />
-    <Compile Include="Execute.Sync.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="Events\FluentHttpRequestEventArgs.cs" />

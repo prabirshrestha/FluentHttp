@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Net;
 
     /// <summary>
     /// Event Args for FluentHttpResponseEventArgs
@@ -12,18 +13,26 @@ namespace FluentHttp
         /// </summary>
         private readonly FluentHttpResponse _fluentHttpResponse;
 
+        private readonly object _userState;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseHeadersReceivedEventArgs"/> class.
         /// </summary>
         /// <param name="fluentHttpResponse">
         /// The fluent http response.
         /// </param>
-        public ResponseHeadersReceivedEventArgs(FluentHttpResponse fluentHttpResponse)
+        public ResponseHeadersReceivedEventArgs(FluentHttpResponse fluentHttpResponse, object userState)
         {
             if (fluentHttpResponse == null)
                 throw new ArgumentNullException("fluentHttpResponse");
 
             _fluentHttpResponse = fluentHttpResponse;
+            _userState = userState;
+        }
+
+        public object UserState
+        {
+            get { return _userState; }
         }
 
         /// <summary>
@@ -44,7 +53,11 @@ namespace FluentHttp
             get { return _fluentHttpResponse.ContentType; }
         }
 
-        public object UserState { get; set; }
+        public HttpStatusCode StatusCode
+        {
+            get { return _fluentHttpResponse.StatusCode; }
+        }
+
 
     }
 }

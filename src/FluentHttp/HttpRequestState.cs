@@ -41,6 +41,7 @@ namespace FluentHttp
         public Stream Stream { get; set; }
 
         public HttpWebRequest HttpWebRequest { get; set; }
+        public HttpWebResponse HttpWebResponse { get; set; }
 
         public FluentHttpAsyncResult AsyncResult { get; set; }
     }

@@ -20,9 +20,8 @@ namespace FluentHttp
 
             if (Executing != null)
             {
-                var executingEventArgs = new ExecutingEventArgs(this) { UserState = state };
+                var executingEventArgs = new ExecutingEventArgs(this, state);
                 Executing(this, executingEventArgs);
-                _asyncResult.AsyncState = executingEventArgs.UserState;
             }
 
             AuthenticateIfRequried();
@@ -62,60 +61,66 @@ namespace FluentHttp
         {
             var requestState = (HttpRequestState)asyncResult.AsyncState;
             var request = requestState.HttpWebRequest;
-            var fluentHttpRequest = requestState.Request;
 
             WebResponse response;
-            Stream stream;
 
             try
             {
                 using (response = request.EndGetResponse(asyncResult))
                 {
                     // TODO: better to do this in different method
-                    var httpRespone = (HttpWebResponse) response;
-                    var fluentHttpResponse = new FluentHttpResponse
-                                                 {
-                                                     ContentLength = httpRespone.ContentLength,
-                                                     ContentType = httpRespone.ContentType,
-                                                     Headers = httpRespone.Headers,
-                                                     CharacterSet = httpRespone.CharacterSet,
-                                                     ContentEncoding = httpRespone.ContentEncoding,
-                                                     Cookies = httpRespone.Cookies,
-                                                     IsMutuallyAuthenticated = httpRespone.IsMutuallyAuthenticated,
-                                                     LastModified = httpRespone.LastModified,
-                                                     Method = httpRespone.Method,
-                                                     ProtocolVersion = httpRespone.ProtocolVersion,
-                                                     ResponseUri = httpRespone.ResponseUri,
-                                                     Server = httpRespone.Server,
-                                                     StatusCode = httpRespone.StatusCode,
-                                                     StatusDescription = httpRespone.StatusDescription
-                                                 };
+                    requestState.HttpWebResponse = (HttpWebResponse)response;
+                    var fluentHttpResponse = new FluentHttpResponse(this, requestState.HttpWebResponse);
+
                     requestState.Response = fluentHttpResponse;
                     requestState.TotalBytes = response.ContentLength;
 
-                    // decompress if compressed.
-                    if (fluentHttpRequest.ResponseHeadersReceived != null)
-                    {
-                        var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse) { UserState = requestState.AsyncResult.AsyncState };
-                        fluentHttpRequest.ResponseHeadersReceived(request, responseHeadersReceivedEventArgs);
-                        requestState.AsyncResult.AsyncState = responseHeadersReceivedEventArgs.UserState;
-                    }
+                    NotifyHeadersReceived(fluentHttpResponse, requestState);
 
-                    using (stream = response.GetResponseStream())
-                    {
-                        if (stream == null)
-                            return;
-                        requestState.Stream = stream;
-
-                        Read(requestState);
-                    }
+                    ReadResponseStream(requestState);
                 }
             }
             catch (WebException ex)
             {
                 // handle web exception
-                throw;
+                requestState.HttpWebResponse = (HttpWebResponse)ex.Response;
+
+                var fluentHttpResponse = new FluentHttpResponse(this, requestState.HttpWebResponse);
+                requestState.Response = fluentHttpResponse;
+                // don't set the requestState.Exception, that exception is for something else besides WebException.
+
+                requestState.Response = fluentHttpResponse;
+                requestState.TotalBytes = fluentHttpResponse.ContentLength;
+
+                NotifyHeadersReceived(fluentHttpResponse, requestState);
+                ReadResponseStream(requestState);
             }
+        }
+
+        private void ReadResponseStream(HttpRequestState requestState)
+        {
+            // TODO: compression/decompression?
+            using (var stream = requestState.HttpWebResponse.GetResponseStream())
+            {
+                if (stream == null)
+                    return;
+                requestState.Stream = stream;
+
+                Read(requestState);
+            }
+        }
+
+        private void NotifyHeadersReceived(FluentHttpResponse fluentHttpResponse, HttpRequestState requestState)
+        {
+            var fluentHttpRequest = fluentHttpResponse.Request;
+
+            if (fluentHttpRequest.ResponseHeadersReceived == null)
+                return;
+
+            var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse,
+                                                                                        requestState.AsyncResult.
+                                                                                            AsyncState);
+            fluentHttpRequest.ResponseHeadersReceived(this, responseHeadersReceivedEventArgs);
         }
 
         /// <summary>
@@ -191,9 +196,9 @@ namespace FluentHttp
 
                 if (fluentRequest.Completed != null)
                 {
-                    var completedEventArgs = new CompletedEventArgs(requestState.Response) { UserState = requestState.AsyncResult.AsyncState };
+                    var completedEventArgs = new CompletedEventArgs(requestState.Response,
+                                                                    requestState.AsyncResult.AsyncState);
                     fluentRequest.Completed(null, completedEventArgs);
-                    requestState.AsyncResult.AsyncState = completedEventArgs.UserState;
                 }
                 Complete();
             }

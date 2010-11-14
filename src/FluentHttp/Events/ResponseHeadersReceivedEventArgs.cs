@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Net;
 
     /// <summary>
     /// Event Args for ResponseReadEventArgs
@@ -82,6 +83,11 @@ namespace FluentHttp
         public string ContentType
         {
             get { return _fluentHttpResponse.ContentType; }
+        }
+
+        public HttpStatusCode StatusCode
+        {
+            get { return _fluentHttpResponse.StatusCode; }
         }
 
     }

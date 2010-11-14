@@ -13,18 +13,26 @@ namespace FluentHttp
         /// </summary>
         private readonly FluentHttpResponse _fluentHttpResponse;
 
+        private readonly object _userState;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseHeadersReceivedEventArgs"/> class.
         /// </summary>
         /// <param name="fluentHttpResponse">
         /// The fluent http response.
         /// </param>
-        public CompletedEventArgs(FluentHttpResponse fluentHttpResponse)
+        public CompletedEventArgs(FluentHttpResponse fluentHttpResponse, object userState)
         {
             if (fluentHttpResponse == null)
                 throw new ArgumentNullException("fluentHttpResponse");
 
             _fluentHttpResponse = fluentHttpResponse;
+            _userState = userState;
+        }
+
+        public object UserState
+        {
+            get { return _userState; }
         }
 
         /// <summary>
@@ -34,8 +42,6 @@ namespace FluentHttp
         {
             get { return _fluentHttpResponse; }
         }
-
-        public object UserState { get; set; }
 
         public ResponseStatus ResponseStatus
         {
