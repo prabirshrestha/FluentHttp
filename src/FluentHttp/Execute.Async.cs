@@ -71,11 +71,24 @@ namespace FluentHttp
             {
                 using (response = request.EndGetResponse(asyncResult))
                 {
+                    // TODO: better to do this in different method
+                    var httpRespone = (HttpWebResponse) response;
                     var fluentHttpResponse = new FluentHttpResponse
                                                  {
-                                                     ContentLength = response.ContentLength,
-                                                     ContentType = response.ContentType,
-                                                     Headers = response.Headers
+                                                     ContentLength = httpRespone.ContentLength,
+                                                     ContentType = httpRespone.ContentType,
+                                                     Headers = httpRespone.Headers,
+                                                     CharacterSet = httpRespone.CharacterSet,
+                                                     ContentEncoding = httpRespone.ContentEncoding,
+                                                     Cookies = httpRespone.Cookies,
+                                                     IsMutuallyAuthenticated = httpRespone.IsMutuallyAuthenticated,
+                                                     LastModified = httpRespone.LastModified,
+                                                     Method = httpRespone.Method,
+                                                     ProtocolVersion = httpRespone.ProtocolVersion,
+                                                     ResponseUri = httpRespone.ResponseUri,
+                                                     Server = httpRespone.Server,
+                                                     StatusCode = httpRespone.StatusCode,
+                                                     StatusDescription = httpRespone.StatusDescription
                                                  };
                     requestState.Response = fluentHttpResponse;
                     requestState.TotalBytes = response.ContentLength;

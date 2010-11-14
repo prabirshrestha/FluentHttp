@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Net;
 
     /// <summary>
     /// Event Args for CompletedEventArgs
@@ -39,6 +40,11 @@ namespace FluentHttp
         public ResponseStatus ResponseStatus
         {
             get { return _fluentHttpResponse.ResponseStatus; }
+        }
+
+        public HttpStatusCode StatusCode
+        {
+            get { return _fluentHttpResponse.StatusCode; }
         }
 
     }
