@@ -36,5 +36,10 @@ namespace FluentHttp
 
         public object UserState { get; set; }
 
+        public ResponseStatus ResponseStatus
+        {
+            get { return _fluentHttpResponse.ResponseStatus; }
+        }
+
     }
 }

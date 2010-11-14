@@ -174,19 +174,19 @@ namespace FluentHttp
 
             if (!canRead)
             {
+                requestState.Response.ResponseStatus = ResponseStatus.Completed;
+
                 if (fluentRequest.Completed != null)
                 {
                     var completedEventArgs = new CompletedEventArgs(requestState.Response) { UserState = requestState.AsyncResult.AsyncState };
                     fluentRequest.Completed(null, completedEventArgs);
                     requestState.AsyncResult.AsyncState = completedEventArgs.UserState;
                 }
-
                 Complete();
             }
 
             return canRead;
         }
-
 
         private void Complete()
         {
