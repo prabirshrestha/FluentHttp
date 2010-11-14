@@ -83,7 +83,7 @@
                 }
 
                 // if not null or empty
-                if (resourcePath[0] != '/')
+                if (resourcePath.Length > 0 && resourcePath[0] != '/')
                 {
                     // if doesn't start with / then add /
                     resourcePath = "/" + resourcePath;
