@@ -10,6 +10,11 @@ namespace FluentHttp
     /// </summary>
     public partial class FluentHttpRequest
     {
+        // http://www.briangrinstead.com/blog/multipart-form-post-in-c
+        // make it const string for performance
+        private const string MultipartFormDataBoundary = "-----------------------------28947758029299";
+        private const string MultipartFormData = "multipart/form-data; boundary=" + MultipartFormDataBoundary;
+
         /// <summary>
         /// Adds necessary authentication stuffs if required.
         /// </summary>
@@ -74,7 +79,7 @@ namespace FluentHttp
             // set proxy
             webRequest.Proxy = fluentHttpRequest.GetProxy();
 
-            // decompression methods set by set accept-encoding headers.
+            // decompression methods set by set accept-encoding header.
             webRequest.AutomaticDecompression = DecompressionMethods.None;
 
             return webRequest;
@@ -82,7 +87,7 @@ namespace FluentHttp
 
         internal static HttpWebRequest SetHeaders(FluentHttpRequest fluentHttpRequest, HttpWebRequest webRequest)
         {
-            // default content-length to 0 if it is not GET.
+            // set default content-length to 0 if it is not GET.
             if (!fluentHttpRequest.GetMethod().Equals("GET", StringComparison.OrdinalIgnoreCase))
                 webRequest.ContentLength = 0;
 
