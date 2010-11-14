@@ -1,7 +1,6 @@
 namespace FluentHttp
 {
     using System;
-    using System.IO;
     using System.Net;
 
     /// <summary>
@@ -51,8 +50,16 @@ namespace FluentHttp
             if (ar == null || !object.ReferenceEquals(_asyncResult, ar))
                 throw new ArgumentException("asyncResult");
 
-            ar.AsyncWaitHandle.WaitOne();
             _asyncResult = null;
+
+            // propagate the exception to the one who calls EndRequest.
+            if (ar.HttpRequestState.Exception != null)
+            {
+                // TODO: clean up resources
+                throw ar.HttpRequestState.Exception;
+            }
+
+            ar.AsyncWaitHandle.WaitOne();
 
             return ar.HttpRequestState.Response;
         }
@@ -117,10 +124,19 @@ namespace FluentHttp
             if (fluentHttpRequest.ResponseHeadersReceived == null)
                 return;
 
-            var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse,
-                                                                                        requestState.AsyncResult.
-                                                                                            AsyncState);
-            fluentHttpRequest.ResponseHeadersReceived(this, responseHeadersReceivedEventArgs);
+            try
+            {
+                var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse,
+                                                                                            requestState.AsyncResult.
+                                                                                                AsyncState);
+                fluentHttpRequest.ResponseHeadersReceived(this, responseHeadersReceivedEventArgs);
+            }
+            catch (Exception ex)
+            {
+                // we need to catch the user exception so that we can end the request.
+                requestState.Exception = ex;
+                Complete();
+            }
         }
 
         /// <summary>
@@ -147,19 +163,12 @@ namespace FluentHttp
 
         public void ReadResponseStreamCallback(IAsyncResult asyncResult)
         {
-            try
+            if (asyncResult.CompletedSynchronously)
+                return;
+            if (EndRead(asyncResult))
             {
-                if (asyncResult.CompletedSynchronously)
-                    return;
-                if (EndRead(asyncResult))
-                {
-                    var requestState = (HttpRequestState)asyncResult.AsyncState;
-                    Read(requestState);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                var requestState = (HttpRequestState)asyncResult.AsyncState;
+                Read(requestState);
             }
         }
 
@@ -184,10 +193,19 @@ namespace FluentHttp
 
             if (fluentRequest.ResponseRead != null)
             {
-                var responseReadEventArgs = new ResponseReadEventArgs(requestState.Response, requestState.Buffer,
-                                                                      chunkSize, requestState.BytesRead, canRead) { UserState = requestState.AsyncResult.AsyncState };
-                fluentRequest.ResponseRead(requestState.Stream, responseReadEventArgs);
-                requestState.AsyncResult.AsyncState = responseReadEventArgs.UserState;
+                try
+                {
+                    var responseReadEventArgs = new ResponseReadEventArgs(requestState.Response, requestState.Buffer,
+                                                                          chunkSize, requestState.BytesRead, canRead) { UserState = requestState.AsyncResult.AsyncState };
+                    fluentRequest.ResponseRead(requestState.Stream, responseReadEventArgs);
+                    requestState.AsyncResult.AsyncState = responseReadEventArgs.UserState;
+                }
+                catch (Exception ex)
+                {
+                    // we need to catch the user exception so that we can end the request.
+                    requestState.Exception = ex;
+                    Complete();
+                }
             }
 
             if (!canRead)
@@ -196,9 +214,18 @@ namespace FluentHttp
 
                 if (fluentRequest.Completed != null)
                 {
-                    var completedEventArgs = new CompletedEventArgs(requestState.Response,
-                                                                    requestState.AsyncResult.AsyncState);
-                    fluentRequest.Completed(null, completedEventArgs);
+                    try
+                    {
+                        var completedEventArgs = new CompletedEventArgs(requestState.Response,
+                                                                        requestState.AsyncResult.AsyncState);
+                        fluentRequest.Completed(null, completedEventArgs);
+                    }
+                    catch (Exception ex)
+                    {
+                        // we need to catch the user exception so that we can end the request.
+                        requestState.Exception = ex;
+                        Complete();
+                    }
                 }
                 Complete();
             }

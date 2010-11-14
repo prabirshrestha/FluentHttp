@@ -44,5 +44,7 @@ namespace FluentHttp
         public HttpWebResponse HttpWebResponse { get; set; }
 
         public FluentHttpAsyncResult AsyncResult { get; set; }
+
+        public Exception Exception { get; set; }
     }
 }
