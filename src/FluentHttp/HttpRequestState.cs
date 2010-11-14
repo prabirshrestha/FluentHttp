@@ -3,10 +3,7 @@ namespace FluentHttp
     using System;
     using System.IO;
     using System.Net;
-
-    public delegate void FluentHttpCallback(
-        FluentHttpRequest fluentHttpRequest, FluentHttpResponse fluentHttpResponse, object userState);
-
+    
     class HttpRequestState : IDisposable
     {
         public int BufferSize { get; private set; }
