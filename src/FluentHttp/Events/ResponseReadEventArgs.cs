@@ -53,6 +53,11 @@ namespace FluentHttp
             get { return _fluentHttpResponse.ContentType; }
         }
 
+        public string ContentEncoding
+        {
+            get { return _fluentHttpResponse.ContentEncoding; }
+        }
+
         public HttpStatusCode StatusCode
         {
             get { return _fluentHttpResponse.StatusCode; }

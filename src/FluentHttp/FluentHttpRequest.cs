@@ -29,13 +29,6 @@
         /// </summary>
         private string _resourcePath;
 
-        /// <summary>
-        /// Decompression Methods
-        /// </summary>
-        private DecompressionMethods _decompressionMethods = System.Net.DecompressionMethods.Deflate |
-                                                             System.Net.DecompressionMethods.GZip |
-                                                             System.Net.DecompressionMethods.None;
-
         private int _bufferSize;
 
         /// <summary>
@@ -190,33 +183,6 @@
         public int GetBufferSize()
         {
             return _bufferSize;
-        }
-
-        /// <summary>
-        /// Sets the decompression methods.
-        /// </summary>
-        /// <param name="decompressionMethods">
-        /// The decompression methods.
-        /// </param>
-        /// <returns>
-        /// </returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequest DecompressionMethods(DecompressionMethods decompressionMethods)
-        {
-            _decompressionMethods = decompressionMethods;
-            return this;
-        }
-
-        /// <summary>
-        /// Gets the decompression methods.
-        /// </summary>
-        /// <returns>
-        /// Returns the decompression methods.
-        /// </returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public DecompressionMethods GetDecompressionMethods()
-        {
-            return _decompressionMethods;
         }
 
         #region Hide defualt object methods

@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.IO.Compression;
     using System.Net;
 
     /// <summary>
@@ -106,12 +107,17 @@ namespace FluentHttp
 
         private void ReadResponseStream(HttpRequestState requestState)
         {
-            // TODO: compression/decompression?
             var stream = requestState.HttpWebResponse.GetResponseStream();
 
             if (stream == null)
                 return;
+
             requestState.Stream = stream;
+
+            if (requestState.HttpWebResponse.ContentEncoding.Contains("gzip"))
+                requestState.Stream = new GZipStream(stream, CompressionMode.Decompress);
+            else if (requestState.HttpWebResponse.ContentEncoding.Contains("deflate"))
+                requestState.Stream = new DeflateStream(stream, CompressionMode.Decompress);
 
             Read(requestState);
         }
@@ -186,7 +192,7 @@ namespace FluentHttp
             var requestState = (HttpRequestState)asyncResult.AsyncState;
             int chunkSize = requestState.Stream.EndRead(asyncResult);
             requestState.BytesRead += chunkSize;
-            var canRead = chunkSize > 0 && requestState.BytesRead < requestState.TotalBytes;
+            var canRead = chunkSize > 0 && requestState.Stream.CanRead;
 
             var fluentRequest = requestState.Request;
 

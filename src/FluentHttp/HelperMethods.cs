@@ -1,3 +1,4 @@
+
 namespace FluentHttp
 {
     using System;
@@ -74,6 +75,9 @@ namespace FluentHttp
 
             // set proxy
             webRequest.Proxy = fluentHttpRequest.GetProxy();
+
+            // decompression methods set by set accept-encoding headers.
+            webRequest.AutomaticDecompression = DecompressionMethods.None;
 
             return webRequest;
         }
