@@ -11,9 +11,10 @@ namespace FluentHttp
     {
         public int BufferSize { get; private set; }
 
-        public HttpRequestState(int bufferSize)
+        public HttpRequestState(int bufferSize, FluentHttpAsyncResult asyncResult)
         {
             BufferSize = bufferSize;
+            AsyncResult = asyncResult;
         }
 
         public long TotalBytes { get; set; }
@@ -41,8 +42,6 @@ namespace FluentHttp
 
         public HttpWebRequest HttpWebRequest { get; set; }
 
-        public AsyncCallback AsynCallback { get; set; }
-
-        public object UserState { get; set; }
+        public FluentHttpAsyncResult AsyncResult { get; set; }
     }
 }

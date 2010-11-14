@@ -9,39 +9,56 @@ namespace FluentHttp
     /// </summary>
     public partial class FluentHttpRequest
     {
-        public IAsyncResult BeginRequest(AsyncCallback callback, object userState)
+        private FluentHttpAsyncResult _asyncResult;
+
+        public IAsyncResult BeginRequest(AsyncCallback callback, object state)
         {
+            if (_asyncResult != null)
+                throw new InvalidOperationException("Request has already started.");
+
+            _asyncResult = new FluentHttpAsyncResult(callback, state);
+
             if (Executing != null)
             {
-                var executingEventArgs = new ExecutingEventArgs(this) { UserState = userState };
+                var executingEventArgs = new ExecutingEventArgs(this) { UserState = state };
                 Executing(this, executingEventArgs);
-                userState = executingEventArgs.UserState;
+                _asyncResult.AsyncState = executingEventArgs.UserState;
             }
 
             AuthenticateIfRequried();
 
             var request = CreateHttpWebRequest(this);
 
-            var requestState = new HttpRequestState(GetBufferSize())
+            var requestState = new HttpRequestState(GetBufferSize(), _asyncResult)
                                    {
                                        Request = this,
-                                       HttpWebRequest = request,
-                                       AsynCallback = callback,
-                                       UserState = userState
+                                       HttpWebRequest = request
                                    };
 
-            // TODO check if http method is supported
+            _asyncResult.HttpRequestState = requestState;
 
-            return request.BeginGetResponse(GetResponseCallback, requestState);
+            request.BeginGetResponse(GetResponseCallback, requestState);
+
+            return _asyncResult;
         }
 
-        public FluentHttpResponse EndRequest(IAsyncResult result)
+        public FluentHttpResponse EndRequest(IAsyncResult asyncResult)
         {
-            var requestState = (HttpRequestState) result.AsyncState;
-            return requestState.Response;
+            if (asyncResult == null)
+                throw new ArgumentNullException("asyncResult");
+
+            var ar = asyncResult as FluentHttpAsyncResult;
+
+            if (ar == null || !object.ReferenceEquals(_asyncResult, ar))
+                throw new ArgumentException("asyncResult");
+
+            ar.AsyncWaitHandle.WaitOne();
+            _asyncResult = null;
+
+            return ar.HttpRequestState.Response;
         }
 
-        private static void GetResponseCallback(IAsyncResult asyncResult)
+        private void GetResponseCallback(IAsyncResult asyncResult)
         {
             var requestState = (HttpRequestState)asyncResult.AsyncState;
             var request = requestState.HttpWebRequest;
@@ -66,9 +83,9 @@ namespace FluentHttp
                     // decompress if compressed.
                     if (fluentHttpRequest.ResponseHeadersReceived != null)
                     {
-                        var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse) { UserState = requestState.UserState };
+                        var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse) { UserState = requestState.AsyncResult.AsyncState };
                         fluentHttpRequest.ResponseHeadersReceived(request, responseHeadersReceivedEventArgs);
-                        requestState.UserState = responseHeadersReceivedEventArgs.UserState;
+                        requestState.AsyncResult.AsyncState = responseHeadersReceivedEventArgs.UserState;
                     }
 
                     using (stream = response.GetResponseStream())
@@ -94,7 +111,7 @@ namespace FluentHttp
         /// <param name="requestState">
         /// The request state.
         /// </param>
-        private static void Read(HttpRequestState requestState)
+        private void Read(HttpRequestState requestState)
         {
             var stream = requestState.Stream;
             while (true)
@@ -110,47 +127,7 @@ namespace FluentHttp
             }
         }
 
-        /// <summary>
-        /// Returns false if there is no more data to read.
-        /// </summary>
-        /// <param name="asyncResult">
-        /// The async result.
-        /// </param>
-        /// <returns>
-        /// </returns>
-        /// <exception cref="NotImplementedException">
-        /// </exception>
-        private static bool EndRead(IAsyncResult asyncResult)
-        {
-            var requestState = (HttpRequestState)asyncResult.AsyncState;
-            int chunkSize = requestState.Stream.EndRead(asyncResult);
-            requestState.BytesRead += chunkSize;
-            var canRead = chunkSize > 0 && requestState.BytesRead < requestState.TotalBytes;
-
-            var fluentRequest = requestState.Request;
-
-            if (fluentRequest.ResponseRead != null)
-            {
-                var responseReadEventArgs = new ResponseReadEventArgs(requestState.Response, requestState.Buffer,
-                                                                      chunkSize, requestState.BytesRead, canRead) { UserState = requestState.UserState };
-                fluentRequest.ResponseRead(requestState.Stream, responseReadEventArgs);
-                requestState.UserState = responseReadEventArgs.UserState;
-            }
-
-            if (!canRead)
-            {
-                if (fluentRequest.Completed != null)
-                {
-                    var completedEventArgs = new CompletedEventArgs(requestState.Response) { UserState = requestState.UserState };
-                    fluentRequest.Completed(null, completedEventArgs);
-                    requestState.UserState = completedEventArgs.UserState;
-                }
-            }
-
-            return canRead;
-        }
-
-        public static void ReadResponseStreamCallback(IAsyncResult asyncResult)
+        public void ReadResponseStreamCallback(IAsyncResult asyncResult)
         {
             try
             {
@@ -168,88 +145,55 @@ namespace FluentHttp
             }
         }
 
-        //private static void ResponseCallback(IAsyncResult asyncResult)
-        //{
-        //    var requestState = (HttpRequestState)asyncResult.AsyncState;
-        //    var request = requestState.HttpWebRequest;
+        /// <summary>
+        /// Returns false if there is no more data to read.
+        /// </summary>
+        /// <param name="asyncResult">
+        /// The async result.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        private bool EndRead(IAsyncResult asyncResult)
+        {
+            var requestState = (HttpRequestState)asyncResult.AsyncState;
+            int chunkSize = requestState.Stream.EndRead(asyncResult);
+            requestState.BytesRead += chunkSize;
+            var canRead = chunkSize > 0 && requestState.BytesRead < requestState.TotalBytes;
 
-        //    WebResponse response = null;
-        //    Stream stream = null;
+            var fluentRequest = requestState.Request;
 
-        //    try
-        //    {
-        //        using (response = request.EndGetResponse(asyncResult))
-        //        {
-        //            // decompress if compressed.
-        //            // TODO: notify that the header has been received.
+            if (fluentRequest.ResponseRead != null)
+            {
+                var responseReadEventArgs = new ResponseReadEventArgs(requestState.Response, requestState.Buffer,
+                                                                      chunkSize, requestState.BytesRead, canRead) { UserState = requestState.AsyncResult.AsyncState };
+                fluentRequest.ResponseRead(requestState.Stream, responseReadEventArgs);
+                requestState.AsyncResult.AsyncState = responseReadEventArgs.UserState;
+            }
 
-        //        }
+            if (!canRead)
+            {
+                if (fluentRequest.Completed != null)
+                {
+                    var completedEventArgs = new CompletedEventArgs(requestState.Response) { UserState = requestState.AsyncResult.AsyncState };
+                    fluentRequest.Completed(null, completedEventArgs);
+                    requestState.AsyncResult.AsyncState = completedEventArgs.UserState;
+                }
 
-        //        //    var response = (HttpWebResponse)requestState.HttpWebRequest.EndGetResponse(asyncResult);
-        //        //    requestState.Response = ToFluentHttpResponseAsync(response);
+                Complete();
+            }
 
-        //        //    // TODO notify that the header has been received.
+            return canRead;
+        }
 
-        //        //    // now download the actual data
-        //        //    var responseStream = response.GetResponseStream();
-        //        //    requestState.ResponseStream = responseStream;
 
-        //        //    // begin reading contents of the response data
-        //        //    var result = responseStream.BeginRead(requestState.BufferRead, 0, requestState.BufferSize, ReadCallback,
-        //        //                                          requestState);
-
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-        //private static void ReadCallback(IAsyncResult asyncResult)
-        //{
-        //    // start reading the actual contents data
-        //    try
-        //    {
-        //        var requestState = (HttpRequestState)asyncResult.AsyncState;
-
-        //        var responseStream = requestState.ResponseStream;
-
-        //        // get get results of read operation
-
-        //        int bytesRead = responseStream.EndRead(asyncResult);
-
-        //        // got some data, need to read more
-        //        if (bytesRead > 0)
-        //        {
-        //            requestState.BytesRead += bytesRead;
-        //            double percentageComplete = ((double)requestState.BytesRead / requestState.TotalBytes) * 100.0f;
-
-        //            var totalTime = DateTime.Now - requestState.TransferStartedDate;
-
-        //            // TODO: report progress
-
-        //            // kick of another read
-        //            var result = responseStream.BeginRead(requestState.BufferRead, 0, requestState.BufferSize,
-        //                                                  ReadCallback, requestState);
-        //            return;
-        //        }
-        //        else
-        //        {
-        //            // EndRead returned 0, so no more data to read
-        //            responseStream.Close();
-        //            requestState.Response.HttpWebResponse.Close();
-
-        //            // TODO notify completed.
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
+        private void Complete()
+        {
+            _asyncResult.Complete();
+            _asyncResult = null;
+            // more cleanups
+        }
 
     }
 }

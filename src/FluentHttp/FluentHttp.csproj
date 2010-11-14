@@ -53,7 +53,9 @@
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\OnResponseHeadersReceived.cs" />
     <Compile Include="Events\OnExecuting.cs" />
+    <Compile Include="Execute.Async.cs" />
     <Compile Include="Execute.Sync.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="Events\FluentHttpRequestEventArgs.cs" />
     <Compile Include="FluentHttpResponse.cs" />
@@ -72,9 +74,6 @@
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
     <Compile Include="Utils\Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Execute.Async.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
