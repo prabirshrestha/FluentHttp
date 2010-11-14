@@ -2,6 +2,7 @@ namespace FluentHttp
 {
     using System;
     using System.Net;
+    using System.Text;
 
     /// <summary>
     /// Event Args for ResponseReadEventArgs
@@ -54,6 +55,27 @@ namespace FluentHttp
             get { return _buffer; }
         }
 
+        public string GetString(Encoding encoding, int index, int count)
+        {
+            return encoding.GetString(Buffer, index, count);
+        }
+
+        public string GetString(Encoding encoding)
+        {
+            return GetString(encoding, 0, BufferSize);
+        }
+
+        public string GetString(int index, int count)
+        {
+            var encoding = Encoding.GetEncoding(CharacterSet);
+            return GetString(encoding, index, count);
+        }
+
+        public string GetString()
+        {
+            return GetString(0, BufferSize);
+        }
+
         public bool HasMore
         {
             get { return _hasMore; }
@@ -83,6 +105,11 @@ namespace FluentHttp
         public string ContentType
         {
             get { return _fluentHttpResponse.ContentType; }
+        }
+
+        public string CharacterSet
+        {
+            get { return _fluentHttpResponse.CharacterSet; }
         }
 
         public HttpStatusCode StatusCode
