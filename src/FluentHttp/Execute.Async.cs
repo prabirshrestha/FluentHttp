@@ -73,19 +73,19 @@ namespace FluentHttp
 
             try
             {
-                using (response = request.EndGetResponse(asyncResult))
-                {
-                    // TODO: better to do this in different method
-                    requestState.HttpWebResponse = (HttpWebResponse)response;
-                    var fluentHttpResponse = new FluentHttpResponse(this, requestState.HttpWebResponse);
+                response = request.EndGetResponse(asyncResult);
 
-                    requestState.Response = fluentHttpResponse;
-                    requestState.TotalBytes = response.ContentLength;
+                // TODO: better to do this in different method
+                requestState.HttpWebResponse = (HttpWebResponse)response;
+                var fluentHttpResponse = new FluentHttpResponse(this, requestState.HttpWebResponse);
 
-                    NotifyHeadersReceived(fluentHttpResponse, requestState);
+                requestState.Response = fluentHttpResponse;
+                requestState.TotalBytes = response.ContentLength;
 
-                    ReadResponseStream(requestState);
-                }
+                NotifyHeadersReceived(fluentHttpResponse, requestState);
+
+                ReadResponseStream(requestState);
+
             }
             catch (WebException ex)
             {
@@ -107,14 +107,13 @@ namespace FluentHttp
         private void ReadResponseStream(HttpRequestState requestState)
         {
             // TODO: compression/decompression?
-            using (var stream = requestState.HttpWebResponse.GetResponseStream())
-            {
-                if (stream == null)
-                    return;
-                requestState.Stream = stream;
+            var stream = requestState.HttpWebResponse.GetResponseStream();
 
-                Read(requestState);
-            }
+            if (stream == null)
+                return;
+            requestState.Stream = stream;
+
+            Read(requestState);
         }
 
         private void NotifyHeadersReceived(FluentHttpResponse fluentHttpResponse, HttpRequestState requestState)
