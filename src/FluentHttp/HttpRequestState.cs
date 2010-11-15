@@ -3,7 +3,7 @@ namespace FluentHttp
     using System;
     using System.IO;
     using System.Net;
-    
+
     class HttpRequestState : IDisposable
     {
         public int BufferSize { get; private set; }
@@ -38,6 +38,8 @@ namespace FluentHttp
         public FluentHttpAsyncResult AsyncResult { get; set; }
 
         public Exception Exception { get; set; }
+
+        public HttpRequestBody RequestBody { get; set; }
 
         #region Implementation of IDisposable
 

@@ -158,47 +158,92 @@
             return _timeout;
         }
 
-        private IHttpBody _body;
-        public FluentHttpRequest Body(string bodyContent, Encoding encoding)
-        {
-            if (_body != null)
-            {
-                throw new InvalidOperationException("Body has already been set.");
-            }
+        //public FluentHttpRequest Body(string bodyContent, Encoding encoding)
+        //{
+        //    if (_body != null)
+        //    {
+        //        throw new InvalidOperationException("Body has already been set.");
+        //    }
 
-            _body = new HttpByteBody(bodyContent, encoding);
-            return this;
+        //    _body = new HttpByteBody(bodyContent, encoding);
+        //    return this;
+        //}
+
+        //public FluentHttpRequest Body(string bodyContent)
+        //{
+        //    if (_body != null)
+        //    {
+        //        throw new InvalidOperationException("Body has already been set.");
+        //    }
+        //    return Body(bodyContent, Encoding.UTF8);
+        //}
+
+        //public FluentHttpRequest Body(byte[] bytes)
+        //{
+        //    if (_body != null && bytes != null)
+        //    {
+        //        throw new InvalidOperationException("Body has already been set.");
+        //    }
+
+        //    // allow bytes to be null, in order to clear the body.
+        //    // only this method can clear the body, not others.
+        //    // hidden gem.
+        //    _body = bytes == null ? null : new HttpByteBody(bytes);
+
+        //    return this;
+        //}
+
+        private HttpRequestBody _body;
+        public FluentHttpRequest Body(Stream stream)
+        {
+            return Body(stream, 0);
         }
 
-        public FluentHttpRequest Body(string bodyContent)
+        public FluentHttpRequest Body(Stream stream, long length)
         {
-            if (_body != null)
+            return Body(stream, 0, true);
+        }
+
+        public FluentHttpRequest Body(Stream stream, long length, bool autoDispose)
+        {
+            if (stream == null)
             {
-                throw new InvalidOperationException("Body has already been set.");
+                // allow the body to be cleared.
+                _body = null;
+                return this;
             }
-            return Body(bodyContent, Encoding.UTF8);
+
+            if (_body != null)
+                throw new ArgumentNullException("Body has already been set.");
+
+            _body = new HttpRequestBody(stream, length, autoDispose);
+            return this;
         }
 
         public FluentHttpRequest Body(byte[] bytes)
         {
-            if (_body != null && bytes != null)
+            if (bytes == null)
             {
-                throw new InvalidOperationException("Body has already been set.");
+                _body = null;
+                return this;
             }
 
-            // allow bytes to be null, in order to clear the body.
-            // only this method can clear the body, not others.
-            // hidden gem.
-            _body = bytes == null ? null : new HttpByteBody(bytes);
+            if (_body != null)
+                throw new ArgumentNullException("Body has already been set.");
 
+            _body = new HttpRequestBody(new MemoryStream(bytes));
             return this;
         }
 
-        //public FluentHttpRequest Body(Stream stream)
-        //{
-        //    TODO: should i support this 'Body(Stream)'?
-        //    return this;
-        //}
+        public FluentHttpRequest Body(string bodyContent, Encoding encoding)
+        {
+            return Body(encoding.GetBytes(bodyContent));
+        }
+
+        public FluentHttpRequest Body(string bodyContent)
+        {
+            return Body(bodyContent, Encoding.UTF8);
+        }
 
         /// <summary>
         /// Sets the buffer size.

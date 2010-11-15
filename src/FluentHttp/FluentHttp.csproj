@@ -43,8 +43,7 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
-    <Compile Include="Body\ByteBody.cs" />
-    <Compile Include="Body\IHttpBody.cs" />
+    <Compile Include="Body\HttpBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
@@ -55,6 +54,7 @@
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\OnResponseHeadersReceived.cs" />
     <Compile Include="Events\OnExecuting.cs" />
+    <None Include="Execute.Async.old.cs_" />
     <Compile Include="Execute.Async.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
@@ -74,6 +74,10 @@
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
+    <Compile Include="Utils\StreamCopier\StreamCopier.cs" />
+    <Compile Include="Utils\StreamCopier\StreamCopierAsyncResult.cs" />
+    <Compile Include="Utils\StreamCopier\StreamCopierState.cs" />
+    <Compile Include="Utils\StreamCopier\StreamCopyEventArgs.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
