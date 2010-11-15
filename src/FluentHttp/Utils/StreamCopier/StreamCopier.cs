@@ -49,13 +49,13 @@ namespace FluentHttp
 
             var onStart = OnStart;
             if (onStart != null)
-                onStart(this, new StreamCopyEventArgs(this, null));
+                onStart(this, new StreamCopyEventArgs(this, null, false));
 
             // http://msdn.microsoft.com/en-us/magazine/cc337900.aspx
             var buffer = new byte[BufferSize];
 
-            Action<Exception> done =
-                ex =>
+            Action<Exception, bool> done =
+                (ex, isCancelled) =>
                 {
                     //lock (this)
                     //{
@@ -65,7 +65,9 @@ namespace FluentHttp
 
                     var onCompleted = OnCompleted;
                     if (onCompleted != null)
-                        onCompleted(this, new StreamCopyEventArgs(this, ex));
+                    {
+                        onCompleted(this, new StreamCopyEventArgs(this, ex, isCancelled));
+                    }
                 };
 
             AsyncCallback rc = null;
@@ -76,6 +78,18 @@ namespace FluentHttp
                     int read = Source.EndRead(readResult);
                     if (read > 0)
                     {
+                        var onRead = OnRead;
+                        if (onRead != null)
+                        {
+                            var e = new StreamCopyEventArgs(this, null, false) { Buffer = buffer, ActualBufferSize = read };
+                            onRead(this, e);
+                            if (e.Cancel)
+                            {
+                                done(null, true);
+                                return;
+                            }
+                        }
+
                         Destination.BeginWrite(
                             buffer, 0, read,
                             writeResult =>
@@ -83,23 +97,24 @@ namespace FluentHttp
                                 try
                                 {
                                     Destination.EndWrite(writeResult);
+                                    Destination.Flush(); // Will block until data is sent: http://efreedom.com/Question/1-2529558/Silverlight-RC-File-Upload-Upload-Progress 
                                     Source.BeginRead(buffer, 0, buffer.Length, rc, streamState);
                                 }
                                 catch (Exception ex)
                                 {
-                                    done(ex);
+                                    done(ex, false);
                                 }
                             },
                             streamState);
                     }
                     else
                     {
-                        done(null);
+                        done(null, false);
                     }
                 }
                 catch (Exception ex)
                 {
-                    done(ex);
+                    done(ex, false);
                 }
             };
 
@@ -130,5 +145,7 @@ namespace FluentHttp
         public event EventHandler<StreamCopyEventArgs> OnStart;
 
         public event EventHandler<StreamCopyEventArgs> OnCompleted;
+
+        public event EventHandler<StreamCopyEventArgs> OnRead;
     }
 }
