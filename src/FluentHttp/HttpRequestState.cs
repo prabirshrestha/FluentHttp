@@ -39,8 +39,6 @@ namespace FluentHttp
 
         public Exception Exception { get; set; }
 
-        public HttpRequestBody RequestBody { get; set; }
-
         #region Implementation of IDisposable
 
         /// <summary>

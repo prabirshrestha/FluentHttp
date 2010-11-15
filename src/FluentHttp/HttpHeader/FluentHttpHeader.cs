@@ -5,7 +5,7 @@ namespace FluentHttp
     /// <summary>
     /// Http Header for Fluent Http
     /// </summary>
-    public class FluentHttpHeader : INameValue
+    public class FluentHttpHeader
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpHeader"/> class.

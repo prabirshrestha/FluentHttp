@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
-    <Compile Include="Body\HttpBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
@@ -54,7 +53,6 @@
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\OnResponseHeadersReceived.cs" />
     <Compile Include="Events\OnExecuting.cs" />
-    <None Include="Execute.Async.old.cs_" />
     <Compile Include="Execute.Async.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
@@ -65,7 +63,6 @@
     <Compile Include="HttpHeader\FluentHttpHeader.cs" />
     <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
     <Compile Include="HttpRequestState.cs" />
-    <Compile Include="INameValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentHttpRequest.cs" />
@@ -74,11 +71,22 @@
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopier.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopierAsyncResult.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopierState.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopyEventArgs.cs" />
+    <Compile Include="Utils\StreamCopier\StreamCopier.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\StreamCopier\StreamCopierAsyncResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\StreamCopier\StreamCopierState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\StreamCopier\StreamCopyEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Body\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

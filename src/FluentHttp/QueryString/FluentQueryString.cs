@@ -2,7 +2,7 @@ namespace FluentHttp
 {
     using System;
 
-    public class FluentQueryString : INameValue
+    public class FluentQueryString
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentQueryString"/> class.
