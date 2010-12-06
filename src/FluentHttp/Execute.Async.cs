@@ -1,9 +1,9 @@
 namespace FluentHttp
 {
     using System;
+    using System.IO;
     using System.IO.Compression;
     using System.Net;
-    using System.IO;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -12,7 +12,228 @@ namespace FluentHttp
     {
         private FluentHttpAsyncResult _asyncResult;
 
-        public IAsyncResult BeginRequest(AsyncCallback callback,object state)
+        public IAsyncResult BeginRequest(AsyncCallback callback, object state)
+        {
+            if (_asyncResult != null)
+            {
+                throw new InvalidOperationException("Request has already started.");
+            }
+
+            _asyncResult = new FluentHttpAsyncResult(callback, state);
+
+            if (Executing != null)
+            {
+                var executingEventArgs = new ExecutingEventArgs(this, state);
+                Executing(this, executingEventArgs);
+            }
+
+            AuthenticateIfRequried();
+
+            var request = CreateHttpWebRequest(this);
+
+            var httpBody = GetBody();
+            var requestState = new HttpRequestState(GetBufferSize(), _asyncResult)
+                                   {
+                                       Request = this,
+                                       HttpWebRequest = request,
+                                       RequestBody = httpBody
+                                   };
+
+            _asyncResult.HttpRequestState = requestState;
+
+            if (httpBody == null)
+            {
+                ReadResponse(requestState);
+            }
+            else
+            {
+                // set the content length, content-type and boundaries 
+                // and other necessary stuffs here. this has to be set
+                // before the request begins.
+
+                // TODO: support for multipart.
+                if (string.IsNullOrEmpty(request.ContentType))
+                {
+                    request.ContentType = "application/x-www-form-urlencoded";
+                }
+
+                request.ContentLength = httpBody.Length;
+
+                WriteBodyAndReadResponse(httpBody, requestState);
+            }
+
+            return _asyncResult;
+        }
+
+        private void ReadResponse(HttpRequestState requestState)
+        {
+            var request = requestState.HttpWebRequest;
+            request.BeginGetResponse(
+                ar =>
+                {
+                    requestState = (HttpRequestState)ar.AsyncState;
+
+                    // EndGetResponse might throw error.
+                    HttpWebResponse response;
+
+                    try
+                    {
+                        response = (HttpWebResponse)request.EndGetResponse(ar);
+                    }
+                    catch (WebException ex)
+                    {
+                        response = (HttpWebResponse)ex.Response;
+
+                        // don't set the requestState.Exception,
+                        // that exception is for something else.
+                    }
+
+                    // got the response header, read it and notify
+                    requestState.HttpWebResponse = response;
+                    var fluentHttpResponse = new FluentHttpResponse(this, response);
+                    requestState.Response = fluentHttpResponse;
+                    NotifyHeadersReceived(fluentHttpResponse, requestState);
+
+                    ReadResponseStream(requestState);
+                },
+                requestState);
+        }
+
+        private void ReadResponseStream(HttpRequestState requestState)
+        {
+            var stream = requestState.HttpWebResponse.GetResponseStream();
+
+            if (stream == null)
+            {
+                return;
+            }
+
+            var contentEncoding = requestState.HttpWebResponse.ContentEncoding;
+
+            if (contentEncoding.Contains("gzip"))
+            {
+                stream = new GZipStream(stream, CompressionMode.Decompress);
+            }
+            else if (contentEncoding.Contains("deflate"))
+            {
+                stream = new DeflateStream(stream, CompressionMode.Decompress);
+            }
+
+            var destinationStream = GetSaveStream();
+
+            var fluentRequest = requestState.Request;
+
+            var streamCopier = new StreamCopier(stream, destinationStream, requestState.BufferSize);
+
+            if (fluentRequest.ResponseRead != null)
+            {
+                streamCopier.OnRead +=
+                    (o, e) =>
+                    {
+                        var responseReadEventArgs = new ResponseReadEventArgs(
+                                                        requestState.Response,
+                                                        e.Buffer,
+                                                        e.ActualBufferSize,
+                                                        e.BytesRead)
+                                                        {
+                                                            UserState = requestState.AsyncResult.AsyncState
+                                                        };
+
+                        fluentRequest.ResponseRead(requestState.Stream, responseReadEventArgs);
+                        requestState.AsyncResult.AsyncState = responseReadEventArgs.UserState;
+                    };
+            }
+
+            streamCopier.OnCompleted +=
+                (o, e) =>
+                    {
+                    if (e.Exception != null)
+                    {
+                        // if an exception occurred.
+                        requestState.Exception = e.Exception;
+                    }
+                    else if (e.IsCancelled)
+                    {
+                        // if cancelled
+                    }
+                    else
+                    {
+                        // else copy completed.                        
+                    }
+
+                    // web response read completed.
+                    // signal complete
+                    if (fluentRequest.Completed != null)
+                    {
+                        try
+                        {
+                            var completedEventArgs = new CompletedEventArgs(
+                                                            requestState.Response,
+                                                            requestState.AsyncResult.AsyncState);
+
+                            requestState.Response.ResponseStatus = ResponseStatus.Completed;
+                            fluentRequest.Completed(this, completedEventArgs);
+                        }
+                        catch (Exception ex)
+                        {
+                            // we need to catch the user exception so that we can end the request.
+                            requestState.Exception = ex;
+                        }
+                    }
+
+                    Complete();
+                };
+
+            // start copying stream
+            streamCopier.BeginCopy(
+                ar =>
+                {
+                    try
+                    {
+                        streamCopier.EndCopy(ar);
+                    }
+                    catch (Exception ex)
+                    {
+                        requestState.Exception = ex;
+                        Complete();
+                    }
+                }, requestState);
+        }
+
+        private void NotifyHeadersReceived(FluentHttpResponse fluentHttpResponse, HttpRequestState requestState)
+        {
+            var fluentHttpRequest = fluentHttpResponse.Request;
+
+            if (fluentHttpRequest.ResponseHeadersReceived == null)
+                return;
+
+            try
+            {
+                var responseHeadersReceivedEventArgs = new ResponseHeadersReceivedEventArgs(fluentHttpResponse,
+                                                                                            requestState.AsyncResult.
+                                                                                                AsyncState);
+                fluentHttpRequest.ResponseHeadersReceived(this, responseHeadersReceivedEventArgs);
+            }
+            catch (Exception ex)
+            {
+                // we need to catch the user exception so that we can end the request.
+                requestState.Exception = ex;
+                Complete();
+            }
+        }
+
+        private void Complete()
+        {
+            _asyncResult.Complete();
+            _asyncResult = null;
+        }
+
+        private void WriteBodyAndReadResponse(IHttpBody httpBody, HttpRequestState requestState)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IHttpBody GetBody()
         {
             return null;
         }
@@ -27,14 +248,14 @@ namespace FluentHttp
             if (ar == null || !ReferenceEquals(_asyncResult, ar))
                 throw new ArgumentException("asyncResult");
 
+            ar.AsyncWaitHandle.WaitOne();
+
             // propagate the exception to the one who calls EndRequest.
             if (ar.HttpRequestState.Exception != null)
             {
                 ar.HttpRequestState.Response.ResponseStatus = ResponseStatus.Error;
                 throw ar.HttpRequestState.Exception;
             }
-
-            ar.AsyncWaitHandle.WaitOne();
 
             return ar.HttpRequestState.Response;
         }

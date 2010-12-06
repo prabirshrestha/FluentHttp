@@ -13,7 +13,9 @@ namespace FluentHttp
 
         public StreamCopier(Stream source, Stream destination, int bufferSize)
         {
-            // TODO: asset buffer size and streams
+            // TODO: asset buffer size and source stream.
+            // note: allow destination to be null, incase the user doesn't want to write
+            // and just read.
             _source = source;
             _destination = destination;
             _bufferSize = bufferSize;
@@ -59,14 +61,18 @@ namespace FluentHttp
                 {
                     //lock (this)
                     //{
+                    _asyncResult.StreamCopierState.Exception = ex;
                     _asyncResult.Complete();
                     _asyncResult = null;
                     //}
 
-                    var onCompleted = OnCompleted;
-                    if (onCompleted != null)
+                    if (ex == null)
                     {
-                        onCompleted(this, new StreamCopyEventArgs(this, ex, isCancelled));
+                        var onCompleted = OnCompleted;
+                        if (onCompleted != null)
+                        {
+                            onCompleted(this, new StreamCopyEventArgs(this, ex, isCancelled));
+                        }
                     }
                 };
 
@@ -82,6 +88,7 @@ namespace FluentHttp
                         if (onRead != null)
                         {
                             var e = new StreamCopyEventArgs(this, null, false) { Buffer = buffer, ActualBufferSize = read };
+                            e.BytesRead += read;
                             onRead(this, e);
                             if (e.Cancel)
                             {
@@ -90,22 +97,38 @@ namespace FluentHttp
                             }
                         }
 
-                        Destination.BeginWrite(
-                            buffer, 0, read,
-                            writeResult =>
+                        // if destination is null, just read
+                        if (Destination == null)
+                        {
+                            try
                             {
-                                try
+                                Source.BeginRead(buffer, 0, buffer.Length, rc, streamState);
+                            }
+                            catch (Exception ex)
+                            {
+                                done(ex, false);
+                            }
+                        }
+                        else
+                        {
+                            Destination.BeginWrite(
+                                buffer, 0, read,
+                                writeResult =>
                                 {
-                                    Destination.EndWrite(writeResult);
-                                    Destination.Flush(); // Will block until data is sent: http://efreedom.com/Question/1-2529558/Silverlight-RC-File-Upload-Upload-Progress 
-                                    Source.BeginRead(buffer, 0, buffer.Length, rc, streamState);
-                                }
-                                catch (Exception ex)
-                                {
-                                    done(ex, false);
-                                }
-                            },
-                            streamState);
+                                    try
+                                    {
+                                        Destination.EndWrite(writeResult);
+                                        Destination.Flush();
+                                        // Will block until data is sent: http://efreedom.com/Question/1-2529558/Silverlight-RC-File-Upload-Upload-Progress 
+                                        Source.BeginRead(buffer, 0, buffer.Length, rc, streamState);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        done(ex, false);
+                                    }
+                                },
+                                streamState);
+                        }
                     }
                     else
                     {

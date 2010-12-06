@@ -18,7 +18,6 @@ namespace FluentHttp
         private readonly int _bufferSize;
 
         private readonly long _totalBytesRead;
-        private readonly bool _hasMore;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseReadEventArgs"/> class.
@@ -28,7 +27,7 @@ namespace FluentHttp
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
-        public ResponseReadEventArgs(FluentHttpResponse fluentHttpResponse, byte[] buffer, int bufferSize, long totalBytesRead, bool hasMore)
+        public ResponseReadEventArgs(FluentHttpResponse fluentHttpResponse, byte[] buffer, int bufferSize, long totalBytesRead)
         {
             if (fluentHttpResponse == null)
                 throw new ArgumentNullException("fluentHttpResponse");
@@ -37,7 +36,6 @@ namespace FluentHttp
             _buffer = buffer;
             _bufferSize = bufferSize;
             _totalBytesRead = totalBytesRead;
-            _hasMore = hasMore;
         }
 
         public object UserState { get; set; }
@@ -74,19 +72,6 @@ namespace FluentHttp
         public string GetString()
         {
             return GetString(0, BufferSize);
-        }
-
-        public bool HasMore
-        {
-            get { return _hasMore; }
-        }
-
-        /// <summary>
-        /// Gets number of bytes read.
-        /// </summary>
-        public long TotalBytesRead
-        {
-            get { return _totalBytesRead; }
         }
 
         /// <summary>

@@ -30,11 +30,12 @@ namespace FluentHttp
             get { return _streamCopier; }
         }
 
-        public byte[] Buffer { get; set; }
-        public int ActualBufferSize { get; set; }
+        public byte[] Buffer;
+        public int ActualBufferSize;
+        public long BytesRead;
 
-        public bool Cancel { get; set; }
-        public bool IsCancelled { get; set; }
+        public bool Cancel;
+        public bool IsCancelled;
 
     }
 }

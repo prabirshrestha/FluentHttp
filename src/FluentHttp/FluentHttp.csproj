@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
+    <Compile Include="Body\IHttpBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
+    <Compile Include="Utils\StreamCopier\NotifierStream.cs" />
     <Compile Include="Utils\StreamCopier\StreamCopier.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -85,9 +87,7 @@
     </Compile>
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Body\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

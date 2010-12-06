@@ -14,8 +14,6 @@ namespace FluentHttp
             AsyncResult = asyncResult;
         }
 
-        public long TotalBytes { get; set; }
-
         /// <summary>
         /// Gets or sets the total bytes read during current transfer.
         /// </summary>
@@ -55,5 +53,7 @@ namespace FluentHttp
         }
 
         #endregion
+
+        public IHttpBody RequestBody { get; set; }
     }
 }

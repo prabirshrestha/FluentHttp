@@ -186,6 +186,31 @@
             return _bufferSize;
         }
 
+        private Stream _saveStream;
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public FluentHttpRequest SaveTo(Stream stream)
+        {
+            if (stream == null)
+            {
+                return this;
+            }
+            
+            if (!stream.CanWrite)
+            {
+                throw new ArgumentException("stream is not writable.");
+            }
+
+            _saveStream = stream;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public Stream GetSaveStream()
+        {
+            return _saveStream;
+        }
+
         #region Hide defualt object methods
 
         [EditorBrowsable(EditorBrowsableState.Never)]
