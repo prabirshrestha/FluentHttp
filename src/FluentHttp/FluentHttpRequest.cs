@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.Contracts;
     using System.IO;
 
     /// <summary>
@@ -12,24 +13,27 @@
         /// <summary>
         /// Base url of the request.
         /// </summary>
-        private readonly string _baseUrl;
+        private readonly string baseUrl;
 
         /// <summary>
         /// Name of the method
         /// </summary>
-        private string _method;
+        private string method = "GET";
 
         /// <summary>
         /// Timeout
         /// </summary>
-        private int _timeout;
+        private int timeout;
 
         /// <summary>
         /// Resource Path
         /// </summary>
-        private string _resourcePath;
+        private string resourcePath = string.Empty;
 
-        private int _bufferSize;
+        /// <summary>
+        /// Request body and response buffer size.
+        /// </summary>
+        private int bufferSize = 4096;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
@@ -37,24 +41,22 @@
         /// <param name="baseUrl">
         /// The url to make request at.
         /// </param>
+        [ContractVerification(true)]
         public FluentHttpRequest(string baseUrl)
         {
-            if (string.IsNullOrEmpty(baseUrl))
-                throw new ArgumentNullException("baseUrl");
+            Contract.Requires(!string.IsNullOrEmpty(baseUrl));
 
-            _baseUrl = baseUrl;
-            _method = "GET";
-            _bufferSize = 4096;
+            Contract.Ensures(!string.IsNullOrEmpty(this.baseUrl));
+
+            this.baseUrl = baseUrl;
         }
-
-
 
         /// <summary>
         /// Gets the base url to make request at.
         /// </summary>
         public string BaseUrl
         {
-            get { return _baseUrl; }
+            get { return baseUrl; }
         }
 
         /// <summary>
@@ -64,9 +66,13 @@
         /// The resource path.
         /// </param>
         /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
         /// </returns>
+        [ContractVerification(true)]
         public FluentHttpRequest ResourcePath(string resourcePath)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             if (!(string.IsNullOrEmpty(resourcePath) || (resourcePath = resourcePath.Trim()).Length == 0))
             {
                 if (resourcePath.EndsWith("/"))
@@ -83,7 +89,8 @@
                 }
             }
 
-            _resourcePath = resourcePath;
+            this.resourcePath = resourcePath;
+
             return this;
         }
 
@@ -91,11 +98,12 @@
         /// Gets the resource path.
         /// </summary>
         /// <returns>
+        /// Returns the resource path.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string GetResourcePath()
         {
-            return _resourcePath;
+            return resourcePath;
         }
 
         /// <summary>
@@ -105,18 +113,21 @@
         /// The http method.
         /// </param>
         /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Throws <see cref="ArgumentNullException"/> if method is null or empty.
         /// </exception>
+        [ContractVerification(true)]
         public FluentHttpRequest Method(string method)
         {
-#if AGGRESSIVE_CHECK
-            if (string.IsNullOrEmpty(method) || method.Trim().Length == 0)
-                throw new ArgumentOutOfRangeException("method");
-#endif
+            Contract.Requires(!string.IsNullOrEmpty(method));
+            // Contract.Requires(Contract.Exists(new[] { "GET", "POST", "DELETE" }, p => p.Equals(method, StringComparison.OrdinalIgnoreCase)));
 
-            _method = method;
+            Contract.Ensures(!string.IsNullOrEmpty(method));
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            this.method = method;
 
             return this;
         }
@@ -129,7 +140,7 @@
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string GetMethod()
         {
-            return _method;
+            return method;
         }
 
         /// <summary>
@@ -142,7 +153,7 @@
         /// </returns>
         public FluentHttpRequest Timeout(int timeout)
         {
-            _timeout = timeout;
+            this.timeout = timeout;
             return this;
         }
 
@@ -154,7 +165,7 @@
         [EditorBrowsable(EditorBrowsableState.Never)]
         public int GetTimeout()
         {
-            return _timeout;
+            return timeout;
         }
 
         /// <summary>
@@ -170,7 +181,7 @@
         {
             if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException("bufferSize", "Buffer size must be greater than 0");
-            _bufferSize = bufferSize;
+            this.bufferSize = bufferSize;
             return this;
         }
 
@@ -182,7 +193,7 @@
         [EditorBrowsable(EditorBrowsableState.Never)]
         public int GetBufferSize()
         {
-            return _bufferSize;
+            return bufferSize;
         }
 
         private Stream _saveStream;
@@ -194,7 +205,7 @@
             {
                 return this;
             }
-            
+
             if (!stream.CanWrite)
             {
                 throw new ArgumentException("stream is not writable.");
@@ -240,5 +251,11 @@
 
         #endregion
 
+        [ContractInvariantMethod]
+        [ContractVerification(true)]
+        void InvariantObject()
+        {
+            Contract.Invariant(!string.IsNullOrEmpty(method));
+        }
     }
 }

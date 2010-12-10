@@ -2,14 +2,22 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.Contracts;
 
     public partial class FluentHttpRequest
     {
         // make it HttpHeaders so that it doesn't conflict with Headers method
-        private FluentHttpHeaders _httpHeaders;
+        private FluentHttpHeaders httpHeaders;
+
+        [ContractVerification(true)]
         private FluentHttpHeaders HttpHeaders
         {
-            get { return _httpHeaders ?? (_httpHeaders = new FluentHttpHeaders()); }
+            get
+            {
+                Contract.Ensures(Contract.Result<FluentHttpHeaders>() != null);
+
+                return httpHeaders ?? (this.httpHeaders = new FluentHttpHeaders());
+            }
         }
 
         /// <summary>
@@ -21,16 +29,23 @@
         /// <returns>
         /// Returns <see cref="FluentHttpRequest"/>
         /// </returns>
+        [ContractVerification(true)]
         public FluentHttpRequest Headers(Action<FluentHttpHeaders> headers)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             if (headers != null)
                 headers(HttpHeaders);
+
             return this;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [ContractVerification(true)]
         public FluentHttpHeaders GetHeaders()
         {
+            Contract.Ensures(Contract.Result<FluentHttpHeaders>() != null);
+
             return HttpHeaders;
         }
     }
