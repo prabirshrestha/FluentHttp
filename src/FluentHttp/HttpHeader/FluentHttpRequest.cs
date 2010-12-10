@@ -26,7 +26,7 @@
             {
                 Contract.Ensures(Contract.Result<FluentHttpHeaders>() != null);
 
-                return httpHeaders ?? (this.httpHeaders = new FluentHttpHeaders());
+                return this.httpHeaders ?? (this.httpHeaders = new FluentHttpHeaders());
             }
         }
 
