@@ -50,6 +50,8 @@ namespace FluentHttp.Tests.Authenticators.OAuth2.AuthorizationHeader
             Assert.Equal(oauthToken, _oauthToken);
         }
 
+        private Exception _exception;
+
 #if AGGRESSIVE_CHECK
 
         private Exception _exception;

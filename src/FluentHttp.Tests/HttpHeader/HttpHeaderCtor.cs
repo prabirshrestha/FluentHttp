@@ -55,6 +55,8 @@
             _headerValue = _fluentHttpHeader.Value;
         }
 
+        private Exception _exception;
+
 #if AGGRESSIVE_CHECK
         private Exception _exception;
 

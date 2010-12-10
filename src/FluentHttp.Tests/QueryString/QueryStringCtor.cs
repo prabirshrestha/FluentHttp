@@ -1,5 +1,5 @@
 ﻿using System;
-
+/*
 namespace FluentHttp.Tests.QueryString
 {
     using TechTalk.SpecFlow;
@@ -54,6 +54,8 @@ namespace FluentHttp.Tests.QueryString
         {
             Assert.Equal(_qsValue, qsValue);
         }
+
+        private Exception _exception;
 
 #if AGGRESSIVE_CHECK
         private Exception _exception;
@@ -121,3 +123,4 @@ namespace FluentHttp.Tests.QueryString
 #endif
     }
 }
+*/

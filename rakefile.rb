@@ -58,7 +58,7 @@ puts
 
 task :default => :full
 
-task :full => [:build_release,:test,:package_binaries]
+task :full => [:build_release,:package_binaries]
 
 desc "Run Tests"
 task :test => [:main_test]

@@ -41,6 +41,7 @@ namespace FluentHttp.External
 {
     using System;
 
+    [System.Diagnostics.Contracts.ContractVerification(false)]
 #if !MOBILE
     // CAS - no InheritanceDemand here as the class is sealed
     [AspNetHostingPermission(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]

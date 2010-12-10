@@ -48,6 +48,7 @@ namespace FluentHttp.External
         public static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
     }
 
+    [System.Diagnostics.Contracts.ContractVerification(false)]
 //#if NET_4_0
 //    public
 //#endif
