@@ -57,7 +57,7 @@ namespace FluentHttp
                     request.ContentType = "application/x-www-form-urlencoded";
                 }
 
-                request.ContentLength = httpBody.Length;
+                request.ContentLength = httpBody.ContentLength;
 
                 WriteBodyAndReadResponse(httpBody, requestState);
             }
@@ -228,12 +228,12 @@ namespace FluentHttp
             _asyncResult = null;
         }
 
-        private void WriteBodyAndReadResponse(IHttpBody httpBody, HttpRequestState requestState)
+        private void WriteBodyAndReadResponse(IHttpRequestBody httpBody, HttpRequestState requestState)
         {
             throw new NotImplementedException();
         }
 
-        private IHttpBody GetBody()
+        private IHttpRequestBody GetBody()
         {
             return null;
         }

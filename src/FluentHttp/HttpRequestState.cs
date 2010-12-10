@@ -54,6 +54,6 @@ namespace FluentHttp
 
         #endregion
 
-        public IHttpBody RequestBody { get; set; }
+        public IHttpRequestBody RequestBody { get; set; }
     }
 }
