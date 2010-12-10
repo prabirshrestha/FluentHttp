@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
-    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Http Header for Fluent Http
@@ -16,12 +17,11 @@ namespace FluentHttp
         /// <param name="value">
         /// The value of the http header.
         /// </param>
+        [ContractVerification(true)]
         public FluentHttpHeader(string name, string value)
         {
-#if AGGRESSIVE_CHECK
-            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
-                throw new ArgumentOutOfRangeException("name");
-#endif
+            Contract.Requires(!string.IsNullOrEmpty(name));
+            Contract.Ensures(!string.IsNullOrEmpty(Name));
 
             Name = name;
             Value = value;
@@ -36,5 +36,12 @@ namespace FluentHttp
         /// Gets the value of the http header.
         /// </summary>
         public string Value { get; private set; }
+
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+            Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
+        private void InvariantObject()
+        {
+            Contract.Invariant(!string.IsNullOrEmpty(Name));
+        }
     }
 }
