@@ -4,15 +4,40 @@ namespace FluentHttp
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics.Contracts;
     using System.Net;
 
+    /// <summary>
+    /// Fluent cookies
+    /// </summary>
     public class FluentCookies : IEnumerable<Cookie>
     {
-        private readonly List<Cookie> _cookies = new List<Cookie>();
+        /// <summary>
+        /// Internal list for cookies.
+        /// </summary>
+        private readonly List<Cookie> cookies = new List<Cookie>();
 
+        /// <summary>
+        /// Add a cookie.
+        /// </summary>
+        /// <param name="name">
+        /// The name of the cookie.
+        /// </param>
+        /// <param name="value">
+        /// The value of the cookie.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentCookies"/>.
+        /// </returns>
+        [ContractVerification(true)]
         public FluentCookies Add(string name, string value)
         {
-            _cookies.Add(new Cookie(name, value));
+            Contract.Requires(!string.IsNullOrEmpty(name));
+            Contract.Ensures(Contract.Result<FluentCookies>() != null);
+
+            this.cookies.Add(new Cookie(name, value));
+
             return this;
         }
 
@@ -28,7 +53,7 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         public IEnumerator<Cookie> GetEnumerator()
         {
-            return _cookies.GetEnumerator();
+            return cookies.GetEnumerator();
         }
 
         /// <summary>
@@ -47,18 +72,41 @@ namespace FluentHttp
 
         #region Hide defualt object methods
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override string ToString()
         {
             return base.ToString();
         }
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override int GetHashCode()
         {
             return base.GetHashCode();
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. 
+        ///                 </param><exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.
+        /// </exception><filterpriority>2</filterpriority>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)
         {
@@ -66,7 +114,8 @@ namespace FluentHttp
         }
 
 #pragma warning disable 0108
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+            Justification = "Reviewed. Suppression is OK here."), EditorBrowsable(EditorBrowsableState.Never)]
         public Type GetType()
         {
             return base.GetType();
@@ -74,5 +123,12 @@ namespace FluentHttp
 #pragma warning restore 0108
 
         #endregion
+
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+            Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
+        private void InvariantObject()
+        {
+            Contract.Invariant(this.cookies != null);
+        }
     }
 }
