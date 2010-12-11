@@ -165,10 +165,19 @@ namespace FluentHttp
             ar.AsyncWaitHandle.WaitOne();
         }
 
+        /// <summary>
+        /// On copy start.
+        /// </summary>
         public event EventHandler<StreamCopyEventArgs> OnStart;
 
+        /// <summary>
+        /// On copy completed.
+        /// </summary>
         public event EventHandler<StreamCopyEventArgs> OnCompleted;
 
+        /// <summary>
+        /// On read.
+        /// </summary>
         public event EventHandler<StreamCopyEventArgs> OnRead;
     }
 }

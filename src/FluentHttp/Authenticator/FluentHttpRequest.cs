@@ -1,4 +1,6 @@
-﻿namespace FluentHttp
+﻿using System.Diagnostics.Contracts;
+
+namespace FluentHttp
 {
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
@@ -21,8 +23,11 @@
         /// <returns>
         /// Returns <see cref="FluentHttpRequest"/>.
         /// </returns>
+        [ContractVerification(true)]
         public FluentHttpRequest AuthenticateUsing(IFluentAuthenticator fluentAuthenticator)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             this.fluentAuthenticator = fluentAuthenticator;
 
             return this;

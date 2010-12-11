@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Authenticator\FluentHttpRequest.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
+    <Compile Include="Authenticator\OAuth2Authenticators.cs" />
     <Compile Include="Body\IHttpRequestBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />

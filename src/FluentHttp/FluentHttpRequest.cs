@@ -151,9 +151,13 @@
         /// </param>
         /// <returns>
         /// </returns>
+        [ContractVerification(true)]        
         public FluentHttpRequest Timeout(int timeout)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             this.timeout = timeout;
+
             return this;
         }
 
@@ -177,11 +181,15 @@
         /// <returns>
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [ContractVerification(true)]
         public FluentHttpRequest BufferSize(int bufferSize)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException("bufferSize", "Buffer size must be greater than 0");
             this.bufferSize = bufferSize;
+
             return this;
         }
 
@@ -199,8 +207,11 @@
         private Stream _saveStream;
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [ContractVerification(true)]
         public FluentHttpRequest SaveTo(Stream stream)
         {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
             if (stream == null)
             {
                 return this;

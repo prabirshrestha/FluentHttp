@@ -2,6 +2,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -12,7 +13,7 @@ namespace FluentHttp
         /// <summary>
         /// The oauth_token
         /// </summary>
-        private readonly string _oauthToken;
+        private readonly string oauthToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2Authenticator"/> class.
@@ -20,13 +21,13 @@ namespace FluentHttp
         /// <param name="oauthToken">
         /// The oauth token.
         /// </param>
+        [ContractVerification(true)]
         public OAuth2Authenticator(string oauthToken)
         {
-#if AGGRESSIVE_CHECK
-            if (string.IsNullOrEmpty(oauthToken) || oauthToken.Trim().Length == 0)
-                throw new ArgumentOutOfRangeException("oauthToken");
-#endif
-            _oauthToken = oauthToken;
+            Contract.Requires(!string.IsNullOrEmpty(oauthToken));
+            Contract.Ensures(!string.IsNullOrEmpty(this.oauthToken));
+
+            this.oauthToken = oauthToken;
         }
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace FluentHttp
         /// </summary>
         public string OAuthToken
         {
-            get { return _oauthToken; }
+            get { return this.oauthToken; }
         }
 
         #region Implementation of IFluentAuthenticator
@@ -77,12 +78,14 @@ namespace FluentHttp
         /// <param name="fluentHttpRequest">
         /// The fluent http request.
         /// </param>
+        [ContractVerification(true)]
         public override void Authenticate(FluentHttpRequest fluentHttpRequest)
         {
-#if AGGRESSIVE_CHECK
-            if (fluentHttpRequest.GetHeaders().Any(header => header.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
-                throw new Exception("fluentHttpRequest already contains 'Authorization' header");
-#endif
+            Contract.Requires(fluentHttpRequest != null);
+            Contract.Requires(
+                !fluentHttpRequest.GetHeaders().Any(
+                    header => header.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)));
+
             fluentHttpRequest.Headers(headers =>
                                       headers
                                           .Add("Authorization", "OAuth " + OAuthToken));

@@ -58,6 +58,7 @@
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [ContractVerification(true)]
+        [Pure]
         public FluentHttpHeaders GetHeaders()
         {
             Contract.Ensures(Contract.Result<FluentHttpHeaders>() != null);

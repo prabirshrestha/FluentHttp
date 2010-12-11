@@ -96,7 +96,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authenticators\IAuthenticators\OAuth2Authenticators.cs" />
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.cs" />
     <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature.cs">
       <AutoGen>True</AutoGen>
