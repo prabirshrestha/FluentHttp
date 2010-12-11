@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.Diagnostics.Contracts;
     using System.IO;
+    using System.Text;
 
     /// <summary>
     /// Fluent Http Wrapper
@@ -151,7 +152,7 @@
         /// </param>
         /// <returns>
         /// </returns>
-        [ContractVerification(true)]        
+        [ContractVerification(true)]
         public FluentHttpRequest Timeout(int timeout)
         {
             Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
@@ -202,6 +203,118 @@
         public int GetBufferSize()
         {
             return bufferSize;
+        }
+
+        /// <summary>
+        /// Request body.
+        /// </summary>
+        private IHttpRequestBody httpRequestBody;
+
+        /// <summary>
+        /// Sets the http request body.
+        /// </summary>
+        /// <param name="httpRequestBody">
+        /// The http request body.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        private FluentHttpRequest RequestBody(IHttpRequestBody httpRequestBody)
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            this.httpRequestBody = httpRequestBody;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets teh http request body.
+        /// </summary>
+        /// <returns>
+        /// Returns <see cref="IHttpRequestBody"/>.
+        /// </returns>
+        private IHttpRequestBody GetRequestBody()
+        {
+            return this.httpRequestBody;
+        }
+
+        /// <summary>
+        /// Sets the contents of http request body.
+        /// </summary>
+        /// <param name="contents">
+        /// The string contents.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest Body(string contents, Encoding encoding)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(contents));
+            Contract.Requires(encoding != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            return Body(encoding.GetBytes(contents));
+        }
+
+        /// <summary>
+        /// Sets the sepecified string as http request body using UTF8 encoding.
+        /// </summary>
+        /// <param name="contents">
+        /// The contents.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest Body(string contents)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(contents));
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            return Body(contents, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Sets the http request body.
+        /// </summary>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest Body(byte[] data)
+        {
+            if (this.httpRequestBody != null)
+            {
+                throw new InvalidOperationException(
+                    "Body has already been set. Call ClearBody() before setting a new body.");
+            }
+
+            return data == null ? ClearBody() : RequestBody(new StreamHttpBody(new MemoryStream(data)));
+        }
+
+        /// <summary>
+        /// Clears the http request body.
+        /// </summary>
+        /// <returns>
+        /// Returns <see cref="FluentHttpRequest"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest ClearBody()
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            this.httpRequestBody = null;
+
+            return this;
         }
 
         private Stream _saveStream;

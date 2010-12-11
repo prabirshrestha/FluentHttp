@@ -95,6 +95,7 @@
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
     <Compile Include="Authenticator\OAuth2Authenticators.cs" />
     <Compile Include="Body\IHttpRequestBody.cs" />
+    <Compile Include="Body\StreamHttpBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Cookies\FluentHttpRequest.cs" />
     <Compile Include="Credentials\FluentHttpRequest.cs" />
