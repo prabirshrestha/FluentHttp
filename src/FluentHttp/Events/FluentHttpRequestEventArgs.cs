@@ -10,27 +10,42 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Request.
         /// </summary>
-        private readonly FluentHttpRequest _fluentHttpRequest;
+        private readonly FluentHttpRequest fluentHttpRequest;
 
-        private readonly object _userState;
+        /// <summary>
+        /// User state.
+        /// </summary>
+        private readonly object userState;
 
-        public ExecutingEventArgs(FluentHttpRequest fluentHttpRequest,object userState)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExecutingEventArgs"/> class.
+        /// </summary>
+        /// <param name="fluentHttpRequest">
+        /// The fluent http request.
+        /// </param>
+        /// <param name="userState">
+        /// The user state.
+        /// </param>
+        public ExecutingEventArgs(FluentHttpRequest fluentHttpRequest, object userState)
         {
-            _fluentHttpRequest = fluentHttpRequest;
-            _userState = userState;
-        }
-
-        public object UserState
-        {
-            get { return _userState; }
+            this.fluentHttpRequest = fluentHttpRequest;
+            this.userState = userState;
         }
 
         /// <summary>
-        /// Gets the FluentHttpRequest.
+        /// Gets the user state.
+        /// </summary>
+        public object UserState
+        {
+            get { return this.userState; }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="FluentHttpRequest"/>.
         /// </summary>
         public FluentHttpRequest FluentHttpRequest
         {
-            get { return _fluentHttpRequest; }
+            get { return this.fluentHttpRequest; }
         }
     }
 }

@@ -11,47 +11,61 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Response.
         /// </summary>
-        private readonly FluentHttpResponse _fluentHttpResponse;
-
-        private readonly object _userState;
+        private readonly FluentHttpResponse fluentHttpResponse;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseHeadersReceivedEventArgs"/> class.
+        /// User state.
+        /// </summary>
+        private readonly object userState;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompletedEventArgs"/> class.
         /// </summary>
         /// <param name="fluentHttpResponse">
         /// The fluent http response.
+        /// </param>
+        /// <param name="userState">
+        /// The user state.
         /// </param>
         public CompletedEventArgs(FluentHttpResponse fluentHttpResponse, object userState)
         {
             if (fluentHttpResponse == null)
                 throw new ArgumentNullException("fluentHttpResponse");
 
-            _fluentHttpResponse = fluentHttpResponse;
-            _userState = userState;
-        }
-
-        public object UserState
-        {
-            get { return _userState; }
+            this.fluentHttpResponse = fluentHttpResponse;
+            this.userState = userState;
         }
 
         /// <summary>
-        /// Gets the FluentHttpResponse.
+        /// Gets the user state.
+        /// </summary>
+        public object UserState
+        {
+            get { return this.userState; }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="FluentHttpResponse"/>.
         /// </summary>
         public FluentHttpResponse FluentHttpResponse
         {
-            get { return _fluentHttpResponse; }
+            get { return this.fluentHttpResponse; }
         }
 
+        /// <summary>
+        /// Gets the response status.
+        /// </summary>
         public ResponseStatus ResponseStatus
         {
-            get { return _fluentHttpResponse.ResponseStatus; }
+            get { return this.fluentHttpResponse.ResponseStatus; }
         }
 
+        /// <summary>
+        /// Gets the http status code.
+        /// </summary>
         public HttpStatusCode StatusCode
         {
-            get { return _fluentHttpResponse.StatusCode; }
+            get { return this.fluentHttpResponse.StatusCode; }
         }
-
     }
 }

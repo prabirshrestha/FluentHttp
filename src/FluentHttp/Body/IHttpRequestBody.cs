@@ -1,7 +1,7 @@
 namespace FluentHttp
 {
     /// <summary>
-    /// Http Body
+    /// Http Request Body
     /// </summary>
     interface IHttpRequestBody
     {

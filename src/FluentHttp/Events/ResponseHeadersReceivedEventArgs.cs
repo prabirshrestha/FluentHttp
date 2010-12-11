@@ -12,12 +12,13 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Response.
         /// </summary>
-        private readonly FluentHttpResponse _fluentHttpResponse;
+        private readonly FluentHttpResponse fluentHttpResponse;
 
-        private readonly byte[] _buffer;
-        private readonly int _bufferSize;
+        private readonly byte[] buffer;
 
-        private readonly long _totalBytesRead;
+        private readonly int bufferSize;
+
+        private readonly long totalBytesRead;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseReadEventArgs"/> class.
@@ -32,17 +33,17 @@ namespace FluentHttp
             if (fluentHttpResponse == null)
                 throw new ArgumentNullException("fluentHttpResponse");
 
-            _fluentHttpResponse = fluentHttpResponse;
-            _buffer = buffer;
-            _bufferSize = bufferSize;
-            _totalBytesRead = totalBytesRead;
+            this.fluentHttpResponse = fluentHttpResponse;
+            this.buffer = buffer;
+            this.bufferSize = bufferSize;
+            this.totalBytesRead = totalBytesRead;
         }
 
         public object UserState { get; set; }
 
         public int BufferSize
         {
-            get { return _bufferSize; }
+            get { return this.bufferSize; }
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace FluentHttp
         /// </summary>
         public byte[] Buffer
         {
-            get { return _buffer; }
+            get { return this.buffer; }
         }
 
         public string GetString(Encoding encoding, int index, int count)
@@ -79,27 +80,27 @@ namespace FluentHttp
         /// </summary>
         public FluentHttpResponse FluentHttpResponse
         {
-            get { return _fluentHttpResponse; }
+            get { return this.fluentHttpResponse; }
         }
 
         public long ContentLength
         {
-            get { return _fluentHttpResponse.ContentLength; }
+            get { return this.fluentHttpResponse.ContentLength; }
         }
 
         public string ContentType
         {
-            get { return _fluentHttpResponse.ContentType; }
+            get { return this.fluentHttpResponse.ContentType; }
         }
 
         public string CharacterSet
         {
-            get { return _fluentHttpResponse.CharacterSet; }
+            get { return this.fluentHttpResponse.CharacterSet; }
         }
 
         public HttpStatusCode StatusCode
         {
-            get { return _fluentHttpResponse.StatusCode; }
+            get { return this.fluentHttpResponse.StatusCode; }
         }
 
     }
