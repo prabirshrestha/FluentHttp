@@ -22,7 +22,7 @@
         private string method = "GET";
 
         /// <summary>
-        /// Timeout
+        /// Http timeout.
         /// </summary>
         private int timeout;
 
@@ -57,7 +57,7 @@
         /// </summary>
         public string BaseUrl
         {
-            get { return baseUrl; }
+            get { return this.baseUrl; }
         }
 
         /// <summary>
