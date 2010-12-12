@@ -235,8 +235,11 @@ namespace FluentHttp
         private void WriteBodyAndReadResponse(IHttpRequestBody httpBody, HttpRequestState requestState)
         {
             Contract.Requires(requestState != null);
+            Contract.Requires(requestState.HttpWebRequest != null);
 
-            requestState.HttpWebRequest.BeginGetRequestStream(
+            var httpWebRequest = requestState.HttpWebRequest;
+
+            httpWebRequest.BeginGetRequestStream(
                 ar =>
                 {
                     requestState = (HttpRequestState)ar.AsyncState;
