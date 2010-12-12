@@ -317,13 +317,16 @@
             return this;
         }
 
-        private Stream _saveStream;
+        private Stream saveStream;
+        private bool saveStreamSeekToBeginning;
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         [ContractVerification(true)]
-        public FluentHttpRequest SaveTo(Stream stream)
+        public FluentHttpRequest SaveTo(Stream stream, bool seekToBeginingWhenDone)
         {
             Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            this.saveStream = stream;
 
             if (stream == null)
             {
@@ -335,14 +338,31 @@
                 throw new ArgumentException("stream is not writable.");
             }
 
-            _saveStream = stream;
+            if (seekToBeginingWhenDone)
+            {
+                if (!stream.CanSeek)
+                {
+                    throw new ArgumentException("stream is not seekable");
+                }
+            }
+
+            this.saveStreamSeekToBeginning = seekToBeginingWhenDone;
+
             return this;
+        }
+
+        [ContractVerification(true)]
+        public FluentHttpRequest SaveTo(Stream stream)
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            return SaveTo(stream, true);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Stream GetSaveStream()
         {
-            return _saveStream;
+            return this.saveStream;
         }
 
         #region Hide defualt object methods

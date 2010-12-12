@@ -181,6 +181,9 @@ namespace FluentHttp
                         }
                     }
 
+                    if (this.GetSaveStream() != null && this.saveStreamSeekToBeginning)
+                        this.saveStream.Seek(0, System.IO.SeekOrigin.Begin);
+
                     Complete();
                 };
 
