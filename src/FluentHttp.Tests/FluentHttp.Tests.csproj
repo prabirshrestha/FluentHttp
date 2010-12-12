@@ -96,33 +96,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.cs" />
-    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OAuth2AuthenticatorCtor.feature</DependentUpon>
-    </Compile>
-    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.cs" />
-    <Compile Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OAuth2AuthorizationHeader.feature</DependentUpon>
-    </Compile>
     <Compile Include="CredentialsTests.cs" />
-    <Compile Include="HttpHeader\HttpHeaderCtor.cs" />
-    <Compile Include="HttpHeader\HttpHeaderCtor.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>HttpHeaderCtor.feature</DependentUpon>
-    </Compile>
-    <Compile Include="HttpHeader\SpecialHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryString\QueryStringCtor.cs" />
-    <Compile Include="QueryString\QueryStringCtor.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>QueryStringCtor.feature</DependentUpon>
-    </Compile>
     <Compile Include="ResourcePathTests.cs" />
     <Compile Include="TimeoutTests.cs" />
   </ItemGroup>
@@ -134,22 +109,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthenticatorCtor.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OAuth2AuthenticatorCtor.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Authenticators\OAuth2\AuthorizationHeader\OAuth2AuthorizationHeader.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OAuth2AuthorizationHeader.feature.cs</LastGenOutput>
-    </None>
-    <None Include="HttpHeader\HttpHeaderCtor.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>HttpHeaderCtor.feature.cs</LastGenOutput>
-    </None>
-    <None Include="QueryString\QueryStringCtor.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>QueryStringCtor.feature.cs</LastGenOutput>
-    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Authenticators\OAuth2\AuthorizationHeader\" />
+    <Folder Include="HttpHeader\" />
+    <Folder Include="QueryString\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
