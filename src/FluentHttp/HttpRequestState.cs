@@ -45,11 +45,9 @@ namespace FluentHttp
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            if (Stream != null)
-            {
-                Stream.Dispose();
-                Stream = null;
-            }
+            if (Stream == null) return;
+            Stream.Dispose();
+            Stream = null;
         }
 
         #endregion
