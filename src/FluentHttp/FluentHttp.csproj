@@ -124,6 +124,7 @@
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
+    <Compile Include="Utils\MultiReadStream.cs" />
     <Compile Include="Utils\StreamCopier\NotifierStream.cs" />
     <Compile Include="Utils\StreamCopier\StreamCopier.cs">
       <SubType>Code</SubType>

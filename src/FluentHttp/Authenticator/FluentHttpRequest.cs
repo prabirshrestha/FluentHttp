@@ -1,9 +1,8 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace FluentHttp
+﻿namespace FluentHttp
 {
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics.Contracts;
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
