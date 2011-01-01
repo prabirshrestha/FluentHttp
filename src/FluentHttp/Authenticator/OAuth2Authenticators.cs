@@ -1,7 +1,7 @@
-
 namespace FluentHttp
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
     using System.Linq;
 
@@ -57,6 +57,8 @@ namespace FluentHttp
     /// <remarks>
     /// Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.1
     /// </remarks>
+    [SuppressMessage("Microsoft.StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass",
+        Justification = "Reviewed. Suppression is OK here.")]
     public class OAuth2AuthorizationRequestHeaderAuthenticator : OAuth2Authenticator
     {
         /// <summary>
