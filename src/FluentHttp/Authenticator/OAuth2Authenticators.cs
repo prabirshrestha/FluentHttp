@@ -22,7 +22,7 @@ namespace FluentHttp
         /// The oauth token.
         /// </param>
         [ContractVerification(true)]
-        public OAuth2Authenticator(string oauthToken)
+        protected OAuth2Authenticator(string oauthToken)
         {
             Contract.Requires(!string.IsNullOrEmpty(oauthToken));
             Contract.Ensures(!string.IsNullOrEmpty(this.oauthToken));
