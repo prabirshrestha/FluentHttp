@@ -2,6 +2,7 @@ namespace FluentHttp
 {
     using System;
     using System.Diagnostics.Contracts;
+    using System.IO;
     using System.IO.Compression;
     using System.Net;
 
@@ -31,35 +32,34 @@ namespace FluentHttp
 
             var request = CreateHttpWebRequest(this);
 
-            var httpBody = GetRequestBody();
+            var requestBody = GetRequestBody();
+            var requestStreamBody = requestBody.GetStream();
             var requestState = new HttpRequestState(GetBufferSize(), _asyncResult)
                                    {
                                        Request = this,
                                        HttpWebRequest = request,
-                                       RequestBody = httpBody
+                                       RequestStreamBody = requestStreamBody
                                    };
 
             _asyncResult.HttpRequestState = requestState;
 
-            if (httpBody == null)
+            if (requestStreamBody == null || requestStreamBody.Length == 0)
             {
                 ReadResponse(requestState);
             }
             else
             {
-                // set the content length, content-type and boundaries 
-                // and other necessary stuffs here. this has to be set
-                // before the request begins.
-
-                // TODO: support for multipart.
-                if (string.IsNullOrEmpty(request.ContentType))
+                if (request.ContentType == null)
                 {
-                    request.ContentType = httpBody.ContentType;
+                    // set appropriate content type if it is not yet specified. 
+                    if (requestBody.IsMultipartFormData())
+                        request.ContentType = "multipart/form-data; boundary=" + requestBody.GetMultipartFormDataBoundary();
+                    else
+                        request.ContentType = "application/x-www-form-urlencoded";
                 }
 
-                request.ContentLength = httpBody.ContentLength;
-
-                WriteBodyAndReadResponse(httpBody, requestState);
+                request.ContentLength = requestStreamBody.Length;
+                WriteBodyAndReadResponse(requestStreamBody, requestState);
             }
 
             return _asyncResult;
@@ -232,7 +232,7 @@ namespace FluentHttp
         }
 
         [ContractVerification(true)]
-        private void WriteBodyAndReadResponse(IHttpRequestBody httpBody, HttpRequestState requestState)
+        private void WriteBodyAndReadResponse(Stream requestStreamBody, HttpRequestState requestState)
         {
             Contract.Requires(requestState != null);
             Contract.Requires(requestState.HttpWebRequest != null);
@@ -247,7 +247,7 @@ namespace FluentHttp
 
                     var destinationStream = request.EndGetRequestStream(ar);
 
-                    var streamCopier = new StreamCopier(httpBody.Stream, destinationStream, requestState.BufferSize);
+                    var streamCopier = new StreamCopier(requestStreamBody, destinationStream, requestState.BufferSize);
 
                     // notify stream copier on request body read.
 

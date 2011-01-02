@@ -13,9 +13,32 @@ namespace FluentHttp
     {
         private readonly MultiReadStream multiReadStream;
 
+        // http://www.briangrinstead.com/blog/multipart-form-post-in-c
+        // make it const string for performance
+        string multipartFormDataBoundary = "-----------------------------28947758029299";
+
+        // string MultipartFormContentType = "multipart/form-data; boundary=" + MultipartFormDataBoundary;
+
+        private bool isMultipartFormData;
+
         public FluentHttpRequestBody()
         {
             this.multiReadStream = new MultiReadStream();
+        }
+
+        [ContractVerification(true)]
+        public FluentHttpRequestBody MultipartFormDataBoundary(string boundary)
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
+
+            this.multipartFormDataBoundary = boundary;
+
+            return this;
+        }
+
+        public string GetMultipartFormDataBoundary()
+        {
+            return this.multipartFormDataBoundary;
         }
 
         /// <summary>
@@ -68,7 +91,7 @@ namespace FluentHttp
         }
 
         [ContractVerification(true)]
-        public FluentHttpRequestBody Append(string format, params object[] args)
+        public FluentHttpRequestBody AppendFormat(string format, params object[] args)
         {
             Contract.Requires(!string.IsNullOrEmpty(format));
             Contract.Requires(args != null);
@@ -80,7 +103,7 @@ namespace FluentHttp
             return Append(str, Encoding.UTF8);
         }
 
-        [ContractVerification(true)]
+        //[ContractVerification(true)]
         public FluentHttpRequestBody Append(IDictionary<string, object> parameters)
         {
             Contract.Requires(parameters != null);
@@ -102,7 +125,13 @@ namespace FluentHttp
 
         public FluentHttpRequestBody MultipartSeperator()
         {
-            return this;
+            this.isMultipartFormData = true;
+            return Append(GetMultipartFormDataBoundary());
+        }
+
+        public bool IsMultipartFormData()
+        {
+            return this.isMultipartFormData;
         }
 
         private FluentHttpRequestBody AppendFile(string path, IDictionary<string, object> parameters)
@@ -155,7 +184,7 @@ namespace FluentHttp
             return this;
         }
 
-        public Stream GetBody()
+        public Stream GetStream()
         {
             return this.multiReadStream;
         }

@@ -34,5 +34,13 @@ namespace FluentHttp
             return this;
         }
 
+        [ContractVerification(true)]
+        public FluentHttpRequestBody GetRequestBody()
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
+            
+            return this.FluentHttpRequestBody;
+        }
+
     }
 }

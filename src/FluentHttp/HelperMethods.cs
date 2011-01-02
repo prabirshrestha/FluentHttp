@@ -10,11 +10,6 @@ namespace FluentHttp
     /// </summary>
     public partial class FluentHttpRequest
     {
-        // http://www.briangrinstead.com/blog/multipart-form-post-in-c
-        // make it const string for performance
-        private const string MultipartFormDataBoundary = "-----------------------------28947758029299";
-        private const string MultipartFormData = "multipart/form-data; boundary=" + MultipartFormDataBoundary;
-
         /// <summary>
         /// Adds necessary authentication stuffs if required.
         /// </summary>
