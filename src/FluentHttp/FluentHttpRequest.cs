@@ -263,6 +263,58 @@
         }
 
         /// <summary>
+        /// Sets the contents of http request body.
+        /// </summary>
+        /// <param name="format">
+        /// A composite format string.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest Body(Encoding encoding, string format, params object[] args)
+        {
+            Contract.Requires(encoding != null);
+            Contract.Requires(!string.IsNullOrEmpty(format));
+            Contract.Requires(args != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            var str = string.Format(format, args);
+            Contract.Assume(!string.IsNullOrEmpty(str));
+
+            return Body(str, encoding);
+        }
+
+        /// <summary>
+        /// Sets the contents of http request body.
+        /// </summary>
+        /// <param name="format">
+        /// A composite format string.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest Body(string format, params object[] args)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(format));
+            Contract.Requires(args != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            var str = string.Format(format, args);
+            Contract.Assume(!string.IsNullOrEmpty(str));
+
+            return Body(str, Encoding.UTF8);
+        }
+
+        /// <summary>
         /// Sets the sepecified string as http request body using UTF8 encoding.
         /// </summary>
         /// <param name="contents">
