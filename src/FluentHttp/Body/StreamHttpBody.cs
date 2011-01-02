@@ -2,7 +2,7 @@ namespace FluentHttp
 {
     using System.IO;
 
-    public class StreamHttpBody : IHttpRequestBody
+    class StreamHttpBody : IHttpRequestBody
     {
         private readonly Stream stream;
 
