@@ -155,6 +155,11 @@ namespace FluentHttp
             return this;
         }
 
+        public Stream GetBody()
+        {
+            return this.multiReadStream;
+        }
+
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
             Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
         [ContractVerification(true)]
