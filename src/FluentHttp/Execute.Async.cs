@@ -1,3 +1,4 @@
+
 namespace FluentHttp
 {
     using System;
@@ -326,6 +327,33 @@ namespace FluentHttp
 
             return ar.HttpRequestState.Response;
         }
+
+#if !(NET35 || NET20)
+
+        [ContractVerification(true)]
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state, System.Threading.Tasks.TaskCreationOptions taskCreationOptions)
+        {
+            Contract.Ensures(Contract.Result<System.Threading.Tasks.Task<FluentHttpResponse>>() != null);
+            Contract.Assume(System.Threading.Tasks.Task.Factory != null);
+            var task = System.Threading.Tasks.Task.Factory.FromAsync<FluentHttpResponse>(this.BeginRequest, this.EndRequest, state, taskCreationOptions);
+            Contract.Assume(task != null);
+            return task;
+        }
+
+        [ContractVerification(true)]
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state)
+        {
+            Contract.Ensures(Contract.Result<System.Threading.Tasks.Task<FluentHttpResponse>>() != null);
+            return this.ToTask(state, System.Threading.Tasks.TaskCreationOptions.None);
+        }
+
+        [ContractVerification(true)]
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask()
+        {
+            Contract.Ensures(Contract.Result<System.Threading.Tasks.Task<FluentHttpResponse>>() != null);
+            return this.ToTask(null);
+        }
+#endif
 
     }
 }
