@@ -326,5 +326,6 @@ namespace FluentHttp
 
             return ar.HttpRequestState.Response;
         }
+
     }
 }
