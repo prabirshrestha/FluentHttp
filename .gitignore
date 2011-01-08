@@ -18,6 +18,9 @@ _ReSharper.*/
 # StyleCop cache ignores
 *StyleCop.Cache
 
+# Ignore TypeMock TestLint Cache
+lint.db
+
 # vim Ignore
 *.swp
 
