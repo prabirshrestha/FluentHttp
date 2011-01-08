@@ -11,11 +11,13 @@ namespace FluentHttp
     /// </summary>
     public class FluentHttpRequestBody
     {
+        private const string NewLine = "\r\n";
         private readonly MultiReadStream multiReadStream;
 
         // http://www.briangrinstead.com/blog/multipart-form-post-in-c
         // make it const string for performance
-        string multipartFormDataBoundary = "-----------------------------28947758029299";
+        string multipartFormDataBoundary = "28947758029299";
+        private string prefix = "--";
 
         // string MultipartFormContentType = "multipart/form-data; boundary=" + MultipartFormDataBoundary;
 
@@ -66,9 +68,7 @@ namespace FluentHttp
             Contract.Requires(data != null);
             Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
 
-            this.multiReadStream.AddStream(new MemoryStream(data));
-
-            return this;
+            return this.Append(new MemoryStream(data));
         }
 
         [ContractVerification(true)]
@@ -88,6 +88,24 @@ namespace FluentHttp
             Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
 
             return Append(contents, Encoding.UTF8);
+        }
+
+        [ContractVerification(true)]
+        public FluentHttpRequestBody AppendLine()
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
+
+            return Append(NewLine);
+        }
+
+        [ContractVerification(true)]
+        public FluentHttpRequestBody AppendLine(string contents)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(contents));
+            Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
+
+            var b = Append(contents, Encoding.UTF8);
+            return b.AppendLine();
         }
 
         [ContractVerification(true)]
@@ -126,7 +144,13 @@ namespace FluentHttp
         public FluentHttpRequestBody MultipartSeperator()
         {
             this.isMultipartFormData = true;
-            return Append(GetMultipartFormDataBoundary());
+            return Append(this.prefix + this.GetMultipartFormDataBoundary() + NewLine);
+        }
+
+        public FluentHttpRequestBody EndMultipart()
+        {
+            this.isMultipartFormData = true;
+            return Append(this.prefix + this.GetMultipartFormDataBoundary() + this.prefix + NewLine);
         }
 
         public bool IsMultipartFormData()
