@@ -12,7 +12,7 @@
     <AssemblyName>FluentHttp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -102,18 +102,18 @@
     <Compile Include="TimeoutTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FluentHttp\FluentHttp.csproj">
-      <Project>{3AD95B76-5086-406A-BE3F-54825CFF25EB}</Project>
-      <Name>FluentHttp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Authenticators\OAuth2\AuthorizationHeader\" />
     <Folder Include="HttpHeader\" />
     <Folder Include="QueryString\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FluentHttp\FluentHttp-Net40.csproj">
+      <Project>{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}</Project>
+      <Name>FluentHttp-Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

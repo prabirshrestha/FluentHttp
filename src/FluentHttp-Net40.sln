@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentHttp-Net40", "FluentHttp\FluentHttp-Net40.csproj", "{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentHttp.Tests-Net40", "FluentHttp.Tests\FluentHttp.Tests-Net40.csproj", "{59D0AEB5-4915-463A-B6C6-61BF3175A40F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D0AEB5-4915-463A-B6C6-61BF3175A40F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D0AEB5-4915-463A-B6C6-61BF3175A40F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D0AEB5-4915-463A-B6C6-61BF3175A40F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D0AEB5-4915-463A-B6C6-61BF3175A40F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
