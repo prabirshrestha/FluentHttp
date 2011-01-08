@@ -3,6 +3,7 @@ namespace FluentHttp
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using FluentHttp.External;
+    using System.IO;
 
     /// <summary>
     /// Fluent Http Utilities
@@ -57,6 +58,14 @@ namespace FluentHttp
             }
 
             return merged;
+        }
+
+        public static string ToString(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
