@@ -101,6 +101,7 @@ namespace FluentHttp
                         // most likely no internet connection.
                         // some might find it usefull to extract more details by looking at webexception.
                         requestState.Response.Exception = webException;
+                        requestState.Response.ResponseStatus = ResponseStatus.Error;
 
                         if (requestState.Request.Completed != null)
                         {
@@ -110,7 +111,6 @@ namespace FluentHttp
                                                                 requestState.Response,
                                                                 requestState.AsyncResult.AsyncState);
 
-                                requestState.Response.ResponseStatus = ResponseStatus.Error;
                                 requestState.Request.Completed(this, completedEventArgs);
                             }
                             catch (Exception ex)
