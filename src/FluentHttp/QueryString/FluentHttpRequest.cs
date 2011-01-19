@@ -1,4 +1,6 @@
-﻿namespace FluentHttp
+﻿using System.Collections.Generic;
+
+namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
@@ -46,6 +48,43 @@
                 queryStrings(this.HttpQueryStrings);
 
             return this;
+        }
+
+        /// <summary>
+        /// Adds the specified querystrings.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="encode">
+        /// The encode.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest QueryStrings(IDictionary<string, object> parameters, bool encode)
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            this.GetQueryStrings().Add(parameters, encode);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified querystrings.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentHttpRequest QueryStrings(IDictionary<string, object> parameters)
+        {
+            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+
+            return this.QueryStrings(parameters, true);
         }
 
         /// <summary>

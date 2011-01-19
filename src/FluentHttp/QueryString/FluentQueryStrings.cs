@@ -85,6 +85,51 @@ namespace FluentHttp
             return this;
         }
 
+        /// <summary>
+        /// Collection of querystring
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="encode">
+        /// Indicate whether to encode the querystring.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentQueryStrings"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentQueryStrings Add(IDictionary<string, object> parameters, bool encode)
+        {
+            Contract.Ensures(Contract.Result<FluentQueryStrings>() != null);
+
+            if (parameters != null)
+            {
+                foreach (var parameter in parameters)
+                {
+                    this.Add(parameter.Key, parameter.Value.ToString(), encode);
+                }
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Collection of querystring
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="FluentQueryStrings"/>.
+        /// </returns>
+        [ContractVerification(true)]
+        public FluentQueryStrings Add(IDictionary<string, object> parameters)
+        {
+            Contract.Ensures(Contract.Result<FluentQueryStrings>() != null);
+
+            return this.Add(parameters, true);
+        }
+
         #region Implementation of IEnumerable
 
         /// <summary>
