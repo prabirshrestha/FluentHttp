@@ -11,23 +11,24 @@ namespace FluentHttp
         {
             ResponseStatus = ResponseStatus.Non;
             _fluentHttpRequest = fluentHttpRequest;
-            if (httpWebResponse == null)
-                throw new ArgumentNullException("httpWebResponse");
 
-            ContentLength = httpWebResponse.ContentLength;
-            ContentType = httpWebResponse.ContentType;
-            Headers = httpWebResponse.Headers;
-            CharacterSet = httpWebResponse.CharacterSet;
-            ContentEncoding = httpWebResponse.ContentEncoding;
-            Cookies = httpWebResponse.Cookies;
-            IsMutuallyAuthenticated = httpWebResponse.IsMutuallyAuthenticated;
-            LastModified = httpWebResponse.LastModified;
-            Method = httpWebResponse.Method;
-            ProtocolVersion = httpWebResponse.ProtocolVersion;
-            ResponseUri = httpWebResponse.ResponseUri;
-            Server = httpWebResponse.Server;
-            StatusCode = httpWebResponse.StatusCode;
-            StatusDescription = httpWebResponse.StatusDescription;
+            if (httpWebResponse != null)
+            {
+                ContentLength = httpWebResponse.ContentLength;
+                ContentType = httpWebResponse.ContentType;
+                Headers = httpWebResponse.Headers;
+                CharacterSet = httpWebResponse.CharacterSet;
+                ContentEncoding = httpWebResponse.ContentEncoding;
+                Cookies = httpWebResponse.Cookies;
+                IsMutuallyAuthenticated = httpWebResponse.IsMutuallyAuthenticated;
+                LastModified = httpWebResponse.LastModified;
+                Method = httpWebResponse.Method;
+                ProtocolVersion = httpWebResponse.ProtocolVersion;
+                ResponseUri = httpWebResponse.ResponseUri;
+                Server = httpWebResponse.Server;
+                StatusCode = httpWebResponse.StatusCode;
+                StatusDescription = httpWebResponse.StatusDescription;
+            }
         }
 
         public FluentHttpRequest Request { get { return _fluentHttpRequest; } }

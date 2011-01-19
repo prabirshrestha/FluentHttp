@@ -76,6 +76,7 @@ namespace FluentHttp
 
                     // EndGetResponse might throw error.
                     HttpWebResponse response;
+                    WebException webException = null;
 
                     try
                     {
@@ -83,6 +84,7 @@ namespace FluentHttp
                     }
                     catch (WebException ex)
                     {
+                        webException = ex;
                         response = (HttpWebResponse)ex.Response;
 
                         // don't set the requestState.Exception,
@@ -93,9 +95,39 @@ namespace FluentHttp
                     requestState.HttpWebResponse = response;
                     var fluentHttpResponse = new FluentHttpResponse(this, response);
                     requestState.Response = fluentHttpResponse;
-                    NotifyHeadersReceived(fluentHttpResponse, requestState);
 
-                    ReadResponseStream(requestState);
+                    if (response == null)
+                    {
+                        // most likely no internet connection.
+                        // some might find it usefull to extract more details by looking at webexception.
+                        requestState.Response.Exception = webException;
+
+                        if (requestState.Request.Completed != null)
+                        {
+                            try
+                            {
+                                var completedEventArgs = new CompletedEventArgs(
+                                                                requestState.Response,
+                                                                requestState.AsyncResult.AsyncState);
+
+                                requestState.Response.ResponseStatus = ResponseStatus.Error;
+                                requestState.Request.Completed(this, completedEventArgs);
+                            }
+                            catch (Exception ex)
+                            {
+                                // we need to catch the user exception so that we can end the request.
+                                requestState.Exception = ex;
+                            }
+                        }
+
+                        _asyncResult.Complete();
+                    }
+                    else
+                    {
+                        NotifyHeadersReceived(fluentHttpResponse, requestState);
+
+                        ReadResponseStream(requestState);
+                    }
                 },
                 requestState);
         }
