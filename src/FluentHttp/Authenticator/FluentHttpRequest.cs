@@ -1,5 +1,6 @@
 ﻿namespace FluentHttp
 {
+    using System;
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
@@ -28,6 +29,16 @@
             Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
 
             this.fluentAuthenticator = fluentAuthenticator;
+
+            return this;
+        }
+
+        public FluentHttpRequest AuthenticateUsing(Func<IFluentAuthenticator> authenticator)
+        {
+            if (authenticator != null)
+            {
+                this.fluentAuthenticator = authenticator();
+            }
 
             return this;
         }
