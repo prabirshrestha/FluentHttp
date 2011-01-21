@@ -124,19 +124,22 @@ namespace FluentHttp
         //[ContractVerification(true)]
         public FluentHttpRequestBody Append(IDictionary<string, object> parameters)
         {
-            Contract.Requires(parameters != null);
             Contract.Ensures(Contract.Result<FluentHttpRequestBody>() != null);
+
+            if (parameters == null || parameters.Count == 0)
+            {
+                return this;
+            }
 
             var sb = new StringBuilder();
 
             foreach (var parameter in parameters)
             {
-                sb.AppendFormat("{0}={1}&", parameter.Key, parameter.Value);
+                sb.AppendFormat("{0}={1}&", Utils.UrlEncode(parameter.Key), Utils.UrlEncode(parameter.Value.ToString()));
             }
 
-            // remove the last & if present
-            if (parameters.Count >= 1)
-                --sb.Length;
+            // remove the last &
+            --sb.Length;
 
             return Append(sb.ToString());
         }
@@ -158,6 +161,7 @@ namespace FluentHttp
             return this.isMultipartFormData;
         }
 
+        /*
         private FluentHttpRequestBody AppendFile(string path, IDictionary<string, object> parameters)
         {
             return this;
@@ -207,6 +211,7 @@ namespace FluentHttp
         {
             return this;
         }
+        */
 
         public Stream GetStream()
         {
