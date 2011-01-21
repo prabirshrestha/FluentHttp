@@ -101,6 +101,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourcePathTests.cs" />
     <Compile Include="TimeoutTests.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenASingleLetterStringExceptSlashThen.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenAStringStartingWithSlashThen.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenAStringWithoutSlashThen.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenEmptyStringThen.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenNullStringThen.cs" />
+    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenSlashOnlyThen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

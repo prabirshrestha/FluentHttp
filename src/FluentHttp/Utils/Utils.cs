@@ -2,7 +2,7 @@ namespace FluentHttp
 {
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-    using FluentHttp.External;
+    using External;
     using System.IO;
 
     /// <summary>
@@ -60,11 +60,48 @@ namespace FluentHttp
             return merged;
         }
 
+        /// <summary>
+        /// Converts stream to string.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string ToString(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             {
                 return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// Adds a forward slash if not present.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// Returns a string starting with /.
+        /// </returns>
+        public static string AddStartingSlashInNotPresent(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return "/";
+            }
+
+            // if not null or empty
+            if (input[0] != '/')
+            {
+                // if doesn't start with / then add /
+                return "/" + input;
+            }
+            else
+            {
+                // else return the original input.
+                return input;
             }
         }
     }
