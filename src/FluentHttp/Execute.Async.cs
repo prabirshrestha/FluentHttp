@@ -188,10 +188,12 @@ namespace FluentHttp
                     else if (e.IsCancelled)
                     {
                         // if cancelled
+                        requestState.Response.ResponseStatus = ResponseStatus.Cancelled;
                     }
                     else
                     {
-                        // else copy completed.                        
+                        // else copy completed.   
+                        requestState.Response.ResponseStatus = ResponseStatus.Completed;
                     }
 
                     // web response read completed.
@@ -204,7 +206,6 @@ namespace FluentHttp
                                                             requestState.Response,
                                                             requestState.AsyncResult.AsyncState);
 
-                            requestState.Response.ResponseStatus = ResponseStatus.Completed;
                             fluentRequest.Completed(this, completedEventArgs);
                         }
                         catch (Exception ex)

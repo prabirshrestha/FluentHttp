@@ -13,6 +13,7 @@ namespace FluentHttp
     class MultiReadStream : Stream
     {
         private List<Stream> streamList = new List<Stream>();
+        private Stream currentStream = null;
 
         private long position;
 
@@ -97,7 +98,10 @@ namespace FluentHttp
         /// </exception><filterpriority>2</filterpriority>
         public override void Flush()
         {
-            // TODO: need to implement flush.
+            if (currentStream != null)
+            {
+                this.currentStream.Flush();
+            }
         }
 
         /// <summary>
@@ -127,6 +131,7 @@ namespace FluentHttp
                     position = len + offset;
                     break;
             }
+
             if (position > len)
             {
                 position = len;
@@ -135,6 +140,7 @@ namespace FluentHttp
             {
                 position = 0;
             }
+
             return position;
         }
 
@@ -183,6 +189,7 @@ namespace FluentHttp
             int bytesRead;
             foreach (Stream stream in streamList)
             {
+                currentStream = stream;
                 if (position < (len + stream.Length))
                 {
                     stream.Position = position - len;
@@ -201,6 +208,7 @@ namespace FluentHttp
                 }
                 len += stream.Length;
             }
+
             return result;
         }
 
