@@ -7,7 +7,7 @@ namespace FluentHttp
     /// <summary>
     /// Async Result for <see cref="FluentHttp"/>.
     /// </summary>
-    public class FluentHttpAsyncResult : IAsyncResult
+    public class FluentHttpAsyncResultOld : IAsyncResult
     {
         /// <summary>
         /// The callback.
@@ -20,7 +20,7 @@ namespace FluentHttp
         private readonly ManualResetEvent waitHandle;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttpAsyncResult"/> class.
+        /// Initializes a new instance of the <see cref="FluentHttpAsyncResultOld"/> class.
         /// </summary>
         /// <param name="callback">
         /// The callback.
@@ -28,7 +28,7 @@ namespace FluentHttp
         /// <param name="state">
         /// The state.
         /// </param>
-        public FluentHttpAsyncResult(AsyncCallback callback, object state)
+        public FluentHttpAsyncResultOld(AsyncCallback callback, object state)
         {
             this.callback = callback;
             this.AsyncState = state;

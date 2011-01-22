@@ -54,6 +54,13 @@ namespace FluentHttp
             return default(string);
         }
 
+        public HttpWebRequest CreateHttpWebRequest(string url)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(url));
+            Contract.Ensures(Contract.Result<HttpWebRequest>() != null);
+            return default(HttpWebRequest);
+        }
+
         public IAsyncResult BeginRequest(AsyncCallback callback, object state)
         {
             Contract.Ensures(Contract.Result<IAsyncResult>() != null);

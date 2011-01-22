@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace FluentHttp
 {
     using System;
@@ -175,6 +177,22 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Create an instnace of new <see cref="System.Net.HttpWebRequest"/>.
+        /// </summary>
+        /// <param name="url">
+        /// The request url.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="System.Net.HttpWebRequest"/>.
+        /// </returns>
+        public HttpWebRequest CreateHttpWebRequest(string url)
+        {
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            Contract.Assume(httpWebRequest != null);
+            return httpWebRequest;
+        }
+
+        /// <summary>
         /// Starts the http request.
         /// </summary>
         /// <param name="callback">
@@ -188,6 +206,11 @@ namespace FluentHttp
         /// </returns>
         public IAsyncResult BeginRequest(AsyncCallback callback, object state)
         {
+            AuthenticateIfRequried();
+
+            var httpWebRequest = this.CreateHttpWebRequest(this.BaseUrl);
+            PrepareHttpWebRequest(httpWebRequest);
+
             throw new NotImplementedException();
         }
 
@@ -584,6 +607,154 @@ namespace FluentHttp
         }
 
 #endif
+
+        /// <summary>
+        /// Authenticates the <see cref="FluentHttpRequest"/> if it has an authenticator.
+        /// </summary>
+        internal void AuthenticateIfRequried()
+        {
+            var authenticator = this.GetAuthenticator();
+            if (authenticator != null)
+            {
+                authenticator.Authenticate(this);
+            }
+        }
+
+        /// <summary>
+        /// Builds the request url.
+        /// </summary>
+        /// <returns>
+        /// The request url.
+        /// </returns>
+        internal string BuildRequestUrl()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(this.BaseUrl);
+            sb.Append(this.GetResourcePath());
+            sb.Append("?");
+
+            foreach (var qs in this.GetQueryStrings())
+            {
+                // these querystrings are already url encoded.
+                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
+            }
+
+            // remove the last & or ?
+            --sb.Length;
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Prepare <see cref="HttpWebRequest"/> by copying necessary http headers, cookies etc. to HttpWebRequest.
+        /// </summary>
+        /// <param name="httpWebRequest">
+        /// The http web request.
+        /// </param>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        internal void PrepareHttpWebRequest(HttpWebRequest httpWebRequest)
+        {
+            Contract.Requires(httpWebRequest != null);
+
+            httpWebRequest.Method = this.GetMethod();
+            httpWebRequest.Timeout = this.GetTimeout();
+            httpWebRequest.Credentials = this.GetCredentials();
+            httpWebRequest.Proxy = this.GetProxy();
+
+            SetHttpWebRequestHeaders(httpWebRequest);
+            SetHttpWebRequestCookies(httpWebRequest);
+
+            // decompression methods set by accept-encoding header.
+            httpWebRequest.AutomaticDecompression = DecompressionMethods.None;
+        }
+
+        /// <summary>
+        /// Copy fluent http request headers to <see cref="HttpWebRequest"/>.
+        /// </summary>
+        /// <param name="httpWebRequest">
+        /// The http web request.
+        /// </param>
+        internal void SetHttpWebRequestHeaders(HttpWebRequest httpWebRequest)
+        {
+            Contract.Requires(httpWebRequest != null);
+
+            // set default content-length to 0 if it is not GET.
+            if (!this.GetMethod().Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                httpWebRequest.ContentLength = 0;
+            }
+
+            foreach (var header in this.GetHeaders())
+            {
+                if (FluentHttpHeaders.IsSpecialHeader(header.Name) == -1)
+                {
+                    httpWebRequest.Headers.Add(header.Name, header.Value);
+                }
+                else
+                {
+                    // todo: need to reorder so the performance is better
+                    if (header.Name.Equals("accept", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.Accept = header.Value;
+                    }
+                    else if (header.Name.Equals("connection", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.Connection = header.Value;
+                    }
+                    else if (header.Name.Equals("content-length", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.ContentLength = long.Parse(header.Value);
+                    }
+                    else if (header.Name.Equals("content-type", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.ContentType = header.Value;
+                    }
+                    else if (header.Name.Equals("expect", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.Expect = header.Value;
+                    }
+                    // date set by the system
+                    // host set by the system
+                    else if (header.Name.Equals("if-modified-since", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.IfModifiedSince = DateTime.Parse(header.Value);
+                    }
+                    // todo range?
+                    else if (header.Name.Equals("referer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.Referer = header.Value;
+                    }
+                    else if (header.Name.Equals("transfer-encoding", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.TransferEncoding = header.Value;
+                    }
+                    else if (header.Name.Equals("user-agent", StringComparison.OrdinalIgnoreCase))
+                    {
+                        httpWebRequest.UserAgent = header.Value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copy fluent http request cookies to <see cref="httpWebRequest"/>.
+        /// </summary>
+        /// <param name="httpWebRequest">
+        /// The http web request.
+        /// </param>
+        internal void SetHttpWebRequestCookies(HttpWebRequest httpWebRequest)
+        {
+            Contract.Requires(httpWebRequest != null);
+
+            httpWebRequest.CookieContainer = new CookieContainer();
+
+            foreach (var cookie in this.GetCookies())
+            {
+                httpWebRequest.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value) { Domain = httpWebRequest.RequestUri.Host });
+            }
+        }
 
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
             Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]

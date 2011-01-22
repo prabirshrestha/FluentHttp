@@ -8,7 +8,7 @@ namespace FluentHttp
     {
         public int BufferSize { get; private set; }
 
-        public HttpRequestState(int bufferSize, FluentHttpAsyncResult asyncResult)
+        public HttpRequestState(int bufferSize, FluentHttpAsyncResultOld asyncResult)
         {
             BufferSize = bufferSize;
             AsyncResult = asyncResult;
@@ -33,7 +33,7 @@ namespace FluentHttp
         public HttpWebRequest HttpWebRequest { get; set; }
         public HttpWebResponse HttpWebResponse { get; set; }
 
-        public FluentHttpAsyncResult AsyncResult { get; set; }
+        public FluentHttpAsyncResultOld AsyncResult { get; set; }
 
         public Exception Exception { get; set; }
 

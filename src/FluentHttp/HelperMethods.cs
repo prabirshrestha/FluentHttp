@@ -15,9 +15,9 @@ namespace FluentHttp
         /// </summary>
         internal void AuthenticateIfRequried()
         {
-            var authenticator = GetAuthenticator();
-            if (authenticator != null)
-                authenticator.Authenticate(this);
+            //var authenticator = GetAuthenticator();
+            //if (authenticator != null)
+            //    authenticator.Authenticate(this);
         }
 
         /// <summary>

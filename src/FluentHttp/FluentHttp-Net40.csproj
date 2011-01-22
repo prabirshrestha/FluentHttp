@@ -84,7 +84,7 @@
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\ResponseReadEventArgs.cs" />
     <Compile Include="Execute.Async.cs" />
-    <Compile Include="FluentHttpAsyncResult.cs" />
+    <Compile Include="FluentHttpAsyncResultOld.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="FluentHttpRequestOld.cs" />
     <Compile Include="FluentHttpRequestContracts.cs" />

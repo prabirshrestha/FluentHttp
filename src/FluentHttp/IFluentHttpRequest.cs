@@ -61,6 +61,21 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         string GetMethod();
 
+
+        /// <summary>
+        /// Create an instnace of new <see cref="System.Net.HttpWebRequest"/>.
+        /// </summary>
+        /// <param name="url">
+        /// The request url.
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="System.Net.HttpWebRequest"/>.
+        /// </returns>
+        /// <remarks>
+        /// This class can be useful when mocking HttpWebRequest.
+        /// </remarks>
+        System.Net.HttpWebRequest CreateHttpWebRequest(string url);
+
         /// <summary>
         /// Starts the http request.
         /// </summary>
