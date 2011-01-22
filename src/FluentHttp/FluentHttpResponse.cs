@@ -3,7 +3,7 @@ namespace FluentHttp
     using System;
     using System.Net;
 
-    public class FluentHttpResponse
+    public class FluentHttpResponse : IFluentHttpResponse
     {
         private readonly FluentHttpRequest _fluentHttpRequest;
 
