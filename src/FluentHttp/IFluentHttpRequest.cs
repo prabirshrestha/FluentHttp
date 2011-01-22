@@ -17,6 +17,11 @@ namespace FluentHttp
         string BaseUrl { get; }
 
         /// <summary>
+        /// Gets a value indicating whether to seek the save stream to beginning when completed.
+        /// </summary>
+        bool SeekSaveStreamToBeginning { get; }
+
+        /// <summary>
         /// Sets the resource path.
         /// </summary>
         /// <param name="resourcePath">
@@ -276,13 +281,13 @@ namespace FluentHttp
         /// <param name="saveStream">
         /// The save stream.
         /// </param>
-        /// <param name="seekToBeginingWhenDone">
+        /// <param name="seekSaveStreamToBeginningWhenDone">
         /// Indicates whether to seek to begining when done.
         /// </param>
         /// <returns>
         /// Returns the <see cref="IFluentHttpRequest"/>.
         /// </returns>
-        IFluentHttpRequest SaveTo(Stream saveStream, bool seekToBeginingWhenDone);
+        IFluentHttpRequest SaveTo(Stream saveStream, bool seekSaveStreamToBeginningWhenDone);
 
         /// <summary>
         /// Sets the stream where the response is saved.

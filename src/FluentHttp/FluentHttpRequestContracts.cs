@@ -8,7 +8,7 @@ namespace FluentHttp
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here."), ContractClassFor(typeof(IFluentHttpRequest))]
-    public class FluentHttpRequestContracts : IFluentHttpRequest
+    internal abstract class FluentHttpRequestContracts : IFluentHttpRequest
     {
         public string BaseUrl
         {
@@ -20,6 +20,11 @@ namespace FluentHttp
             }
         }
 
+        public bool SeekSaveStreamToBeginning
+        {
+            get { return default(bool); }
+        }
+
         public IFluentHttpRequest ResourcePath(string resourcePath)
         {
             Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
@@ -29,6 +34,7 @@ namespace FluentHttp
 
         public string GetResourcePath()
         {
+            Contract.Ensures(Contract.Result<string>() != null);
             return default(string);
         }
 
@@ -145,7 +151,7 @@ namespace FluentHttp
 
         public IFluentHttpRequest Timeout(int timeout)
         {
-            Contract.Requires(timeout >= 0);
+            Contract.Requires(timeout >= 0 && timeout != System.Threading.Timeout.Infinite);
             Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
 
             return default(IFluentHttpRequest);
@@ -192,7 +198,7 @@ namespace FluentHttp
             return default(IFluentAuthenticator);
         }
 
-        public IFluentHttpRequest SaveTo(Stream saveStream, bool seekToBeginingWhenDone)
+        public IFluentHttpRequest SaveTo(Stream saveStream, bool seekSaveStreamToBeginningWhenDone)
         {
             Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
 

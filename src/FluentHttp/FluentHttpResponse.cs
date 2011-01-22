@@ -3,6 +3,8 @@ namespace FluentHttp
     using System;
     using System.Net;
 
+    /// <summary>
+    /// </summary>
     public class FluentHttpResponse : IFluentHttpResponse
     {
         private readonly FluentHttpRequestOld _fluentHttpRequest;
@@ -31,7 +33,13 @@ namespace FluentHttp
             }
         }
 
-        public FluentHttpRequestOld Request { get { return _fluentHttpRequest; } }
+        public IFluentHttpRequest Request
+        {
+            get
+            {
+                return null;// _fluentHttpRequest;
+            }
+        }
 
         public Exception Exception { get; set; }
 

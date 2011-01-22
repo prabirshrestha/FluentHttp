@@ -11,7 +11,7 @@ namespace FluentHttp
         /// <summary>
         /// Gets the <see cref="FluentHttpRequestOld"/>.
         /// </summary>
-        FluentHttpRequestOld Request { get; }
+        IFluentHttpRequest Request { get; }
 
         /// <summary>
         /// Gets the exception.

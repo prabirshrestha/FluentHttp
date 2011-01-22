@@ -23,7 +23,8 @@
     <DefineConstants>TRACE;DEBUG;MOBILE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\Net40\FluentHttp.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -85,6 +86,7 @@
     <Compile Include="Execute.Async.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestOld.cs" />
     <Compile Include="FluentHttpRequestContracts.cs" />
     <Compile Include="FluentHttpResponse.cs" />
     <Compile Include="HelperMethods.cs" />
