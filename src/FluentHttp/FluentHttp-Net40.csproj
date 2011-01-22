@@ -85,6 +85,7 @@
     <Compile Include="Execute.Async.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestContracts.cs" />
     <Compile Include="FluentHttpResponse.cs" />
     <Compile Include="HelperMethods.cs" />
     <Compile Include="HttpHeader\FluentHttpHeader.cs" />

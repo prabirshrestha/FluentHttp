@@ -2,11 +2,13 @@ namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.Contracts;
     using System.IO;
 
     /// <summary>
     /// Represent a Fluent Http Request.
     /// </summary>
+    [ContractClass(typeof(FluentHttpRequestContracts))]
     public interface IFluentHttpRequest
     {
         /// <summary>
