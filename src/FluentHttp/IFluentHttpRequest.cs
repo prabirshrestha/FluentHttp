@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.ComponentModel;
     using System.IO;
 
     /// <summary>
@@ -25,6 +26,15 @@ namespace FluentHttp
         IFluentHttpRequest ResourcePath(string resourcePath);
 
         /// <summary>
+        /// Gets the resource path.
+        /// </summary>
+        /// <returns>
+        /// The resource path.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        string GetResourcePath();
+
+        /// <summary>
         /// Sets the http method.
         /// </summary>
         /// <param name="method">
@@ -34,6 +44,15 @@ namespace FluentHttp
         /// Returns <see cref="IFluentHttpRequest"/>.
         /// </returns>
         IFluentHttpRequest Method(string method);
+
+        /// <summary>
+        /// Gets the http method.
+        /// </summary>
+        /// <returns>
+        /// The http method.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        string GetMethod();
 
         /// <summary>
         /// Starts the http request.
@@ -72,6 +91,15 @@ namespace FluentHttp
         IFluentHttpRequest Headers(Action<FluentHttpHeaders> headers);
 
         /// <summary>
+        /// Gets the http headers.
+        /// </summary>
+        /// <returns>
+        /// The http headers.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        FluentHttpHeaders GetHeaders();
+
+        /// <summary>
         /// Access querystrings.
         /// </summary>
         /// <param name="queryStrings">
@@ -83,7 +111,16 @@ namespace FluentHttp
         IFluentHttpRequest QueryStrings(Action<FluentQueryStrings> queryStrings);
 
         /// <summary>
-        /// Access the body.
+        /// Gets the querystrings.
+        /// </summary>
+        /// <returns>
+        /// The querystrings.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        FluentQueryStrings GetQueryStrings();
+
+        /// <summary>
+        /// Access the request body.
         /// </summary>
         /// <param name="body">
         /// The request body.
@@ -92,6 +129,15 @@ namespace FluentHttp
         /// Returns the <see cref="IFluentHttpRequest"/>.
         /// </returns>
         IFluentHttpRequest Body(Action<FluentHttpRequestBody> body);
+
+        /// <summary>
+        /// Gets the request body.
+        /// </summary>
+        /// <returns>
+        /// The resquest body.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        FluentHttpRequestBody GetBody();
 
         /// <summary>
         /// Access cookies.
@@ -105,6 +151,15 @@ namespace FluentHttp
         IFluentHttpRequest Cookies(Action<FluentCookies> cookies);
 
         /// <summary>
+        /// Gets the cookies.
+        /// </summary>
+        /// <returns>
+        /// The cookies.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        FluentCookies GetCookies();
+
+        /// <summary>
         /// Sets the proxy.
         /// </summary>
         /// <param name="proxy">
@@ -114,6 +169,15 @@ namespace FluentHttp
         /// Returns the <see cref="IFluentHttpRequest"/>.
         /// </returns>
         IFluentHttpRequest Proxy(System.Net.IWebProxy proxy);
+
+        /// <summary>
+        /// Gets the proxy.
+        /// </summary>
+        /// <returns>
+        /// The proxy.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        System.Net.IWebProxy GetProxy();
 
         /// <summary>
         /// Sets the credentials.
@@ -127,6 +191,15 @@ namespace FluentHttp
         IFluentHttpRequest Credentials(System.Net.ICredentials credentials);
 
         /// <summary>
+        /// Gets the credentials.
+        /// </summary>
+        /// <returns>
+        /// The credentials.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        System.Net.ICredentials GetCredentials();
+
+        /// <summary>
         /// Sets the timeout.
         /// </summary>
         /// <param name="timeout">
@@ -138,6 +211,15 @@ namespace FluentHttp
         IFluentHttpRequest Timeout(int timeout);
 
         /// <summary>
+        /// Gets the timeout.
+        /// </summary>
+        /// <returns>
+        /// The timeout.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        int GetTimeout();
+
+        /// <summary>
         /// Sets the buffer size.
         /// </summary>
         /// <param name="bufferSize">
@@ -147,6 +229,14 @@ namespace FluentHttp
         /// Returns the <see cref="IFluentHttpRequest"/>.
         /// </returns>
         IFluentHttpRequest BufferSize(int bufferSize);
+
+        /// <summary>
+        /// Gets the buffer size.
+        /// </summary>
+        /// <returns>
+        /// The buffer size.
+        /// </returns>
+        int GetBufferSize();
 
         /// <summary>
         /// Sets the authenticator.
@@ -169,6 +259,14 @@ namespace FluentHttp
         /// Returns the <see cref="IFluentHttpRequest"/>.
         /// </returns>
         IFluentHttpRequest AuthenticateUsing(Func<IFluentAuthenticator> authenticator);
+
+        /// <summary>
+        /// Gets the authenticator.
+        /// </summary>
+        /// <returns>
+        /// The authenticator.
+        /// </returns>
+        IFluentAuthenticator GetAuthenticator();
 
         /// <summary>
         /// Sets the stream where the response is saved.
@@ -197,6 +295,32 @@ namespace FluentHttp
         /// Sets the seek to begining when done.
         /// </remarks>
         IFluentHttpRequest SaveTo(Stream saveStream);
+
+        /// <summary>
+        /// Gets the save stream.
+        /// </summary>
+        /// <returns>
+        /// The save stream.
+        /// </returns>
+        Stream GetSaveStream();
+
+        #region Hide defualt object methods
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        string ToString();
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        int GetHashCode();
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        bool Equals(object obj);
+
+#pragma warning disable 0108
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        Type GetType();
+#pragma warning restore 0108
+
+        #endregion
 
 #if !(NET35 || NET20)
 
