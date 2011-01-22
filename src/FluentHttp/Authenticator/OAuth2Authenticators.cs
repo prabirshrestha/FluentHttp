@@ -46,7 +46,7 @@ namespace FluentHttp
         /// <param name="fluentHttpRequest">
         /// The fluent http request.
         /// </param>
-        public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
+        public abstract void Authenticate(FluentHttpRequestOld fluentHttpRequest);
 
         #endregion
     }
@@ -81,7 +81,7 @@ namespace FluentHttp
         /// The fluent http request.
         /// </param>
         [ContractVerification(true)]
-        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
+        public override void Authenticate(FluentHttpRequestOld fluentHttpRequest)
         {
             Contract.Requires(fluentHttpRequest != null);
             Contract.Requires(

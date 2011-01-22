@@ -8,7 +8,7 @@ namespace FluentHttp
     /// <summary>
     /// Fluent Http Wrapper
     /// </summary>
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Adds necessary authentication stuffs if required.
@@ -23,7 +23,7 @@ namespace FluentHttp
         /// <summary>
         /// Builds the url, ie. sums up the baseUrl + resourePath + querystring
         /// </summary>
-        internal static string BuildUrl(FluentHttpRequest fluentHttpRequest)
+        internal static string BuildUrl(FluentHttpRequestOld fluentHttpRequest)
         {
             var sb = new StringBuilder();
 
@@ -48,7 +48,7 @@ namespace FluentHttp
         /// </param>
         /// <returns>
         /// </returns>
-        internal static HttpWebRequest CreateHttpWebRequest(FluentHttpRequest fluentHttpRequest)
+        internal static HttpWebRequest CreateHttpWebRequest(FluentHttpRequestOld fluentHttpRequest)
         {
             var requestUrl = BuildUrl(fluentHttpRequest);
             var webRequest = (HttpWebRequest)WebRequest.Create(requestUrl);
@@ -80,7 +80,7 @@ namespace FluentHttp
             return webRequest;
         }
 
-        internal static HttpWebRequest SetHeaders(FluentHttpRequest fluentHttpRequest, HttpWebRequest webRequest)
+        internal static HttpWebRequest SetHeaders(FluentHttpRequestOld fluentHttpRequest, HttpWebRequest webRequest)
         {
             // set default content-length to 0 if it is not GET.
             if (!fluentHttpRequest.GetMethod().Equals("GET", StringComparison.OrdinalIgnoreCase))
@@ -133,7 +133,7 @@ namespace FluentHttp
         /// </param>
         /// <returns>
         /// </returns>
-        internal static HttpWebRequest ResetContentLengthIfNeeded(FluentHttpRequest fluentHttpRequest, HttpWebRequest webRequest)
+        internal static HttpWebRequest ResetContentLengthIfNeeded(FluentHttpRequestOld fluentHttpRequest, HttpWebRequest webRequest)
         {
             // todo
             return webRequest;

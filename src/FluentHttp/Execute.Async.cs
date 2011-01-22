@@ -10,7 +10,7 @@ namespace FluentHttp
     /// <summary>
     /// Fluent Http Wrapper
     /// </summary>
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         private FluentHttpAsyncResult _asyncResult;
 

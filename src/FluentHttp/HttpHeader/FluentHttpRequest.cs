@@ -7,7 +7,7 @@
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         // make it HttpHeaders so that it doesn't conflict with Headers method
 
@@ -37,12 +37,12 @@
         /// The http headers.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest Headers(Action<FluentHttpHeaders> headers)
+        public FluentHttpRequestOld Headers(Action<FluentHttpHeaders> headers)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (headers != null)
                 headers(HttpHeaders);
@@ -51,7 +51,7 @@
         }
 
         /// <summary>
-        /// Gets the http headers for the <see cref="FluentHttpRequest"/>.
+        /// Gets the http headers for the <see cref="FluentHttpRequestOld"/>.
         /// </summary>
         /// <returns>
         /// Returns the http headers.

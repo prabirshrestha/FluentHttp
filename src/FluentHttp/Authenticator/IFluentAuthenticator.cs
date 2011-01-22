@@ -11,6 +11,6 @@ namespace FluentHttp
         /// <param name="fluentHttpRequest">
         /// The fluent http request.
         /// </param>
-        void Authenticate(FluentHttpRequest fluentHttpRequest);
+        void Authenticate(FluentHttpRequestOld fluentHttpRequest);
     }
 }

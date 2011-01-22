@@ -7,7 +7,7 @@ namespace FluentHttp.Tests.Authenticators.OAuth2.AuthorizationHeader
         [Fact]
         public void Authenticate_WhenAuthenticate_ShouldContainAuthorizationHeader()
         {
-            var request = new FluentHttpRequest("http://www.prabir.me")
+            var request = new FluentHttpRequestOld("http://www.prabir.me")
                 .AuthenticateUsing(new OAuth2AuthorizationRequestHeaderAuthenticator("oauthtoken"));
 
             request.GetAuthenticator().Authenticate(request);
@@ -32,7 +32,7 @@ namespace FluentHttp.Tests.Authenticators.OAuth2.AuthorizationHeader
         public void Authenticate_WhenAuthenticate_ShouldContainAuthorizationHeaderWithOAuthToken()
         {
             var oauthToken = "oauthtoken";
-            var request = new FluentHttpRequest("http://www.prabir.me")
+            var request = new FluentHttpRequestOld("http://www.prabir.me")
                 .AuthenticateUsing(new OAuth2AuthorizationRequestHeaderAuthenticator(oauthToken));
 
             request.GetAuthenticator().Authenticate(request);

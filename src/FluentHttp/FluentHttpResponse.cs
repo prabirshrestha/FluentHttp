@@ -5,9 +5,9 @@ namespace FluentHttp
 
     public class FluentHttpResponse : IFluentHttpResponse
     {
-        private readonly FluentHttpRequest _fluentHttpRequest;
+        private readonly FluentHttpRequestOld _fluentHttpRequest;
 
-        public FluentHttpResponse(FluentHttpRequest fluentHttpRequest, HttpWebResponse httpWebResponse)
+        public FluentHttpResponse(FluentHttpRequestOld fluentHttpRequest, HttpWebResponse httpWebResponse)
         {
             ResponseStatus = ResponseStatus.Non;
             _fluentHttpRequest = fluentHttpRequest;
@@ -31,7 +31,7 @@ namespace FluentHttp
             }
         }
 
-        public FluentHttpRequest Request { get { return _fluentHttpRequest; } }
+        public FluentHttpRequestOld Request { get { return _fluentHttpRequest; } }
 
         public Exception Exception { get; set; }
 

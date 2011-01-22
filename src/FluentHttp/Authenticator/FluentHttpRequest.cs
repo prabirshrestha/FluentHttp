@@ -7,7 +7,7 @@
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Internal authenticator.
@@ -21,19 +21,19 @@
         /// The fluent authenticator.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest AuthenticateUsing(IFluentAuthenticator fluentAuthenticator)
+        public FluentHttpRequestOld AuthenticateUsing(IFluentAuthenticator fluentAuthenticator)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.fluentAuthenticator = fluentAuthenticator;
 
             return this;
         }
 
-        public FluentHttpRequest AuthenticateUsing(Func<IFluentAuthenticator> authenticator)
+        public FluentHttpRequestOld AuthenticateUsing(Func<IFluentAuthenticator> authenticator)
         {
             if (authenticator != null)
             {

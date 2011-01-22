@@ -9,7 +9,7 @@
     /// <summary>
     /// Fluent Http Wrapper
     /// </summary>
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Base url of the request.
@@ -37,13 +37,13 @@
         private int bufferSize = 4096;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
+        /// Initializes a new instance of the <see cref="FluentHttpRequestOld"/> class.
         /// </summary>
         /// <param name="baseUrl">
         /// The url to make request at.
         /// </param>
         [ContractVerification(true)]
-        public FluentHttpRequest(string baseUrl)
+        public FluentHttpRequestOld(string baseUrl)
         {
             Contract.Requires(!string.IsNullOrEmpty(baseUrl));
 
@@ -67,12 +67,12 @@
         /// The resource path.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest ResourcePath(string resourcePath)
+        public FluentHttpRequestOld ResourcePath(string resourcePath)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (!(string.IsNullOrEmpty(resourcePath) || (resourcePath = resourcePath.Trim()).Length == 0))
             {
@@ -114,19 +114,19 @@
         /// The http method.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Throws <see cref="ArgumentNullException"/> if method is null or empty.
         /// </exception>
         [ContractVerification(true)]
-        public FluentHttpRequest Method(string method)
+        public FluentHttpRequestOld Method(string method)
         {
             Contract.Requires(!string.IsNullOrEmpty(method));
             // Contract.Requires(Contract.Exists(new[] { "GET", "POST", "DELETE" }, p => p.Equals(method, StringComparison.OrdinalIgnoreCase)));
 
             Contract.Ensures(!string.IsNullOrEmpty(method));
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.method = method;
 
@@ -153,9 +153,9 @@
         /// <returns>
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest Timeout(int timeout)
+        public FluentHttpRequestOld Timeout(int timeout)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.timeout = timeout;
 
@@ -183,9 +183,9 @@
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [ContractVerification(true)]
-        public FluentHttpRequest BufferSize(int bufferSize)
+        public FluentHttpRequestOld BufferSize(int bufferSize)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException("bufferSize", "Buffer size must be greater than 0");
@@ -210,9 +210,9 @@
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         [ContractVerification(true)]
-        public FluentHttpRequest SaveTo(Stream stream, bool seekToBeginingWhenDone)
+        public FluentHttpRequestOld SaveTo(Stream stream, bool seekToBeginingWhenDone)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.saveStream = stream;
 
@@ -240,9 +240,9 @@
         }
 
         [ContractVerification(true)]
-        public FluentHttpRequest SaveTo(Stream stream)
+        public FluentHttpRequestOld SaveTo(Stream stream)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             return SaveTo(stream, true);
         }

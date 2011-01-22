@@ -12,7 +12,7 @@ namespace FluentHttp.Tests
         [InlineData(100)]
         public void SetTimeOutTest(int timeout)
         {
-            var request = new FluentHttpRequest("http://prabir.me")
+            var request = new FluentHttpRequestOld("http://prabir.me")
                 .Timeout(timeout);
 
             Assert.Equal(timeout, request.GetTimeout());

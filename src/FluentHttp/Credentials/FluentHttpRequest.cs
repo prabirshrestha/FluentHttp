@@ -7,7 +7,7 @@
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// The credentials to use for http web request.
@@ -21,12 +21,12 @@
         /// The credentials.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest Credentials(ICredentials credentials)
+        public FluentHttpRequestOld Credentials(ICredentials credentials)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.credentials = credentials;
 

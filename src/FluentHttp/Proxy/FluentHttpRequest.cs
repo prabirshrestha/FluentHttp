@@ -7,7 +7,7 @@
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Proxy to use when making http web request.
@@ -21,12 +21,12 @@
         /// The proxy to use.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest Proxy(IWebProxy proxy)
+        public FluentHttpRequestOld Proxy(IWebProxy proxy)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.proxy = proxy;
 

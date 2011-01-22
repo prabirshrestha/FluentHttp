@@ -6,7 +6,7 @@ namespace FluentHttp
     /// <summary>
     /// Fluent Http Wrapper
     /// </summary>
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Occurs just before executing the web request.
@@ -20,12 +20,12 @@ namespace FluentHttp
         /// The event handler.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>
+        /// Returns <see cref="FluentHttpRequestOld"/>
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest OnResponseHeadersRecevied(EventHandler<ResponseHeadersReceivedEventArgs> eventHandler)
+        public FluentHttpRequestOld OnResponseHeadersRecevied(EventHandler<ResponseHeadersReceivedEventArgs> eventHandler)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (eventHandler != null)
                 ResponseHeadersReceived += eventHandler;

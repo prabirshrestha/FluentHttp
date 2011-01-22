@@ -10,7 +10,7 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Request.
         /// </summary>
-        private readonly FluentHttpRequest fluentHttpRequest;
+        private readonly FluentHttpRequestOld fluentHttpRequest;
 
         /// <summary>
         /// User state.
@@ -26,7 +26,7 @@ namespace FluentHttp
         /// <param name="userState">
         /// The user state.
         /// </param>
-        public ExecutingEventArgs(FluentHttpRequest fluentHttpRequest, object userState)
+        public ExecutingEventArgs(FluentHttpRequestOld fluentHttpRequest, object userState)
         {
             this.fluentHttpRequest = fluentHttpRequest;
             this.userState = userState;
@@ -43,7 +43,7 @@ namespace FluentHttp
         /// <summary>
         /// Gets the <see cref="FluentHttpRequest"/>.
         /// </summary>
-        public FluentHttpRequest FluentHttpRequest
+        public FluentHttpRequestOld FluentHttpRequest
         {
             get { return this.fluentHttpRequest; }
         }

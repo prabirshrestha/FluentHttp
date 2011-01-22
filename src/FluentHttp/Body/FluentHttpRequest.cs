@@ -8,7 +8,7 @@ namespace FluentHttp
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         private FluentHttpRequestBody fluentHttprequestBody;
 
@@ -24,9 +24,9 @@ namespace FluentHttp
         }
 
         [ContractVerification(true)]
-        public FluentHttpRequest Body(Action<FluentHttpRequestBody> requestBody)
+        public FluentHttpRequestOld Body(Action<FluentHttpRequestBody> requestBody)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (requestBody != null)
             {

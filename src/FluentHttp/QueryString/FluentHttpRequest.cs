@@ -9,7 +9,7 @@ namespace FluentHttp
 
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Reviewed. Suppression is OK here.")]
-    public partial class FluentHttpRequest
+    public partial class FluentHttpRequestOld
     {
         /// <summary>
         /// Internal list of http querystrings.
@@ -37,12 +37,12 @@ namespace FluentHttp
         /// The querystrings.
         /// </param>
         /// <returns>
-        /// Returns <see cref="FluentHttpRequest"/>.
+        /// Returns <see cref="FluentHttpRequestOld"/>.
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest QueryStrings(Action<FluentQueryStrings> queryStrings)
+        public FluentHttpRequestOld QueryStrings(Action<FluentQueryStrings> queryStrings)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             if (queryStrings != null)
                 queryStrings(this.HttpQueryStrings);
@@ -62,9 +62,9 @@ namespace FluentHttp
         /// <returns>
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest QueryStrings(IDictionary<string, object> parameters, bool encode)
+        public FluentHttpRequestOld QueryStrings(IDictionary<string, object> parameters, bool encode)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             this.GetQueryStrings().Add(parameters, encode);
 
@@ -80,9 +80,9 @@ namespace FluentHttp
         /// <returns>
         /// </returns>
         [ContractVerification(true)]
-        public FluentHttpRequest QueryStrings(IDictionary<string, object> parameters)
+        public FluentHttpRequestOld QueryStrings(IDictionary<string, object> parameters)
         {
-            Contract.Ensures(Contract.Result<FluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<FluentHttpRequestOld>() != null);
 
             return this.QueryStrings(parameters, true);
         }

@@ -13,7 +13,7 @@ namespace FluentHttp.Tests
         [InlineData(null, null)]
         public void SetResourcePath_AutoAppendSlashIfNeeded_Test(string input, string excepted)
         {
-            var request = new FluentHttpRequest("https://graph.facebook.com")
+            var request = new FluentHttpRequestOld("https://graph.facebook.com")
                 .ResourcePath(input);
 
             Assert.Equal(excepted, request.GetResourcePath());

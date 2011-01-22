@@ -8,7 +8,7 @@ namespace FluentHttp
     using System.Diagnostics.Contracts;
 
     /// <summary>
-    /// Http Headers for <see cref="FluentHttpRequest"/>
+    /// Http Headers for <see cref="FluentHttpRequestOld"/>
     /// </summary>
     public class FluentHttpHeaders : IEnumerable<FluentHttpHeader>
     {

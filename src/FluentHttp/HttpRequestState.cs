@@ -24,7 +24,7 @@ namespace FluentHttp
         /// </summary>
         public byte[] Buffer { get; set; }
 
-        public FluentHttpRequest Request { get; set; }
+        public FluentHttpRequestOld Request { get; set; }
 
         public FluentHttpResponse Response { get; set; }
 
