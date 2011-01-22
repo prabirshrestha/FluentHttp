@@ -58,7 +58,7 @@ namespace FluentHttp
         public IFluentHttpResponse EndRequest(IAsyncResult asyncResult)
         {
             Contract.Ensures(asyncResult != null);
-            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+            Contract.Ensures(Contract.Result<IFluentHttpResponse>() != null);
 
             return default(IFluentHttpResponse);
         }

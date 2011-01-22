@@ -35,4 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.0.0.0")]
 [assembly: AssemblyFileVersion("0.0.0.0")]
 
-[assembly: System.Diagnostics.Contracts.ContractVerification(false)]
+[assembly: System.Diagnostics.Contracts.ContractVerification(true)]
