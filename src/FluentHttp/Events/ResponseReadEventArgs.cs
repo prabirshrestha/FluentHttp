@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Diagnostics.Contracts;
     using System.Net;
 
     /// <summary>
@@ -11,7 +12,7 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Response.
         /// </summary>
-        private readonly FluentHttpResponse _fluentHttpResponse;
+        private readonly IFluentHttpResponse _fluentHttpResponse;
 
         private readonly object _userState;
 
@@ -21,10 +22,9 @@ namespace FluentHttp
         /// <param name="fluentHttpResponse">
         /// The fluent http response.
         /// </param>
-        public ResponseHeadersReceivedEventArgs(FluentHttpResponse fluentHttpResponse, object userState)
+        public ResponseHeadersReceivedEventArgs(IFluentHttpResponse fluentHttpResponse, object userState)
         {
-            if (fluentHttpResponse == null)
-                throw new ArgumentNullException("fluentHttpResponse");
+            Contract.Requires(fluentHttpResponse != null);
 
             _fluentHttpResponse = fluentHttpResponse;
             _userState = userState;
@@ -38,7 +38,7 @@ namespace FluentHttp
         /// <summary>
         /// Gets the FluentHttpResponse.
         /// </summary>
-        public FluentHttpResponse FluentHttpResponse
+        public IFluentHttpResponse FluentHttpResponse
         {
             get { return _fluentHttpResponse; }
         }

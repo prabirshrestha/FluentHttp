@@ -84,6 +84,7 @@
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\ResponseReadEventArgs.cs" />
     <Compile Include="Execute.Async.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpAsyncResultOld.cs" />
     <Compile Include="FluentHttpRequest.cs" />
     <Compile Include="FluentHttpRequestOld.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="HttpRequestState.cs" />
     <Compile Include="IFluentHttpRequest.cs" />
     <Compile Include="IFluentHttpResponse.cs" />
+    <Compile Include="InternalState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy\FluentHttpRequest.cs" />
     <Compile Include="QueryString\FluentHttpRequest.cs" />

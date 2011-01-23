@@ -2,6 +2,7 @@ namespace FluentHttp
 {
     using System;
     using System.Net;
+    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Event Args for CompletedEventArgs
@@ -11,7 +12,7 @@ namespace FluentHttp
         /// <summary>
         /// Fluent Http Response.
         /// </summary>
-        private readonly FluentHttpResponse fluentHttpResponse;
+        private readonly IFluentHttpResponse fluentHttpResponse;
 
         /// <summary>
         /// User state.
@@ -27,10 +28,9 @@ namespace FluentHttp
         /// <param name="userState">
         /// The user state.
         /// </param>
-        public CompletedEventArgs(FluentHttpResponse fluentHttpResponse, object userState)
+        public CompletedEventArgs(IFluentHttpResponse fluentHttpResponse, object userState)
         {
-            if (fluentHttpResponse == null)
-                throw new ArgumentNullException("fluentHttpResponse");
+            Contract.Requires(fluentHttpResponse != null);
 
             this.fluentHttpResponse = fluentHttpResponse;
             this.userState = userState;
@@ -47,7 +47,7 @@ namespace FluentHttp
         /// <summary>
         /// Gets the <see cref="FluentHttpResponse"/>.
         /// </summary>
-        public FluentHttpResponse FluentHttpResponse
+        public IFluentHttpResponse FluentHttpResponse
         {
             get { return this.fluentHttpResponse; }
         }

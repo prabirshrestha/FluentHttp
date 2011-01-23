@@ -12,6 +12,21 @@ namespace FluentHttp
     public interface IFluentHttpRequest
     {
         /// <summary>
+        /// Occurs when the response headers are received.
+        /// </summary>
+        event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
+
+        /// <summary>
+        /// Occurs when the reponse stream buffer was read.
+        /// </summary>
+        event EventHandler<ResponseReadEventArgs> Read;
+
+        /// <summary>
+        /// Occurs when the request has been completed without critical errors.
+        /// </summary>
+        event EventHandler<CompletedEventArgs> Completed;
+
+        /// <summary>
         /// Gets the base url.
         /// </summary>
         string BaseUrl { get; }
@@ -325,6 +340,39 @@ namespace FluentHttp
         /// The save stream.
         /// </returns>
         Stream GetSaveStream();
+
+        /// <summary>
+        /// Occurs when http response headers are received.
+        /// </summary>
+        /// <param name="onResponseHeadersReceived">
+        /// On response headers received.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        IFluentHttpRequest OnResponseHeadersReceived(EventHandler<ResponseHeadersReceivedEventArgs> onResponseHeadersReceived);
+
+        /// <summary>
+        /// Occurrs when http response is completed.
+        /// </summary>
+        /// <param name="onCompleted">
+        /// The on completed.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        IFluentHttpRequest OnCompleted(EventHandler<CompletedEventArgs> onCompleted);
+
+        /// <summary>
+        /// Occurs when response buffer was read.
+        /// </summary>
+        /// <param name="onBufferRead">
+        /// The on buffer read.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        IFluentHttpRequest OnRead(EventHandler<ResponseReadEventArgs> onBufferRead);
 
         #region Hide defualt object methods
 

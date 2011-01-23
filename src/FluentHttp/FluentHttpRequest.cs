@@ -1,4 +1,3 @@
-using System.Text;
 
 namespace FluentHttp
 {
@@ -6,7 +5,9 @@ namespace FluentHttp
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
     using System.IO;
+    using System.IO.Compression;
     using System.Net;
+    using System.Text;
 
     /// <summary>
     /// Represents a Fluent Http Request.
@@ -84,6 +85,11 @@ namespace FluentHttp
         private bool seekSaveStreamToBeginning;
 
         /// <summary>
+        /// The current async result.
+        /// </summary>
+        private FluentHttpAsyncResult asyncResult;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         /// <param name="baseUrl">
@@ -104,6 +110,21 @@ namespace FluentHttp
             this.method = "GET";
             this.bufferSize = 4096;
         }
+
+        /// <summary>
+        /// Occurs when the response headers are received.
+        /// </summary>
+        public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
+
+        /// <summary>
+        /// Occurs when the reponse stream buffer was read.
+        /// </summary>
+        public event EventHandler<ResponseReadEventArgs> Read;
+
+        /// <summary>
+        /// Occurs when the request has been completed without critical errors.
+        /// </summary>
+        public event EventHandler<CompletedEventArgs> Completed;
 
         /// <summary>
         /// Gets the base url.
@@ -206,12 +227,22 @@ namespace FluentHttp
         /// </returns>
         public IAsyncResult BeginRequest(AsyncCallback callback, object state)
         {
+            if (this.asyncResult != null)
+            {
+                throw new InvalidOperationException("Request has already started.");
+            }
+
             AuthenticateIfRequried();
 
-            var httpWebRequest = this.CreateHttpWebRequest(this.BaseUrl);
+            var httpWebRequest = this.CreateHttpWebRequest(this.BuildRequestUrl());
             PrepareHttpWebRequest(httpWebRequest);
 
-            throw new NotImplementedException();
+            var internalState = new InternalState(this, httpWebRequest, callback, state);
+            this.asyncResult = new FluentHttpAsyncResult(internalState);
+
+            ExecuteAsync(internalState);
+
+            return this.asyncResult;
         }
 
         /// <summary>
@@ -225,7 +256,28 @@ namespace FluentHttp
         /// </returns>
         public IFluentHttpResponse EndRequest(IAsyncResult asyncResult)
         {
-            throw new NotImplementedException();
+            if (asyncResult == null)
+            {
+                throw new ArgumentNullException("asyncResult");
+            }
+
+            var ar = asyncResult as FluentHttpAsyncResult;
+
+            if (ar == null || !ReferenceEquals(this.asyncResult, ar))
+            {
+                throw new ArgumentException("asyncResult");
+            }
+
+            // wait for the request to end
+            ar.AsyncWaitHandle.WaitOne();
+
+            // propagate the exception to the one who calls EndRequest.
+            if (ar.InternalState.Exception != null)
+            {
+                throw ar.InternalState.Exception;
+            }
+
+            return ar.InternalState.Response;
         }
 
         /// <summary>
@@ -559,6 +611,63 @@ namespace FluentHttp
             return this.saveStream;
         }
 
+        /// <summary>
+        /// Occurs when http response headers are received.
+        /// </summary>
+        /// <param name="onResponseHeadersReceived">
+        /// On response headers received.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        public IFluentHttpRequest OnResponseHeadersReceived(EventHandler<ResponseHeadersReceivedEventArgs> onResponseHeadersReceived)
+        {
+            if (onResponseHeadersReceived != null)
+            {
+                this.ResponseHeadersReceived += onResponseHeadersReceived;
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Occurrs when http response is completed.
+        /// </summary>
+        /// <param name="onCompleted">
+        /// The on completed.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        public IFluentHttpRequest OnCompleted(EventHandler<CompletedEventArgs> onCompleted)
+        {
+            if (onCompleted != null)
+            {
+                this.Completed += onCompleted;
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Occurs when response buffer was read.
+        /// </summary>
+        /// <param name="onBufferRead">
+        /// The on buffer read.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IFluentHttpRequest"/>.
+        /// </returns>
+        public IFluentHttpRequest OnRead(EventHandler<ResponseReadEventArgs> onBufferRead)
+        {
+            if (onBufferRead != null)
+            {
+                this.Read += onBufferRead;
+            }
+
+            return this;
+        }
+
 #if !(NET35 || NET20)
 
         /// <summary>
@@ -754,6 +863,390 @@ namespace FluentHttp
             {
                 httpWebRequest.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value) { Domain = httpWebRequest.RequestUri.Host });
             }
+        }
+
+        /// <summary>
+        /// Executes asynchronously.
+        /// </summary>
+        /// <param name="internalState">
+        /// The internal state.
+        /// </param>
+        internal void ExecuteAsync(InternalState internalState)
+        {
+            Contract.Requires(internalState != null);
+
+            var httpWebRequest = internalState.HttpWebRequest;
+
+            var requestBody = this.GetBody();
+            var requestStream = requestBody.GetStream();
+
+            if (requestStream == null || requestStream.Length == 0)
+            {
+                // if we don't have a body, then just read asynchronously.
+                ReadResponseAsync(internalState);
+            }
+            else
+            {
+                // we have a request body.
+                if (httpWebRequest.ContentType == null)
+                {
+                    // set appropriate content-type if it is not yet specified.
+                    if (requestBody.IsMultipartFormData())
+                    {
+                        httpWebRequest.ContentType = "multipart/form-data; boundary=" + requestBody.GetMultipartFormDataBoundary();
+                    }
+                    else
+                    {
+                        httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+                    }
+                }
+
+                httpWebRequest.ContentLength = requestStream.Length;
+
+                // write body asynchronously and then start reading asynchronously.
+                WriteBodyAndReadResponseAsync(internalState);
+            }
+        }
+
+        /// <summary>
+        /// Start reading the response asynchronously.
+        /// </summary>
+        /// <param name="internalState">
+        /// The internal state.
+        /// </param>
+        internal void ReadResponseAsync(InternalState internalState)
+        {
+            var httpWebRequest = internalState.HttpWebRequest;
+            httpWebRequest.BeginGetResponse(
+                ar =>
+                {
+                    var internalAsyncState = (InternalState)ar.AsyncState;
+
+                    // EndGetResponse might throw error.
+                    HttpWebResponse httpWebResponse = null;
+                    Exception exception = null;
+
+                    try
+                    {
+                        httpWebResponse = (HttpWebResponse)httpWebRequest.EndGetResponse(ar);
+                    }
+                    catch (WebException ex)
+                    {
+                        exception = ex;
+                        httpWebResponse = (HttpWebResponse)ex.Response;
+
+                        // don't state the internalAsyncState.Exception here,
+                        // coz might be this response could had been successful.
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = ex;
+                    }
+
+                    if (exception != null && !(exception is WebException))
+                    {
+                        // critical error occurred.
+                        internalAsyncState.Exception = exception;
+                        this.asyncResult.Complete();
+                    }
+                    else
+                    {
+                        // we have got the response here so create an instance of FluentHttpResponse.
+                        internalAsyncState.HttpWebResponse = httpWebResponse;
+                        internalAsyncState.Response = new FluentHttpResponse(internalAsyncState.Request, httpWebResponse);
+
+                        if (httpWebResponse == null)
+                        {
+                            // most likely no internet connection.
+                            // some devs might find it usefull to extract more details by looking at webexception.
+                            internalAsyncState.Response.Exception = exception;
+                            internalAsyncState.Response.ResponseStatus = ResponseStatus.Error;
+
+                            if (NotifyComplete(internalAsyncState))
+                            {
+                                this.asyncResult.Complete();
+                            }
+                        }
+                        else
+                        {
+                            // we got the response headers successfully.
+                            if (NotifyHeadersReceived(internalAsyncState))
+                            {
+                                // start reading the response stream asynchronously.
+                                ReadResponseStreamAsync(internalAsyncState);
+                            }
+                        }
+                    }
+                },
+                internalState);
+        }
+
+        /// <summary>
+        /// Read response stream asynchronously.
+        /// </summary>
+        /// <param name="internalAsyncState">
+        /// The internal async state.
+        /// </param>
+        internal void ReadResponseStreamAsync(InternalState internalAsyncState)
+        {
+            var httpWebResponse = internalAsyncState.HttpWebResponse;
+
+            var responseStream = httpWebResponse.GetResponseStream();
+
+            var contentEncoding = httpWebResponse.ContentEncoding;
+
+            // might have to do case insensitive search here.
+            if (contentEncoding.Contains("gzip"))
+            {
+                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+            }
+            else if (contentEncoding.Contains("deflate"))
+            {
+                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+            }
+
+            var destinationStream = this.GetSaveStream();
+
+            var streamCopier = new StreamCopier(responseStream, destinationStream, this.GetBufferSize());
+
+            if (this.Read != null)
+            {
+                streamCopier.OnRead +=
+                    (o, e) =>
+                    {
+                        if (!NotifyRead(internalAsyncState, e))
+                        {
+                            // error occured in notify read,
+                            // so cancel further read.
+                            e.Cancel = true;
+                        }
+                    };
+            }
+
+            streamCopier.OnCompleted +=
+                (o, e) =>
+                {
+                    if (e.Exception != null)
+                    {
+                        internalAsyncState.Exception = e.Exception;
+                    }
+                    else if (e.IsCanceled)
+                    {
+                        // if cancelled
+                        internalAsyncState.Response.ResponseStatus = ResponseStatus.Cancelled;
+                    }
+                    else
+                    {
+                        // copy completed successfully.
+                        internalAsyncState.Response.ResponseStatus = ResponseStatus.Completed;
+                    }
+
+                    // web response read completed.
+                    if (NotifyComplete(internalAsyncState))
+                    {
+                        if (destinationStream != null && this.SeekSaveStreamToBeginning)
+                        {
+                            destinationStream.Seek(0, SeekOrigin.Begin);
+                        }
+
+                        this.asyncResult.Complete();
+                    }
+                };
+
+            streamCopier.BeginCopy(
+                ar =>
+                {
+                    var innerStreamCopierAsyncState = (InternalState)ar.AsyncState;
+
+                    try
+                    {
+                        streamCopier.EndCopy(ar);
+                    }
+                    catch (Exception ex)
+                    {
+                        // critical error occurred.
+                        innerStreamCopierAsyncState.Exception = ex;
+                        this.asyncResult.Complete();
+                    }
+                },
+                internalAsyncState);
+        }
+
+        /// <summary>
+        /// Write request body asynchronously and then start reading the response asynchronously.
+        /// </summary>
+        /// <param name="internalState">
+        /// The internal state.
+        /// </param>
+        internal void WriteBodyAndReadResponseAsync(InternalState internalState)
+        {
+            var httpWebRequest = internalState.HttpWebRequest;
+
+            httpWebRequest.BeginGetRequestStream(
+                ar =>
+                {
+                    var destinationStream = httpWebRequest.EndGetRequestStream(ar);
+
+                    var streamCopier = new StreamCopier(this.GetBody().GetStream(), destinationStream, this.GetBufferSize());
+
+                    // we need to notify the stream copier on body read and write.
+                    streamCopier.OnCompleted +=
+                        (o, e) =>
+                        {
+                            if (e.Exception != null)
+                            {
+                                internalState.Exception = e.Exception;
+                                this.asyncResult.Complete();
+                            }
+                            else if (e.IsCancelled)
+                            {
+                                this.asyncResult.Complete();
+                            }
+                            else
+                            {
+                                // copy completed
+
+                                // signal request body write complete.
+
+                                // start receiving response.
+                                ReadResponseAsync(internalState);
+                            }
+                        };
+
+                    streamCopier.BeginCopy(
+                        arStreamCopier =>
+                        {
+                            try
+                            {
+                                streamCopier.EndCopy(arStreamCopier);
+                            }
+                            catch (Exception ex)
+                            {
+                                internalState.Exception = ex;
+                                this.asyncResult.Complete();
+                            }
+                        },
+                        null);
+                },
+                null);
+        }
+
+        /// <summary>
+        /// Notify that the headers have been received.
+        /// </summary>
+        /// <param name="internalAsyncState">
+        /// The internal async state.
+        /// </param>
+        /// <returns>
+        /// Returns true if Notified headers successfully.
+        /// </returns>
+        internal bool NotifyHeadersReceived(InternalState internalAsyncState)
+        {
+            var responseHeadersReceived = this.ResponseHeadersReceived;
+
+            if (responseHeadersReceived == null)
+            {
+                return true;
+            }
+
+            try
+            {
+                var responseHeaderReceivedEventArgs = new ResponseHeadersReceivedEventArgs(internalAsyncState.Response, internalAsyncState.State);
+                responseHeadersReceived(this, responseHeaderReceivedEventArgs);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // we need to catch the user exception so that we can end the request.
+                internalAsyncState.Exception = ex;
+
+                // critical exception occurred so end request.
+                // note: i think it might be better to have an exception called
+                // OnHeaderReceivedException so that we can set the actual expcetion as
+                // inner exception. So devs can know that this exception occurred somewhere
+                // in OnResponseHeadersReceived event handler.
+                this.asyncResult.Complete();
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Notifies when a buffer is read.
+        /// </summary>
+        /// <param name="internalAsyncState">
+        /// The internal async state.
+        /// </param>
+        /// <param name="e">
+        /// The stream copy event argument.
+        /// </param>
+        /// <returns>
+        /// Returns true if successful otherwise false.
+        /// </returns>
+        internal bool NotifyRead(InternalState internalAsyncState, StreamCopyEventArgs e)
+        {
+            var onRead = this.Read;
+
+            try
+            {
+                var responseReadEventArgs = new ResponseReadEventArgs(internalAsyncState.Response, e.Buffer, e.ActualBufferSize, e.BytesRead) { UserState = internalAsyncState.State };
+                onRead(this, responseReadEventArgs);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // we need to catch the user exception so that we can end the request.
+                internalAsyncState.Exception = ex;
+
+                // critical exception occurred so end request.
+                // note: i think it might be better to have an exception called
+                // OnReadException so that we can set the actual expcetion as
+                // inner exception. So devs can know that this exception occurred somewhere
+                // in OnRead event handler.
+                this.asyncResult.Complete();
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Notify that the request has ended.
+        /// </summary>
+        /// <param name="internalAsyncState">
+        /// The internal async state.
+        /// </param>
+        /// <returns>
+        /// Returns true if successful otherwise false.
+        /// </returns>
+        internal bool NotifyComplete(InternalState internalAsyncState)
+        {
+            var completed = this.Completed;
+
+            if (completed == null)
+            {
+                return true;
+            }
+
+            try
+            {
+                var responseHeaderReceivedEventArgs = new CompletedEventArgs(internalAsyncState.Response, internalAsyncState.State);
+                completed(this, responseHeaderReceivedEventArgs);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // we need to catch the user exception so that we can end the request.
+                internalAsyncState.Exception = ex;
+
+                // critical exception occurred so end request.
+                // note: i think it might be better to have an exception called
+                // OnCompletedException so that we can set the actual expcetion as
+                // inner exception. So devs can know that this exception occurred somewhere
+                // in OnCompleted event handler.
+                this.asyncResult.Complete();
+            }
+
+            return false;
         }
 
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",

@@ -10,6 +10,12 @@ namespace FluentHttp
         Justification = "Reviewed. Suppression is OK here."), ContractClassFor(typeof(IFluentHttpRequest))]
     internal abstract class FluentHttpRequestContracts : IFluentHttpRequest
     {
+        public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
+        
+        public event EventHandler<ResponseReadEventArgs> Read;
+
+        public event EventHandler<CompletedEventArgs> Completed;
+
         public string BaseUrl
         {
             get
@@ -222,6 +228,27 @@ namespace FluentHttp
         public Stream GetSaveStream()
         {
             return default(Stream);
+        }
+
+        public IFluentHttpRequest OnResponseHeadersReceived(EventHandler<ResponseHeadersReceivedEventArgs> onResponseHeadersReceived)
+        {
+            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+
+            return default(IFluentHttpRequest);
+        }
+
+        public IFluentHttpRequest OnCompleted(EventHandler<CompletedEventArgs> onCompleted)
+        {
+            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+
+            return default(IFluentHttpRequest);
+        }
+
+        public IFluentHttpRequest OnRead(EventHandler<ResponseReadEventArgs> onBufferRead)
+        {
+            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+
+            return default(IFluentHttpRequest);
         }
 
 #if !(NET35 || NET20)

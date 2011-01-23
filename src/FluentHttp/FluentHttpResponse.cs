@@ -7,9 +7,9 @@ namespace FluentHttp
     /// </summary>
     public class FluentHttpResponse : IFluentHttpResponse
     {
-        private readonly FluentHttpRequestOld _fluentHttpRequest;
+        private readonly IFluentHttpRequest _fluentHttpRequest;
 
-        public FluentHttpResponse(FluentHttpRequestOld fluentHttpRequest, HttpWebResponse httpWebResponse)
+        public FluentHttpResponse(IFluentHttpRequest fluentHttpRequest, HttpWebResponse httpWebResponse)
         {
             ResponseStatus = ResponseStatus.Non;
             _fluentHttpRequest = fluentHttpRequest;
@@ -41,6 +41,12 @@ namespace FluentHttp
             }
         }
 
+        /// <summary>
+        /// Gets or sets the exception occured when making a web request.
+        /// </summary>
+        /// <remarks>
+        /// This exception is not meant to be thrown.
+        /// </remarks>
         public Exception Exception { get; set; }
 
         public ResponseStatus ResponseStatus { get; set; }
