@@ -39,7 +39,7 @@ using System.Text;
 using System.Web.Configuration;
 #endif
 
-namespace FluentHttp.External
+namespace FluentHttp
 {
     using System.Globalization;
 

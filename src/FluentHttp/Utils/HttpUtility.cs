@@ -37,7 +37,7 @@ using System.IO;
 using System.Security.Permissions;
 using System.Text;
 
-namespace FluentHttp.External
+namespace FluentHttp
 {
     using System;
 

@@ -2,7 +2,6 @@ namespace FluentHttp
 {
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-    using External;
     using System.IO;
 
     /// <summary>
