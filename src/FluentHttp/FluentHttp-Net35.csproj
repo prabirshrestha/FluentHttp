@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authenticator\HttpBasicAuthenticatior.cs" />
     <Compile Include="Authenticator\IFluentAuthenticator.cs" />
     <Compile Include="Authenticator\OAuth2Authenticators.cs" />
     <Compile Include="Body\FluentHttpRequestBody.cs" />
