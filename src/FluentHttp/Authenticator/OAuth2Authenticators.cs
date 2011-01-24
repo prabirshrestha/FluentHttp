@@ -1,9 +1,7 @@
 namespace FluentHttp
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
-    using System.Linq;
 
     /// <summary>
     /// Base class for OAuth2 Authenticators.
@@ -70,6 +68,7 @@ namespace FluentHttp
         public OAuth2AuthorizationRequestHeaderAuthenticator(string oauthToken)
             : base(oauthToken)
         {
+            Contract.Requires(!string.IsNullOrEmpty(oauthToken));
         }
 
         #region Overrides of OAuth2Authenticator
@@ -84,13 +83,8 @@ namespace FluentHttp
         public override void Authenticate(IFluentHttpRequest fluentHttpRequest)
         {
             Contract.Requires(fluentHttpRequest != null);
-            Contract.Requires(
-                !fluentHttpRequest.GetHeaders().Any(
-                    header => header.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)));
 
-            fluentHttpRequest.Headers(headers =>
-                                      headers
-                                          .Add("Authorization", "OAuth " + OAuthToken));
+            fluentHttpRequest.Headers(headers => headers.Add("Authorization", "OAuth " + OAuthToken));
         }
 
         #endregion

@@ -1,6 +1,7 @@
 namespace FluentHttp
 {
     using System;
+    using System.Diagnostics.Contracts;
     using System.Net;
     using System.Text;
 
@@ -56,11 +57,14 @@ namespace FluentHttp
 
         public string GetString(Encoding encoding, int index, int count)
         {
+            Contract.Requires(encoding != null);
+
             return encoding.GetString(Buffer, index, count);
         }
 
         public string GetString(Encoding encoding)
         {
+            Contract.Requires(encoding != null);
             return GetString(encoding, 0, BufferSize);
         }
 

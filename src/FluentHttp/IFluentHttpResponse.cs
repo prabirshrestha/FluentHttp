@@ -9,7 +9,7 @@ namespace FluentHttp
     public interface IFluentHttpResponse
     {
         /// <summary>
-        /// Gets the <see cref="FluentHttpRequestOld"/>.
+        /// Gets the <see cref="IFluentHttpRequest"/>.
         /// </summary>
         IFluentHttpRequest Request { get; }
 

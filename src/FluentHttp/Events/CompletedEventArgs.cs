@@ -1,8 +1,9 @@
 namespace FluentHttp
 {
     using System;
-    using System.Net;
+    using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
+    using System.Net;
 
     /// <summary>
     /// Event Args for CompletedEventArgs
@@ -66,6 +67,13 @@ namespace FluentHttp
         public HttpStatusCode StatusCode
         {
             get { return this.fluentHttpResponse.StatusCode; }
+        }
+
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+           Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
+        private void InvarianObject()
+        {
+            Contract.Invariant(this.fluentHttpResponse != null);
         }
     }
 }

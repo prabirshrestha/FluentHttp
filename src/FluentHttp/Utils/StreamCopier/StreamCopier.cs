@@ -1,39 +1,46 @@
 namespace FluentHttp
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics.Contracts;
     using System.IO;
 
     public class StreamCopier
     {
         private StreamCopierAsyncResult _asyncResult;
 
-        private readonly Stream _source;
-        private readonly Stream _destination;
-        private readonly int _bufferSize;
+        private readonly Stream source;
+        private readonly Stream destination;
+        private readonly int bufferSize;
 
         public StreamCopier(Stream source, Stream destination, int bufferSize)
         {
+            Contract.Requires(bufferSize >= 1);
+
             // TODO: asset buffer size and source stream.
             // note: allow destination to be null, incase the user doesn't want to write
             // and just read.
-            _source = source;
-            _destination = destination;
-            _bufferSize = bufferSize;
+            this.source = source;
+            this.destination = destination;
+            this.bufferSize = bufferSize;
         }
 
         public int BufferSize
         {
-            get { return _bufferSize; }
+            get
+            {
+                return bufferSize;
+            }
         }
 
         public Stream Destination
         {
-            get { return _destination; }
+            get { return destination; }
         }
 
         public Stream Source
         {
-            get { return _source; }
+            get { return source; }
         }
 
         public IAsyncResult BeginCopy(AsyncCallback callback, object state)
@@ -179,5 +186,12 @@ namespace FluentHttp
         /// On read.
         /// </summary>
         public event EventHandler<StreamCopyEventArgs> OnRead;
+
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+           Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
+        private void InvarianObject()
+        {
+            Contract.Invariant(this.bufferSize >= 1);
+        }
     }
 }

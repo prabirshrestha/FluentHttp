@@ -55,7 +55,11 @@ namespace FluentHttp
         /// <filterpriority>2</filterpriority>
         public WaitHandle AsyncWaitHandle
         {
-            get { return this.waitHandle; }
+            get
+            {
+                Contract.Ensures(Contract.Result<WaitHandle>() != null);
+                return this.waitHandle;
+            }
         }
 
         /// <summary>
@@ -111,6 +115,7 @@ namespace FluentHttp
         private void InvarianObject()
         {
             Contract.Invariant(this.internalState != null);
+            Contract.Invariant(this.waitHandle != null);
         }
     }
 }

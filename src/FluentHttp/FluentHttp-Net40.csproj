@@ -73,10 +73,6 @@
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Events\CompletedEventArgs.cs" />
     <Compile Include="Events\FluentHttpRequestEventArgs.cs" />
-    <Compile Include="Events\OnCompleted.cs" />
-    <Compile Include="Events\OnExecuting.cs" />
-    <Compile Include="Events\OnResponseHeadersReceived.cs" />
-    <Compile Include="Events\OnResponseRead.cs" />
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="Events\ResponseReadEventArgs.cs" />
     <Compile Include="FluentHttpAsyncResult.cs" />
@@ -95,7 +91,6 @@
     <Compile Include="Utils\HttpEncoder.cs" />
     <Compile Include="Utils\HttpUtility.cs" />
     <Compile Include="Utils\MultiReadStream.cs" />
-    <Compile Include="Utils\StreamCopier\NotifierStream.cs" />
     <Compile Include="Utils\StreamCopier\StreamCopier.cs" />
     <Compile Include="Utils\StreamCopier\StreamCopierAsyncResult.cs" />
     <Compile Include="Utils\StreamCopier\StreamCopierState.cs" />

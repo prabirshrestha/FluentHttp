@@ -242,6 +242,7 @@ namespace FluentHttp
 
             ExecuteAsync(internalState);
 
+            Contract.Assume(this.asyncResult != null);
             return this.asyncResult;
         }
 
@@ -737,6 +738,8 @@ namespace FluentHttp
         /// </returns>
         internal string BuildRequestUrl()
         {
+            Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()));
+
             var sb = new StringBuilder();
 
             sb.Append(this.BaseUrl);
@@ -916,6 +919,8 @@ namespace FluentHttp
         /// </param>
         internal void ReadResponseAsync(InternalState internalState)
         {
+            Contract.Requires(internalState != null);
+
             var httpWebRequest = internalState.HttpWebRequest;
             httpWebRequest.BeginGetResponse(
                 ar =>
@@ -989,20 +994,26 @@ namespace FluentHttp
         /// </param>
         internal void ReadResponseStreamAsync(InternalState internalAsyncState)
         {
+            Contract.Requires(internalAsyncState != null);
+            Contract.Requires(internalAsyncState.HttpWebResponse != null);
+
             var httpWebResponse = internalAsyncState.HttpWebResponse;
 
             var responseStream = httpWebResponse.GetResponseStream();
 
             var contentEncoding = httpWebResponse.ContentEncoding;
 
-            // might have to do case insensitive search here.
-            if (contentEncoding.Contains("gzip"))
+            if (!string.IsNullOrEmpty(contentEncoding))
             {
-                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-            }
-            else if (contentEncoding.Contains("deflate"))
-            {
-                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                // might have to do case insensitive search here.
+                if (contentEncoding.Contains("gzip"))
+                {
+                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+                }
+                else if (contentEncoding.Contains("deflate"))
+                {
+                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                }
             }
 
             var destinationStream = this.GetSaveStream();
@@ -1080,6 +1091,8 @@ namespace FluentHttp
         /// </param>
         internal void WriteBodyAndReadResponseAsync(InternalState internalState)
         {
+            Contract.Requires(internalState != null);
+
             var httpWebRequest = internalState.HttpWebRequest;
 
             httpWebRequest.BeginGetRequestStream(
@@ -1142,6 +1155,9 @@ namespace FluentHttp
         /// </returns>
         internal bool NotifyHeadersReceived(InternalState internalAsyncState)
         {
+            Contract.Requires(internalAsyncState != null);
+            Contract.Requires(internalAsyncState.Response != null);
+
             var responseHeadersReceived = this.ResponseHeadersReceived;
 
             if (responseHeadersReceived == null)
@@ -1185,6 +1201,10 @@ namespace FluentHttp
         /// </returns>
         internal bool NotifyRead(InternalState internalAsyncState, StreamCopyEventArgs e)
         {
+            Contract.Requires(e != null);
+            Contract.Requires(internalAsyncState != null);
+            Contract.Requires(internalAsyncState.Response != null);
+
             var onRead = this.Read;
 
             try
@@ -1220,6 +1240,9 @@ namespace FluentHttp
         /// </returns>
         internal bool NotifyComplete(InternalState internalAsyncState)
         {
+            Contract.Requires(internalAsyncState != null);
+            Contract.Requires(internalAsyncState.Response != null);
+
             var completed = this.Completed;
 
             if (completed == null)

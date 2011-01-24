@@ -10,11 +10,13 @@ namespace FluentHttp
         Justification = "Reviewed. Suppression is OK here."), ContractClassFor(typeof(IFluentHttpRequest))]
     internal abstract class FluentHttpRequestContracts : IFluentHttpRequest
     {
+#pragma warning disable 0067
         public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
         
         public event EventHandler<ResponseReadEventArgs> Read;
 
         public event EventHandler<CompletedEventArgs> Completed;
+#pragma warning restore 0067
 
         public string BaseUrl
         {
