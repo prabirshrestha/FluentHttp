@@ -1,3 +1,4 @@
+
 namespace FluentHttp
 {
     using System.Diagnostics.CodeAnalysis;
@@ -23,7 +24,6 @@ namespace FluentHttp
         protected OAuth2Authenticator(string oauthToken)
         {
             Contract.Requires(!string.IsNullOrEmpty(oauthToken));
-            Contract.Ensures(!string.IsNullOrEmpty(this.oauthToken));
 
             this.oauthToken = oauthToken;
         }
@@ -33,7 +33,11 @@ namespace FluentHttp
         /// </summary>
         public string OAuthToken
         {
-            get { return this.oauthToken; }
+            get
+            {
+                Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()));
+                return this.oauthToken;
+            }
         }
 
         #region Implementation of IFluentAuthenticator
@@ -47,6 +51,14 @@ namespace FluentHttp
         public abstract void Authenticate(IFluentHttpRequest fluentHttpRequest);
 
         #endregion
+
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
+            Justification = "Reviewed. Suppression is OK here.")]
+        [ContractInvariantMethod]
+        private void InvariantObject()
+        {
+            Contract.Invariant(!string.IsNullOrEmpty(this.oauthToken));
+        }
     }
 
     /// <summary>
@@ -82,11 +94,38 @@ namespace FluentHttp
         [ContractVerification(true)]
         public override void Authenticate(IFluentHttpRequest fluentHttpRequest)
         {
-            Contract.Requires(fluentHttpRequest != null);
-
             fluentHttpRequest.Headers(headers => headers.Add("Authorization", "OAuth " + OAuthToken));
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Authenticate the fluent http request using OAuth2 uri querystring parameter.
+    /// </summary>
+    public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OAuth2UriQueryParameterAuthenticator"/> class.
+        /// </summary>
+        /// <param name="oauthToken">
+        /// The oauth token.
+        /// </param>
+        public OAuth2UriQueryParameterAuthenticator(string oauthToken)
+            : base(oauthToken)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(oauthToken));
+        }
+
+        /// <summary>
+        /// Authenticate the fluent http request using OAuth2 uri querystring parameter.
+        /// </summary>
+        /// <param name="fluentHttpRequest">
+        /// The fluent http request.
+        /// </param>
+        public override void Authenticate(IFluentHttpRequest fluentHttpRequest)
+        {
+            fluentHttpRequest.QueryStrings(qs => qs.Add("oauth_token", this.OAuthToken));
+        }
     }
 }
