@@ -81,14 +81,14 @@ end
 desc "Clean solution outputs"
 msbuild :clean_msbuild do |msb|
 	msb.properties :configuration => CONFIGURATION
-	msb.solution = SRC_PATH + "FluentHttp.sln"
+	msb.solution = SRC_PATH + "FluentHttp-Net40.sln"
 	msb.targets	:Clean
 end
 
 desc "Build solution (default)"
 msbuild :build_release => [:prepare] do |msb|
 	msb.properties :configuration => CONFIGURATION
-	msb.solution = SRC_PATH + "FluentHttp.sln"
+	msb.solution = SRC_PATH + "FluentHttp-Net40.sln"
 	msb.targets	:Build
 end
 
