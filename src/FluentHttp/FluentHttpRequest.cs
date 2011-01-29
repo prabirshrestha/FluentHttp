@@ -123,7 +123,7 @@ namespace FluentHttp
         public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
 
         /// <summary>
-        /// Occurs when the reponse stream buffer was read.
+        /// Occurs when the response stream buffer was read.
         /// </summary>
         public event EventHandler<ResponseReadEventArgs> Read;
 
