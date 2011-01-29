@@ -26,7 +26,14 @@ namespace FluentHttp
         /// <filterpriority>2</filterpriority>
         public bool IsCompleted
         {
-            get { return _waitHandle.WaitOne(0, false); }
+            get
+            {
+#if SILVERLIGHT
+                return _waitHandle.WaitOne(0);
+#else
+                return _waitHandle.WaitOne(0, false);
+#endif
+            }
         }
 
         /// <summary>

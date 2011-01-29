@@ -140,6 +140,7 @@ namespace FluentHttp
             return default(FluentCookies);
         }
 
+#if !SILVERLIGHT
         public IFluentHttpRequest Proxy(IWebProxy proxy)
         {
             Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
@@ -151,6 +152,7 @@ namespace FluentHttp
         {
             return default(IWebProxy);
         }
+#endif
 
         public IFluentHttpRequest Credentials(ICredentials credentials)
         {
@@ -163,6 +165,8 @@ namespace FluentHttp
         {
             return default(ICredentials);
         }
+
+#if !SILVERLIGHT
 
         public IFluentHttpRequest Timeout(int timeout)
         {
@@ -178,6 +182,7 @@ namespace FluentHttp
 
             return default(int);
         }
+#endif
 
         public IFluentHttpRequest BufferSize(int bufferSize)
         {
@@ -253,7 +258,7 @@ namespace FluentHttp
             return default(IFluentHttpRequest);
         }
 
-#if !(NET35 || NET20)
+#if !(SILVERLIGHT || NET35 || NET20)
 
         public System.Threading.Tasks.Task<IFluentHttpResponse> ToTask(object state, System.Threading.Tasks.TaskCreationOptions taskCreationOptions)
         {

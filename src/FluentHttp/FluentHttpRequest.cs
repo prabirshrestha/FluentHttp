@@ -5,7 +5,9 @@ namespace FluentHttp
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
     using System.IO;
+#if !SILVERLIGHT
     using System.IO.Compression;
+#endif
     using System.Net;
     using System.Text;
 
@@ -54,6 +56,8 @@ namespace FluentHttp
         /// </summary>
         private int bufferSize;
 
+#if !SILVERLIGHT
+
         /// <summary>
         /// The timeout.
         /// </summary>
@@ -63,6 +67,8 @@ namespace FluentHttp
         /// The proxy.
         /// </summary>
         private IWebProxy proxy;
+
+#endif
 
         /// <summary>
         /// The credentials.
@@ -400,7 +406,7 @@ namespace FluentHttp
         {
             return this.cookies;
         }
-
+#if !SILVERLIGHT
         /// <summary>
         /// Sets the proxy.
         /// </summary>
@@ -426,6 +432,7 @@ namespace FluentHttp
         {
             return this.proxy;
         }
+#endif
 
         /// <summary>
         /// Sets the credentials.
@@ -453,6 +460,8 @@ namespace FluentHttp
             return this.credentials;
         }
 
+#if !SILVERLIGHT
+
         /// <summary>
         /// Sets the timeout.
         /// </summary>
@@ -478,6 +487,7 @@ namespace FluentHttp
         {
             return this.timeout;
         }
+#endif
 
         /// <summary>
         /// Sets the buffer size.
@@ -669,7 +679,7 @@ namespace FluentHttp
             return this;
         }
 
-#if !(NET35 || NET20)
+#if !(SILVERLIGHT || NET35 || NET20)
 
         /// <summary>
         /// Converts the <see cref="IFluentHttpRequest"/> to Task.
@@ -771,15 +781,18 @@ namespace FluentHttp
             Contract.Requires(httpWebRequest != null);
 
             httpWebRequest.Method = this.GetMethod();
-            httpWebRequest.Timeout = this.GetTimeout();
             httpWebRequest.Credentials = this.GetCredentials();
-            httpWebRequest.Proxy = this.GetProxy();
 
             SetHttpWebRequestHeaders(httpWebRequest);
             SetHttpWebRequestCookies(httpWebRequest);
 
+#if !SILVERLIGHT
+            httpWebRequest.Timeout = this.GetTimeout();
+            httpWebRequest.Proxy = this.GetProxy();
+
             // decompression methods set by accept-encoding header.
             httpWebRequest.AutomaticDecompression = DecompressionMethods.None;
+#endif
         }
 
         /// <summary>
@@ -802,7 +815,11 @@ namespace FluentHttp
             {
                 if (FluentHttpHeaders.IsSpecialHeader(header.Name) == -1)
                 {
+#if SILVERLIGHT
+                    httpWebRequest.Headers[header.Name] = header.Value;
+#else
                     httpWebRequest.Headers.Add(header.Name, header.Value);
+#endif
                 }
                 else
                 {
@@ -811,10 +828,12 @@ namespace FluentHttp
                     {
                         httpWebRequest.Accept = header.Value;
                     }
+#if !SILVERLIGHT
                     else if (header.Name.Equals("connection", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.Connection = header.Value;
                     }
+#endif
                     else if (header.Name.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.ContentLength = long.Parse(header.Value);
@@ -823,6 +842,7 @@ namespace FluentHttp
                     {
                         httpWebRequest.ContentType = header.Value;
                     }
+#if !SILVERLIGHT
                     else if (header.Name.Equals("expect", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.Expect = header.Value;
@@ -842,6 +862,7 @@ namespace FluentHttp
                     {
                         httpWebRequest.TransferEncoding = header.Value;
                     }
+#endif
                     else if (header.Name.Equals("user-agent", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.UserAgent = header.Value;
@@ -864,7 +885,11 @@ namespace FluentHttp
 
             foreach (var cookie in this.GetCookies())
             {
+#if SILVERLIGHT
+                httpWebRequest.CookieContainer.Add(httpWebRequest.RequestUri, new Cookie(cookie.Name, cookie.Value));
+#else
                 httpWebRequest.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value) { Domain = httpWebRequest.RequestUri.Host });
+#endif
             }
         }
 
@@ -1001,6 +1026,12 @@ namespace FluentHttp
 
             var responseStream = httpWebResponse.GetResponseStream();
 
+#if !SILVERLIGHT
+            
+            // TODO: need to get DotNetZip for SL4 (http://dotnetzip.codeplex.com/)
+            // hopefully gzip/deflate will be supported in future version 
+            // https://connect.microsoft.com/VisualStudio/feedback/details/575037/provide-support-for-gzip-deflate-compression-when-using-silverlight-client-network-stack
+
             var contentEncoding = httpWebResponse.ContentEncoding;
 
             if (!string.IsNullOrEmpty(contentEncoding))
@@ -1015,6 +1046,7 @@ namespace FluentHttp
                     responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
                 }
             }
+#endif
 
             var destinationStream = this.GetSaveStream();
 
@@ -1279,7 +1311,9 @@ namespace FluentHttp
             Contract.Invariant(!string.IsNullOrEmpty(this.baseUrl));
             Contract.Invariant(!string.IsNullOrEmpty(this.method));
             Contract.Invariant(this.bufferSize >= 1);
+#if !SILVERLIGHT
             Contract.Invariant(this.timeout >= 0);
+#endif
 
             Contract.Invariant(this.headers != null);
             Contract.Invariant(this.queryStrings != null);

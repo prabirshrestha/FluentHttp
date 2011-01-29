@@ -11,22 +11,46 @@ namespace FluentHttp
     {
         public static string UrlDecode(string input)
         {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.UrlDecode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.UrlDecode(input);
+#else
             return HttpUtility.UrlDecode(input);
+#endif
         }
 
         public static string UrlEncode(string input)
         {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.UrlEncode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.UrlEncode(input);
+#else
             return HttpUtility.UrlEncode(input);
+#endif
         }
 
         public static string HtmlDecode(string input)
         {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.HtmlDecode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.HtmlDecode(input);
+#else
             return HttpUtility.HtmlDecode(input);
+#endif
         }
 
         public static string HtmlEncode(string input)
         {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.HtmlEncode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.HtmlEncode(input);
+#else
             return HttpUtility.HtmlEncode(input);
+#endif
         }
 
         /// <summary>

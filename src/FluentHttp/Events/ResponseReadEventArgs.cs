@@ -53,10 +53,13 @@ namespace FluentHttp
             get { return _fluentHttpResponse.ContentType; }
         }
 
+#if !SILVERLIGHT
+
         public string ContentEncoding
         {
             get { return _fluentHttpResponse.ContentEncoding; }
         }
+#endif
 
         public HttpStatusCode StatusCode
         {

@@ -68,9 +68,15 @@ namespace FluentHttp
             return GetString(encoding, 0, BufferSize);
         }
 
+
+
         public string GetString(int index, int count)
         {
+#if !SILVERLIGHT
             var encoding = Encoding.GetEncoding(CharacterSet);
+#else
+            var encoding = Encoding.UTF8;
+#endif
             return GetString(encoding, index, count);
         }
 
@@ -97,10 +103,14 @@ namespace FluentHttp
             get { return this.fluentHttpResponse.ContentType; }
         }
 
+#if !SILVERLIGHT
+
         public string CharacterSet
         {
             get { return this.fluentHttpResponse.CharacterSet; }
         }
+
+#endif
 
         public HttpStatusCode StatusCode
         {

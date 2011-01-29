@@ -196,6 +196,7 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         FluentCookies GetCookies();
 
+#if !SILVERLIGHT
         /// <summary>
         /// Sets the proxy.
         /// </summary>
@@ -215,6 +216,7 @@ namespace FluentHttp
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         System.Net.IWebProxy GetProxy();
+#endif
 
         /// <summary>
         /// Sets the credentials.
@@ -236,6 +238,7 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         System.Net.ICredentials GetCredentials();
 
+#if !SILVERLIGHT
         /// <summary>
         /// Sets the timeout.
         /// </summary>
@@ -255,6 +258,7 @@ namespace FluentHttp
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         int GetTimeout();
+#endif
 
         /// <summary>
         /// Sets the buffer size.
@@ -392,7 +396,7 @@ namespace FluentHttp
 
         #endregion
 
-#if !(NET35 || NET20)
+#if !(SILVERLIGHT || NET35 || NET20)
 
         /// <summary>
         /// Converts the <see cref="IFluentHttpRequest"/> to Task.

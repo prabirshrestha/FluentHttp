@@ -56,7 +56,19 @@ namespace FluentHttp
             Contract.Requires(!string.IsNullOrEmpty(headerName));
             Contract.Ensures(Contract.Result<int>() >= -1 && Contract.Result<int>() < SpecialHeaders.Count);
 
-            return SpecialHeaders.FindIndex(h => h.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+            int i = 0;
+            foreach (var h in SpecialHeaders)
+            {
+                if (h.Equals(headerName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+
+                ++i;
+            }
+
+            // not found
+            return -1;
         }
 
         /// <summary>
@@ -230,8 +242,20 @@ namespace FluentHttp
         {
             Contract.Requires(!string.IsNullOrEmpty(headerName));
             Contract.Ensures(Contract.Result<int>() >= -1 && Contract.Result<int>() < this.headers.Count);
+            
+            int i = 0;
+            foreach (var h in this.headers)
+            {
+                if (h.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
 
-            return this.headers.FindIndex(h => h.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+                ++i;
+            }
+
+            // not found
+            return -1;
         }
 
         /// <summary>
