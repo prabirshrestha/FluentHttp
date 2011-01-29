@@ -808,7 +808,9 @@ namespace FluentHttp
             // set default content-length to 0 if it is not GET.
             if (!this.GetMethod().Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
+#if !WINDOWS_PHONE
                 httpWebRequest.ContentLength = 0;
+#endif
             }
 
             foreach (var header in this.GetHeaders())
@@ -834,10 +836,12 @@ namespace FluentHttp
                         httpWebRequest.Connection = header.Value;
                     }
 #endif
+#if !WINDOWS_PHONE
                     else if (header.Name.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.ContentLength = long.Parse(header.Value);
                     }
+#endif
                     else if (header.Name.Equals("content-type", StringComparison.OrdinalIgnoreCase))
                     {
                         httpWebRequest.ContentType = header.Value;
@@ -928,8 +932,9 @@ namespace FluentHttp
                         httpWebRequest.ContentType = "application/x-www-form-urlencoded";
                     }
                 }
-
+#if !WINDOWS_PHONE
                 httpWebRequest.ContentLength = requestStream.Length;
+#endif
 
                 // write body asynchronously and then start reading asynchronously.
                 WriteBodyAndReadResponseAsync(internalState);
