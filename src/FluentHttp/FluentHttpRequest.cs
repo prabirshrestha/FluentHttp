@@ -11,6 +11,7 @@ namespace FluentHttp
     using System.Net;
     using System.Text;
 
+
     /// <summary>
     /// Represents a Fluent Http Request.
     /// </summary>
@@ -432,7 +433,6 @@ namespace FluentHttp
         {
             return this.proxy;
         }
-#endif
 
         /// <summary>
         /// Sets the credentials.
@@ -459,8 +459,6 @@ namespace FluentHttp
         {
             return this.credentials;
         }
-
-#if !SILVERLIGHT
 
         /// <summary>
         /// Sets the timeout.
@@ -781,14 +779,14 @@ namespace FluentHttp
             Contract.Requires(httpWebRequest != null);
 
             httpWebRequest.Method = this.GetMethod();
-            httpWebRequest.Credentials = this.GetCredentials();
 
             SetHttpWebRequestHeaders(httpWebRequest);
-            SetHttpWebRequestCookies(httpWebRequest);
 
 #if !SILVERLIGHT
+            SetHttpWebRequestCookies(httpWebRequest);
             httpWebRequest.Timeout = this.GetTimeout();
             httpWebRequest.Proxy = this.GetProxy();
+            httpWebRequest.Credentials = this.GetCredentials();
 
             // decompression methods set by accept-encoding header.
             httpWebRequest.AutomaticDecompression = DecompressionMethods.None;
@@ -875,6 +873,8 @@ namespace FluentHttp
             }
         }
 
+#if !SILVERLIGHT
+
         /// <summary>
         /// Copy fluent http request cookies to <see cref="httpWebRequest"/>.
         /// </summary>
@@ -889,13 +889,12 @@ namespace FluentHttp
 
             foreach (var cookie in this.GetCookies())
             {
-#if SILVERLIGHT
-                httpWebRequest.CookieContainer.Add(httpWebRequest.RequestUri, new Cookie(cookie.Name, cookie.Value));
-#else
                 httpWebRequest.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value) { Domain = httpWebRequest.RequestUri.Host });
-#endif
+
             }
         }
+
+#endif
 
         /// <summary>
         /// Executes asynchronously.
@@ -935,7 +934,6 @@ namespace FluentHttp
 #if !WINDOWS_PHONE
                 httpWebRequest.ContentLength = requestStream.Length;
 #endif
-
                 // write body asynchronously and then start reading asynchronously.
                 WriteBodyAndReadResponseAsync(internalState);
             }
@@ -978,7 +976,7 @@ namespace FluentHttp
                         exception = ex;
                     }
 
-                    if (exception != null && !(exception is WebException))
+                    if (exception != null && !(exception is WebException || exception is System.Security.SecurityException))
                     {
                         // critical error occurred.
                         internalAsyncState.Exception = exception;
@@ -992,8 +990,8 @@ namespace FluentHttp
 
                         if (httpWebResponse == null)
                         {
-                            // most likely no internet connection.
-                            // some devs might find it usefull to extract more details by looking at webexception.
+                            // most likely no internet connection or silverlight cross domain policy exception.
+                            // some devs might find it useful to extract more details by looking at exception.
                             internalAsyncState.Response.Exception = exception;
                             internalAsyncState.Response.ResponseStatus = ResponseStatus.Error;
 
@@ -1051,6 +1049,8 @@ namespace FluentHttp
                     responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
                 }
             }
+#else
+
 #endif
 
             var destinationStream = this.GetSaveStream();

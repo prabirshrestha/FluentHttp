@@ -26,11 +26,6 @@ namespace FluentHttp
         // copied from http web requests.
 
         /// <summary>
-        /// Gets the http headers.
-        /// </summary>
-        WebHeaderCollection Headers { get; }
-
-        /// <summary>
         /// Gets the content length.
         /// </summary>
         long ContentLength { get; }
@@ -39,11 +34,6 @@ namespace FluentHttp
         /// Gets the content type.
         /// </summary>
         string ContentType { get; }
-
-        /// <summary>
-        /// Gets the cookies.
-        /// </summary>
-        CookieCollection Cookies { get; }
 
         /// <summary>
         /// Gets the http method.
@@ -96,6 +86,16 @@ namespace FluentHttp
         /// Gets the server.
         /// </summary>
         string Server { get; }
+
+        /// <summary>
+        /// Gets the http headers.
+        /// </summary>
+        WebHeaderCollection Headers { get; }
+
+        /// <summary>
+        /// Gets the cookies.
+        /// </summary>
+        CookieCollection Cookies { get; }
 
 #endif
     }

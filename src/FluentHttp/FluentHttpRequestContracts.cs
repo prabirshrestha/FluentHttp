@@ -152,7 +152,6 @@ namespace FluentHttp
         {
             return default(IWebProxy);
         }
-#endif
 
         public IFluentHttpRequest Credentials(ICredentials credentials)
         {
@@ -165,8 +164,6 @@ namespace FluentHttp
         {
             return default(ICredentials);
         }
-
-#if !SILVERLIGHT
 
         public IFluentHttpRequest Timeout(int timeout)
         {

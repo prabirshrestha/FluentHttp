@@ -216,7 +216,6 @@ namespace FluentHttp
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         System.Net.IWebProxy GetProxy();
-#endif
 
         /// <summary>
         /// Sets the credentials.
@@ -238,7 +237,6 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         System.Net.ICredentials GetCredentials();
 
-#if !SILVERLIGHT
         /// <summary>
         /// Sets the timeout.
         /// </summary>

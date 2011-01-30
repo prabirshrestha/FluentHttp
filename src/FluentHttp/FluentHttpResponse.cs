@@ -18,8 +18,6 @@ namespace FluentHttp
             {
                 ContentLength = httpWebResponse.ContentLength;
                 ContentType = httpWebResponse.ContentType;
-                Headers = httpWebResponse.Headers;
-                Cookies = httpWebResponse.Cookies;
                 Method = httpWebResponse.Method;
                 ResponseUri = httpWebResponse.ResponseUri;
                 StatusCode = httpWebResponse.StatusCode;
@@ -32,6 +30,8 @@ namespace FluentHttp
                 LastModified = httpWebResponse.LastModified;
                 ProtocolVersion = httpWebResponse.ProtocolVersion;
                 Server = httpWebResponse.Server;
+                Headers = httpWebResponse.Headers;
+                Cookies = httpWebResponse.Cookies;
 #endif
             }
         }
@@ -55,11 +55,9 @@ namespace FluentHttp
         public ResponseStatus ResponseStatus { get; set; }
 
         // Copied from http web response.
-        // TODO: might need to make it readonly.
-        public WebHeaderCollection Headers { get; set; }
+        // TODO: make it readonly.
         public long ContentLength { get; set; }
         public string ContentType { get; set; }
-        public CookieCollection Cookies { get; set; }
         public string Method { get; set; }
         public Uri ResponseUri { get; set; }
         public HttpStatusCode StatusCode { get; set; }
@@ -72,6 +70,8 @@ namespace FluentHttp
         public DateTime LastModified { get; set; }
         public Version ProtocolVersion { get; set; }
         public string Server { get; set; }
+        public WebHeaderCollection Headers { get; set; }
+        public CookieCollection Cookies { get; set; }
 #endif
     }
 }

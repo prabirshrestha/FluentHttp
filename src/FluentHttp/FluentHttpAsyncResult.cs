@@ -6,7 +6,7 @@ namespace FluentHttp
     using System.Threading;
 
     /// <summary>
-    /// Represents the intnerla fluent http async result.
+    /// Represents the internal fluent http async result.
     /// </summary>
     internal class FluentHttpAsyncResult : IAsyncResult
     {
@@ -34,6 +34,7 @@ namespace FluentHttp
             this.waitHandle = new ManualResetEvent(false);
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Gets a value indicating whether the asynchronous operation has completed.
         /// </summary>
@@ -45,13 +46,13 @@ namespace FluentHttp
         {
             get
             {
-#if SILVERLIGHT
-                return this.waitHandle.WaitOne(0);
-#else
+
                 return this.waitHandle.WaitOne(0, false);
-#endif
             }
         }
+#else
+        public bool IsCompleted { get; private set; }
+#endif
 
         /// <summary>
         /// Gets a <see cref="T:System.Threading.WaitHandle"/> that is used to wait for an asynchronous operation to complete.
@@ -108,6 +109,10 @@ namespace FluentHttp
         {
             this.waitHandle.Set();
 
+#if SILVERLIGHT
+            this.IsCompleted = true;
+#endif
+            
             if (this.InternalState != null)
             {
                 if (this.internalState.Callback != null)
