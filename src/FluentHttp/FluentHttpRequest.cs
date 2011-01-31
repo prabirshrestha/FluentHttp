@@ -69,12 +69,12 @@ namespace FluentHttp
         /// </summary>
         private IWebProxy proxy;
 
-#endif
-
         /// <summary>
         /// The credentials.
         /// </summary>
         private ICredentials credentials;
+
+#endif
 
         /// <summary>
         /// The authenticator.
