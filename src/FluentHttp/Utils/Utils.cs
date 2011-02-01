@@ -178,6 +178,36 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Merges two dictionaries.
+        /// </summary>
+        /// <param name="first">Default values, only used if second does not contain a value.</param>
+        /// <param name="second">Every value of the merged object is used.</param>
+        /// <returns>The merged dictionary</returns>
+        public static IDictionary<TKey, TValue> Merge<TKey, TValue>(IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second)
+        {
+            Contract.Ensures(Contract.Result<IDictionary<string, object>>() != null);
+
+            first = first ?? new Dictionary<TKey, TValue>();
+            second = second ?? new Dictionary<TKey, TValue>();
+            var merged = new Dictionary<TKey, TValue>();
+
+            foreach (var kvp in second)
+            {
+                merged.Add(kvp.Key, kvp.Value);
+            }
+
+            foreach (var kvp in first)
+            {
+                if (!merged.ContainsKey(kvp.Key))
+                {
+                    merged.Add(kvp.Key, kvp.Value);
+                }
+            }
+
+            return merged;
+        }
+
+        /// <summary>
         /// Converts stream to string.
         /// </summary>
         /// <param name="stream">
