@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace FluentHttp
 {
     using System;
@@ -219,5 +221,21 @@ namespace FluentHttp
                 return input;
             }
         }
+
+        #region Encryption Decryption Helper methods
+
+        internal static byte[] ComputeHmacSha1Hash(byte[] data, byte[] key)
+        {
+            Contract.Requires(data != null);
+            Contract.Requires(key != null);
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
+            using (var crypto = new HMACSHA1(key))
+            {
+                return crypto.ComputeHash(data);
+            }
+        }
+
+        #endregion
     }
 }
