@@ -1,4 +1,4 @@
-namespace FluentHttp
+namespace FluentHttp.Old
 {
     using System;
     using System.Collections.Generic;
@@ -192,6 +192,85 @@ namespace FluentHttp
 
             return sb.ToString();
         }
+
+        internal static IDictionary<string, string> BuildRequestTokenInfo(IFluentHttpRequest request, IDictionary<string, string> parameters)
+        {
+            Contract.Requires(request != null);
+            Contract.Requires(parameters != null);
+
+            var oauthInfo = Utils.Merge(null, parameters);
+
+            if (!oauthInfo.ContainsKey("oauth_nonce") || string.IsNullOrEmpty(oauthInfo["oauth_nonce"]))
+            {
+                oauthInfo["oauth_nonce"] = GenerateNonce();
+            }
+
+            if (!oauthInfo.ContainsKey("oauth_timestamp") || string.IsNullOrEmpty(oauthInfo["oauth_nonce"]))
+            {
+                oauthInfo["oauth_timestamp"] = OAuthTimeStamp();
+            }
+
+            if (!oauthInfo.ContainsKey("oauth_signature_method"))
+            {
+                oauthInfo["oauth_signature_method"] = "HMAC-SHA1";
+            }
+
+            oauthInfo["oauth_version"] = "1.0";
+
+            return oauthInfo;
+        }
+    }
+
+    /// <summary>
+    /// Represents the OAuth authenticator for accessing protected resources.
+    /// </summary>
+    public abstract class OAuthProtectedResourceAuthenticator : OAuthAuthenticator
+    {
+        private readonly string consumerKey;
+        private readonly string consumerSecret;
+        private readonly string token;
+        private readonly string tokenSecret;
+
+        public OAuthProtectedResourceAuthenticator(string consumerKey, string consumerSecret, string token, string tokenSecret)
+        {
+            this.consumerKey = consumerKey;
+            this.consumerSecret = consumerSecret;
+            this.token = token;
+            this.tokenSecret = tokenSecret;
+        }
+
+        public string TokenSecret
+        {
+            get { return tokenSecret; }
+        }
+
+        public string Token
+        {
+            get { return token; }
+        }
+
+        public string ConsumerSecret
+        {
+            get { return consumerSecret; }
+        }
+
+        public string ConsumerKey
+        {
+            get { return consumerKey; }
+        }
+    }
+
+    public class OAuthProtectedResourceAuthorizationHeaderAuthenticator : OAuthProtectedResourceAuthenticator
+    {
+        public OAuthProtectedResourceAuthorizationHeaderAuthenticator(string consumerKey, string consumerSecret, string token, string tokenSecret)
+            : base(consumerKey, consumerSecret, token, tokenSecret)
+        {
+        }
+
+        public override void Authenticate(IFluentHttpRequest fluentHttpRequest)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public abstract class OAuthTemporaryCredentialsAuthenticator : OAuthAuthenticator
@@ -293,4 +372,5 @@ namespace FluentHttp
             fluentHttpRequest.Headers(h => h.Add("Authorization", authorizationValue));
         }
     }
+
 }
