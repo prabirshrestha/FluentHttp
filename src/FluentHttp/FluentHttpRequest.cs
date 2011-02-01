@@ -241,7 +241,7 @@ namespace FluentHttp
 
             AuthenticateIfRequried();
 
-            var httpWebRequest = this.CreateHttpWebRequest(this.BuildRequestUrl());
+            var httpWebRequest = this.CreateHttpWebRequest(BuildRequestUrl(this));
             PrepareHttpWebRequest(httpWebRequest);
 
             var internalState = new InternalState(this, httpWebRequest, callback, state);
@@ -741,20 +741,24 @@ namespace FluentHttp
         /// <summary>
         /// Builds the request url.
         /// </summary>
+        /// <param name="fluentHttpRequest">
+        /// The fluent Http Request.
+        /// </param>
         /// <returns>
         /// The request url.
         /// </returns>
-        internal string BuildRequestUrl()
+        internal static string BuildRequestUrl(IFluentHttpRequest fluentHttpRequest)
         {
+            Contract.Requires(fluentHttpRequest != null);
             Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()));
 
             var sb = new StringBuilder();
 
-            sb.Append(this.BaseUrl);
-            sb.Append(this.GetResourcePath());
+            sb.Append(fluentHttpRequest.BaseUrl);
+            sb.Append(fluentHttpRequest.GetResourcePath());
             sb.Append("?");
 
-            foreach (var qs in this.GetQueryStrings())
+            foreach (var qs in fluentHttpRequest.GetQueryStrings())
             {
                 // these querystrings are already url encoded.
                 sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
@@ -1030,7 +1034,7 @@ namespace FluentHttp
             var responseStream = httpWebResponse.GetResponseStream();
 
 #if !SILVERLIGHT
-            
+
             // TODO: need to get DotNetZip for SL4 (http://dotnetzip.codeplex.com/)
             // hopefully gzip/deflate will be supported in future version 
             // https://connect.microsoft.com/VisualStudio/feedback/details/575037/provide-support-for-gzip-deflate-compression-when-using-silverlight-client-network-stack
