@@ -262,6 +262,21 @@ namespace FluentHttp
         }
     }
 
+    /// <example>
+    /// <code>
+    /// var saveStream = new MemoryStream();
+    /// 
+    /// var fluentRequest = new FluentHttpRequest("http://twitter.com/oauth/request_token")
+    ///                         .Method("POST")
+    ///                         .Proxy(System.Net.WebRequest.DefaultWebProxy)
+    ///                         .AuthenticateUsing(new OAuthTemporaryCredentialsAuthorizationRequestHeaderAuthenticator(consumerKey, consumerSecret))
+    ///                         .SaveTo(saveStream);
+    /// 
+    /// fluentRequest.EndRequest(fluentRequest.BeginRequest(null, null));
+    /// 
+    /// Console.WriteLine(Utils.ToString(saveStream));
+    /// </code>
+    /// </example>
     public class OAuthTemporaryCredentialsAuthorizationRequestHeaderAuthenticator : OAuthTemporaryCredentialsAuthenticator
     {
         public OAuthTemporaryCredentialsAuthorizationRequestHeaderAuthenticator(string consumerKey, string consumerSecret)
