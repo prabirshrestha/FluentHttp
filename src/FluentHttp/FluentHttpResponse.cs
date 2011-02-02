@@ -36,11 +36,14 @@ namespace FluentHttp
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="IFluentHttpRequest"/>.
+        /// </summary>
         public IFluentHttpRequest Request
         {
             get
             {
-                return null;// _fluentHttpRequest;
+                return _fluentHttpRequest;
             }
         }
 

@@ -66,7 +66,7 @@ namespace FluentHttp
         /// </summary>
         public string ConsumerKey
         {
-            get { return consumerKey; }
+            get { return this.consumerKey; }
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace FluentHttp
         /// </summary>
         public string ConsumerSecret
         {
-            get { return consumerSecret; }
+            get { return this.consumerSecret; }
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace FluentHttp
         /// </summary>
         public string Token
         {
-            get { return token; }
+            get { return this.token; }
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace FluentHttp
         /// </summary>
         public string TokenSecret
         {
-            get { return tokenSecret; }
+            get { return this.tokenSecret; }
         }
     }
 
