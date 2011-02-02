@@ -15,7 +15,7 @@ namespace FluentHttp.Tests.FluentHttpRequest.Ctor
         [Fact]
         public void WhenGetBaseUrlShouldNotBeNullOrEmpty()
         {
-            var baseUrl = this.request.BaseUrl;
+            var baseUrl = this.request.GetBaseUrl();
 
             Assert.False(string.IsNullOrEmpty(baseUrl));
         }
@@ -26,7 +26,7 @@ namespace FluentHttp.Tests.FluentHttpRequest.Ctor
             var originalBaseUrl = "https://graph.facebook.com";
             var request = new FluentHttpRequest(originalBaseUrl);
 
-            Assert.Equal(originalBaseUrl, request.BaseUrl);
+            Assert.Equal(originalBaseUrl, request.GetBaseUrl());
         }
 
         [Fact]

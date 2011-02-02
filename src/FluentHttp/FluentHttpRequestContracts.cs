@@ -18,14 +18,21 @@ namespace FluentHttp
         public event EventHandler<CompletedEventArgs> Completed;
 #pragma warning restore 0067
 
-        public string BaseUrl
+        public IFluentHttpRequest BaseUrl(string url)
         {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()));
+            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+            return default(IFluentHttpRequest);
+        }
 
-                return default(string);
-            }
+        /// <summary>
+        /// Gets the base url.
+        /// </summary>
+        /// <returns>
+        /// The base url.
+        /// </returns>
+        public string GetBaseUrl()
+        {
+            return default(string);
         }
 
         public bool SeekSaveStreamToBeginning

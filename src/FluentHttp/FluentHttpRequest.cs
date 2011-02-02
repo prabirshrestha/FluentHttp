@@ -20,7 +20,7 @@ namespace FluentHttp
         /// <summary>
         /// The base url.
         /// </summary>
-        private readonly string baseUrl;
+        private string baseUrl;
 
         /// <summary>
         /// The http headers.
@@ -136,9 +136,15 @@ namespace FluentHttp
         /// <summary>
         /// Gets the base url.
         /// </summary>
-        public string BaseUrl
+        public IFluentHttpRequest BaseUrl(string url)
         {
-            get { return this.baseUrl; }
+            this.baseUrl = url;
+            return this;
+        }
+
+        public string GetBaseUrl()
+        {
+            return this.baseUrl;
         }
 
         /// <summary>
@@ -754,7 +760,14 @@ namespace FluentHttp
 
             var sb = new StringBuilder();
 
-            sb.Append(fluentHttpRequest.BaseUrl);
+            var baseUrl = fluentHttpRequest.GetBaseUrl();
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new ArgumentNullException("baseUrl");
+            }
+
+            sb.Append(fluentHttpRequest.GetBaseUrl());
             sb.Append(fluentHttpRequest.GetResourcePath());
             sb.Append("?");
 

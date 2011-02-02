@@ -27,9 +27,17 @@ namespace FluentHttp
         event EventHandler<CompletedEventArgs> Completed;
 
         /// <summary>
+        /// Sets the base url.
+        /// </summary>
+        IFluentHttpRequest BaseUrl(string url);
+
+        /// <summary>
         /// Gets the base url.
         /// </summary>
-        string BaseUrl { get; }
+        /// <returns>
+        /// The base url.
+        /// </returns>
+        string GetBaseUrl();
 
         /// <summary>
         /// Gets a value indicating whether to seek the save stream to beginning when completed.
