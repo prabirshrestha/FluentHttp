@@ -130,6 +130,14 @@ namespace FluentHttp
             return this.Add(parameters, true);
         }
 
+        [ContractVerification(true)]
+        public FluentQueryStrings Clear()
+        {
+            Contract.Ensures(Contract.Result<FluentQueryStrings>() != null);
+            queryStrings.Clear();
+            return this;
+        }
+
         #region Implementation of IEnumerable
 
         /// <summary>
