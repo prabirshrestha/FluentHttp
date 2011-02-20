@@ -1,113 +1,191 @@
 require File.join(File.dirname(__FILE__), 'libs/albacore/albacore.rb')
 
-def get_version_from_file
-	file = File.new('VERSION','r')
-	return file.gets.chomp
+task :default => [:libs]
+
+PROJECT_NAME      = "Fluent Http"
+PROJECT_NAME_SAFE = "FluentHttp"
+LOG               = false
+ENABLE_HG_CHECK   = false
+#ENV['NIGHTLY']   = 'false'
+
+build_config = nil
+
+task :configure do
+    # do configuration stuffs here
+        
+    root_path    = "#{File.dirname(__FILE__)}/"
+    base_version = 0
+   
+    File.open("#{root_path}VERSION",'r') do |f|
+        base_version = f.gets.chomp
+    end
+    
+    build_config = {
+        :log        => false,
+        :paths      => {
+            :root   => root_path,
+            :src    => "#{root_path}src/",
+            :output => "#{root_path}bin/",
+            :build  => "#{root_path}build/",
+            :dist   => "#{root_path}dist/"
+        },
+        :version    => {
+            :base   => "#{base_version}",
+            :full   => "#{base_version}",
+            :long   => "#{base_version}"
+        },
+        :vcs        => {
+            :name         => '',
+            :rev_id       => '',
+            :short_rev_id => '',
+        },
+        :ci         => {
+            :build_number_param_name => 'BUILD_NUMBER',
+            :is_nightly              => true,
+            :build_number            => 0
+        },
+        :configuration => :Release,
+        :sln        => {
+            :wp7    => '',
+            :sl4    => '',
+            :net40  => '',
+            :net35  => '',
+        }        
+    }
+    
+    build_config[:sln][:wp7]   = "#{build_config[:paths][:src]}FluentHttp-WP7.sln"
+    build_config[:sln][:sl4]   = "#{build_config[:paths][:src]}FluentHttp-SL4.sln"
+    build_config[:sln][:net40] = "#{build_config[:paths][:src]}FluentHttp-Net40.sln"
+    build_config[:sln][:net35] = "#{build_config[:paths][:src]}FluenttHttp-Net35.sln"    
+    
+    #Albacore configure do |config|
+    #    config log_level = :verbose if build_config[:log]
+    #end
+    
+    if (ENABLE_HG_CHECK==true) then
+        begin
+            build_config[:vcs][:rev_id] = `hg id -i`.chomp.chop # remove the +
+            build_config[:vcs][:name] = 'hg'
+            build_config[:vcs][:short_rev_id] = build_config[:vcs][:rev_id]
+        rescue
+        end
+    end
+    
+    if(build_config[:vcs][:rev_id].length==0) then
+        # if mercurial fails try git
+        begin
+            build_config[:vcs][:rev_id]    = `git log -1 --pretty=format:%H`.chomp
+            build_config[:vcs][:name] = 'git'
+            build_config[:vcs][:short_rev_id] = build_config[:vcs][:rev_id][0..7]
+        rescue
+        end
+    end
+   
+    build_config[:ci][:is_nightly]   = ENV['NIGHTLY'].nil? ? true : ENV['NIGHTLY'].match(/(true|1)$/i) != nil
+    build_config[:ci][:build_number] = ENV[build_config[:ci][:build_number_param_name]] || 0
+    
+    build_config[:version][:full] = "#{build_config[:version][:base]}.#{build_config[:ci][:build_number]}"
+   
+    if(build_config[:ci][:is_nightly])
+        build_config[:version][:long] = "#{build_config[:version][:full]}-nightly-#{build_config[:vcs][:short_rev_id]}"
+    else
+        build_config[:version][:long] = "#{build_config[:version][:full]}-#{build_config[:vcs][:short_rev_id]}"        
+    end
+   
+    puts build_config if build_config[:log]
+    puts
+    puts "     Project Name: #{PROJECT_NAME}"
+    puts "Safe Project Name: #{PROJECT_NAME_SAFE}"
+    puts "          Version: #{build_config[:version][:full]} (#{build_config[:version][:long]})"
+    puts "     Base Version: #{build_config[:version][:base]}"
+    print "  CI Build Number: #{build_config[:ci][:build_number]}"
+    print " (not running under CI mode)" if build_config[:ci][:build_number] == 0
+    puts
+    puts "        Root Path: #{build_config[:paths][:root]}"
+    puts
+    puts "              VCS: #{build_config[:vcs][:name]}"
+    print "      Revision ID: #{build_config[:vcs][:rev_id]}"
+    print "  (#{build_config[:vcs][:short_rev_id]})" if build_config[:vcs][:name] == 'git'
+    puts    
+    puts
+    
 end
 
-BASE_VERSION = get_version_from_file
+Rake::Task["configure"].invoke
 
-CONFIGURATION			= :Release
-
-ROOT_DIR				= File.dirname(__FILE__) + "/"
-SRC_PATH				= ROOT_DIR + "src/"
-LIBS_PATH				= ROOT_DIR + "libs/"
-OUTPUT_PATH				= ROOT_DIR + "bin/"
-DIST_PATH				= ROOT_DIR + "dist/"
-TEST_OUTPUT_PATH		= ROOT_DIR + "bin/Tests/"
-XUNIT32_CONSOLE_PATH	= LIBS_PATH + "xunit/xunit.console.clr4.x86.exe"
-
-CI_BUILD_NUMBER_PARAM_NAME = 'BUILD_NUMBER'
-
-begin
-	gitcommit = `git log -1 --pretty=format:%H`
-rescue
-	gitcommit = "nogit"
+desc "Build .NET 4 binaries"
+msbuild :net40 => [:clean_net40] do |msb|
+    # temporary hack for bug caused by code contracts
+    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
+    
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net40]
+    msb.targets :Build
 end
 
-NIGHTLY = ENV['NIGHTLY'].nil? ? 'true' : ENV['NIGHTLY'].downcase
-
-CI_BUILD_NUMBER = ENV[CI_BUILD_NUMBER_PARAM_NAME] || 0
-
-if ENV[CI_BUILD_NUMBER_PARAM_NAME] == nil || NIGHTLY == 'true' then
-	# if we are not running under teamcity or someother CI like hudson.
-	# or if nightly is true.
-	# generate the version number based on VERSION file.
-	VERSION_NO = "#{BASE_VERSION}.#{CI_BUILD_NUMBER}"
-else
-	# if we are running inside teamcity, then it passes the full version
-	# so ignore the VERSION file and overwrite the VERSION_NO and VERSION_LONG
-	VERSION_NO = ENV['BUILD_NUMBER']
+msbuild :clean_net40 do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net40]
+    msb.targets :Clean
 end
 
-if NIGHTLY == 'true' then
-	VERSION_LONG = "#{VERSION_NO}-nightly-#{gitcommit[0..5]}" 
-else
-	VERSION_LONG = "#{VERSION_NO}-#{gitcommit[0..5]}" 
+desc "Build .NET 3.5 binaries"
+msbuild :net35 => [:clean_net35] do |msb|
+    # temporary hack for bug caused by code contracts
+    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
+    
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net35]
+    msb.targets :Build
+    #msb.use :net35
+    # compile .net 3.5 libraries using msbuild 4.0 in order to generate the code contract libraries.
+    # seems like if we use .net 3.5, it does not generate the code contracts.
 end
 
-puts
-puts "Base Version: #{BASE_VERSION}"
-puts "Version Number: #{VERSION_NO}   :  #{VERSION_LONG} "
-print "CI Build Number: "
-print CI_BUILD_NUMBER
-print " (not running under CI mode)" if CI_BUILD_NUMBER == 0
-puts
-puts "Git Commit Hash: #{gitcommit}"
-puts
-
-task :default => :full
-
-task :full => [:build_release,:test,:package_binaries]
-
-desc "Run Tests"
-task :test => [:main_test]
-
-desc "Prepare build"
-task :prepare => [:clean] do
-	mkdir OUTPUT_PATH unless File.exists?(OUTPUT_PATH)
-	mkdir DIST_PATH unless File.exists?(DIST_PATH)
-	mkdir TEST_OUTPUT_PATH unless File.exists?(TEST_OUTPUT_PATH)
-	#cp "LICENSE.txt", OUTPUT_PATH
-	#cp "README.md" , OUTPUT_PATH
+msbuild :clean_net35 do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net35]
+    msb.targets :Clean
+    #msb.use :net35
 end
 
-desc "Clean build outputs"
-task :clean => [:clean_msbuild] do
-	FileUtils.rm_rf OUTPUT_PATH
-	FileUtils.rm_rf DIST_PATH
+desc "Build Silverlight 4 binaries"
+msbuild :sl4 => [:clean_sl4] do |msb|
+    # temporary hack for bug caused by code contracts
+    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
+   
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:sl4]
+    msb.targets :Build
 end
 
-desc "Clean solution outputs"
-msbuild :clean_msbuild do |msb|
-	msb.properties :configuration => CONFIGURATION
-	msb.solution = SRC_PATH + "FluentHttp-Net40.sln"
-	msb.targets	:Clean
+msbuild :clean_sl4 do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:sl4]
+    msb.targets :Clean    
 end
 
-desc "Build solution (default)"
-msbuild :build_release => [:prepare] do |msb|
-	msb.properties :configuration => CONFIGURATION
-	msb.solution = SRC_PATH + "FluentHttp-Net40.sln"
-	msb.targets	:Build
+desc "Build Windows Phone 7 binaries"
+msbuild :wp7 => [:clean_wp7] do |msb|
+    # temporary hack for bug caused by code contracts
+    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
+    
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:wp7]
+    msb.targets :Build
 end
 
-desc "Create a zip package for the release binaries"
-zip :package_binaries => [:build_release] do |zip|
-	zip.directories_to_zip OUTPUT_PATH
-    zip.output_file = "FluentHttp-#{VERSION_LONG}-bin.zip"
-    zip.output_path = DIST_PATH
+msbuild :clean_wp7 do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:wp7]
+    msb.targets :Clean
 end
 
-desc "Create a source package (requires git in PATH)"
-task :package_source do
-	mkdir DIST_PATH unless File.exists?(DIST_PATH)
-	sh "git archive HEAD --format=zip > dist/FluentHttp-#{VERSION_LONG}-src.zip"
-end
+desc "Build All Libraries (default)"
+task :libs => [:net35, :net40, :sl4,:wp7]
 
-xunit :main_test => [:build_release] do |xunit|
-	xunit.command = XUNIT32_CONSOLE_PATH
-	xunit.assembly = SRC_PATH + "FluentHttp.Tests/bin/Release/FluentHttp.Tests.dll"
-	xunit.html_output = TEST_OUTPUT_PATH
-	xunit.options '/nunit ' + TEST_OUTPUT_PATH + 'FluentHttp.Tests.nUnit.xml', '/xml ' + TEST_OUTPUT_PATH + 'FluentHttp.Tests.xUnit.xml'
+desc "Clean All"
+task :clean => [:clean_net35, :clean_net40, :clean_sl4, :clean_wp7] do
+   FileUtils.rm_rf build_config[:paths][:output]
+   FileUtils.rm_rf build_config[:paths][:dist]    
 end

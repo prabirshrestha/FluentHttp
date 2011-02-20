@@ -112,7 +112,7 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Gets or sets the totaly bytes read during current transfer.
+        /// Gets or sets the total bytes read during current transfer.
         /// </summary>
         public long BytesRead { get; set; }
 
