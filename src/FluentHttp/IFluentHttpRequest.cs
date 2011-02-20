@@ -29,6 +29,12 @@ namespace FluentHttp
         /// <summary>
         /// Sets the base url.
         /// </summary>
+        /// <param name="url">
+        /// The base url.
+        /// </param>
+        /// <returns>
+        /// Returns the fluent http request.
+        /// </returns>
         IFluentHttpRequest BaseUrl(string url);
 
         /// <summary>
@@ -84,20 +90,24 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         string GetMethod();
 
-
         /// <summary>
-        /// Create an instnace of new <see cref="System.Net.HttpWebRequest"/>.
+        /// Sets the http web request factory.
         /// </summary>
-        /// <param name="url">
-        /// The request url.
+        /// <param name="webRequestFactory">
+        /// The web request factory.
         /// </param>
         /// <returns>
-        /// Returns <see cref="System.Net.HttpWebRequest"/>.
+        /// The http web request factory.
         /// </returns>
-        /// <remarks>
-        /// This class can be useful when mocking HttpWebRequest.
-        /// </remarks>
-        System.Net.HttpWebRequest CreateHttpWebRequest(string url);
+        IFluentHttpRequest HttpWebRequestFactory(Func<IFluentHttpRequest, string, System.Net.HttpWebRequest> webRequestFactory);
+
+        /// <summary>
+        /// Gets the http web request factory.
+        /// </summary>
+        /// <returns>
+        /// Func method for creating HttpWebRequest.
+        /// </returns>
+        Func<IFluentHttpRequest, string, System.Net.HttpWebRequest> GetHttpWebRequestFactory();
 
         /// <summary>
         /// Starts the http request.

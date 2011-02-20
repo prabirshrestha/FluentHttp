@@ -97,6 +97,11 @@ namespace FluentHttp
         private FluentHttpAsyncResult asyncResult;
 
         /// <summary>
+        /// The http web request factory.
+        /// </summary>
+        private Func<IFluentHttpRequest, string, HttpWebRequest> httpWebRequestFactory;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         /// <param name="baseUrl">
@@ -134,8 +139,14 @@ namespace FluentHttp
         public event EventHandler<CompletedEventArgs> Completed;
 
         /// <summary>
-        /// Gets the base url.
+        /// Sets the base url.
         /// </summary>
+        /// <param name="url">
+        /// The base url.
+        /// </param>
+        /// <returns>
+        /// Returns the fluent http request.
+        /// </returns>
         public IFluentHttpRequest BaseUrl(string url)
         {
             this.baseUrl = url;
@@ -211,19 +222,29 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Create an instnace of new <see cref="System.Net.HttpWebRequest"/>.
+        /// Sets the http web request factory.
         /// </summary>
-        /// <param name="url">
-        /// The request url.
+        /// <param name="webRequestFactory">
+        /// The web request factory.
         /// </param>
         /// <returns>
-        /// Returns <see cref="System.Net.HttpWebRequest"/>.
+        /// The http web request factory.
         /// </returns>
-        public HttpWebRequest CreateHttpWebRequest(string url)
+        public IFluentHttpRequest HttpWebRequestFactory(Func<IFluentHttpRequest, string, HttpWebRequest> webRequestFactory)
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            Contract.Assume(httpWebRequest != null);
-            return httpWebRequest;
+            this.httpWebRequestFactory = webRequestFactory;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the http web request factory.
+        /// </summary>
+        /// <returns>
+        /// Func method for creating HttpWebRequest.
+        /// </returns>
+        public Func<IFluentHttpRequest, string, HttpWebRequest> GetHttpWebRequestFactory()
+        {
+            return this.httpWebRequestFactory;
         }
 
         /// <summary>
@@ -247,7 +268,11 @@ namespace FluentHttp
 
             AuthenticateIfRequried();
 
-            var httpWebRequest = this.CreateHttpWebRequest(BuildRequestUrl(this));
+            var httpWebRequestFactory =
+                this.GetHttpWebRequestFactory() ??
+                new Func<IFluentHttpRequest, string, HttpWebRequest>((fluentHttpRequest, url) => (HttpWebRequest)WebRequest.Create(url));
+
+            var httpWebRequest = httpWebRequestFactory(this, BuildRequestUrl(this));
             PrepareHttpWebRequest(httpWebRequest);
 
             var internalState = new InternalState(this, httpWebRequest, callback, state);

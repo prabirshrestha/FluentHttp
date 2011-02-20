@@ -12,7 +12,7 @@ namespace FluentHttp
     {
 #pragma warning disable 0067
         public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
-        
+
         public event EventHandler<ResponseReadEventArgs> Read;
 
         public event EventHandler<CompletedEventArgs> Completed;
@@ -69,11 +69,15 @@ namespace FluentHttp
             return default(string);
         }
 
-        public HttpWebRequest CreateHttpWebRequest(string url)
+        public IFluentHttpRequest HttpWebRequestFactory(Func<IFluentHttpRequest, string, HttpWebRequest> webRequestFactory)
         {
-            Contract.Requires(!string.IsNullOrEmpty(url));
-            Contract.Ensures(Contract.Result<HttpWebRequest>() != null);
-            return default(HttpWebRequest);
+            Contract.Ensures(Contract.Result<IFluentHttpRequest>() != null);
+            return default(IFluentHttpRequest);
+        }
+
+        public Func<IFluentHttpRequest, string, HttpWebRequest> GetHttpWebRequestFactory()
+        {
+            return default(Func<IFluentHttpRequest, string, HttpWebRequest>);
         }
 
         public IAsyncResult BeginRequest(AsyncCallback callback, object state)
