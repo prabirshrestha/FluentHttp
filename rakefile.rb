@@ -114,7 +114,7 @@ end
 Rake::Task["configure"].invoke
 
 desc "Build .NET 4 binaries"
-msbuild :net40 => [:clean_net40] do |msb|
+msbuild :net40 => [:clean_net40, :assemblyinfo_fluenthttp] do |msb|
     # temporary hack for bug caused by code contracts
     FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
     
@@ -130,7 +130,7 @@ msbuild :clean_net40 do |msb|
 end
 
 desc "Build .NET 3.5 binaries"
-msbuild :net35 => [:clean_net35] do |msb|
+msbuild :net35 => [:clean_net35, :assemblyinfo_fluenthttp] do |msb|
     # temporary hack for bug caused by code contracts
     FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
     
@@ -150,7 +150,7 @@ msbuild :clean_net35 do |msb|
 end
 
 desc "Build Silverlight 4 binaries"
-msbuild :sl4 => [:clean_sl4] do |msb|
+msbuild :sl4 => [:clean_sl4, :assemblyinfo_fluenthttp] do |msb|
     # temporary hack for bug caused by code contracts
     FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
    
@@ -166,7 +166,7 @@ msbuild :clean_sl4 do |msb|
 end
 
 desc "Build Windows Phone 7 binaries"
-msbuild :wp7 => [:clean_wp7] do |msb|
+msbuild :wp7 => [:clean_wp7, :assemblyinfo_fluenthttp] do |msb|
     # temporary hack for bug caused by code contracts
     FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
     
@@ -188,4 +188,15 @@ desc "Clean All"
 task :clean => [:clean_net35, :clean_net40, :clean_sl4, :clean_wp7] do
    FileUtils.rm_rf build_config[:paths][:output]
    FileUtils.rm_rf build_config[:paths][:dist]    
+end
+
+assemblyinfo :assemblyinfo_fluenthttp do |asm|
+    asm.output_file = "#{build_config[:paths][:src]}FluentHttp/Properties/AssemblyInfo.cs"
+    asm.version = build_config[:version][:full]
+    asm.title = "FluentHttp"
+    asm.description = "Fluent http wrapper for .NET"
+    asm.product_name = "FluentHttp"
+    asm.company_name = "Prabir Shrestha"
+    asm.copyright = "Apache License v2.0"
+    asm.com_visible = false
 end
