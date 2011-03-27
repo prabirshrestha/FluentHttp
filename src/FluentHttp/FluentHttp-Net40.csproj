@@ -101,6 +101,11 @@
     <Compile Include="Body\FluentHttpRequestBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
     <Compile Include="Core\Async.cs" />
+    <Compile Include="Core\HttpWebRequestWrapper.cs" />
+    <Compile Include="Core\HttpWebResponseWrapper.cs" />
+    <Compile Include="Core\IHttpWebRequest.cs" />
+    <Compile Include="Core\IHttpWebResponse.cs" />
+    <Compile Include="Core\WebExceptionWrapper.cs" />
     <Compile Include="Events\CompletedEventArgs.cs" />
     <Compile Include="Events\FluentHttpRequestEventArgs.cs" />
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
