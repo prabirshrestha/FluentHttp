@@ -103,6 +103,12 @@
     <Compile Include="Core\Pair.cs" />
     <Compile Include="Core\ResponseReceivedEventArgs.cs" />
     <Compile Include="Core\WebExceptionWrapper.cs" />
+    <Compile Include="FluentHttpRequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FluentHttpResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
