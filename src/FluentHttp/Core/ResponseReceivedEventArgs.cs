@@ -3,7 +3,7 @@ namespace FluentHttp
     using System;
     using System.IO;
 
-    public class ResponseReceivedEventArgs : EventArgs
+    internal class ResponseReceivedEventArgs : EventArgs
     {
         private readonly IHttpWebResponse _response;
 
