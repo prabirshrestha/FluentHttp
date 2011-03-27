@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\Net40\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MOBILE;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;MOBILE;CODE_ANALYSIS;PRABIR_ASYNC_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -53,7 +53,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\Net40\</OutputPath>
-    <DefineConstants>TRACE;MOBILE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS;MOBILE;PRABIR_ASYNC_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Net40\FluentHttp.xml</DocumentationFile>
@@ -100,6 +100,7 @@
     <Compile Include="Authenticator\OAuth\oauthutil.cs" />
     <Compile Include="Body\FluentHttpRequestBody.cs" />
     <Compile Include="Cookies\FluentCookies.cs" />
+    <Compile Include="Core\Async.cs" />
     <Compile Include="Events\CompletedEventArgs.cs" />
     <Compile Include="Events\FluentHttpRequestEventArgs.cs" />
     <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
