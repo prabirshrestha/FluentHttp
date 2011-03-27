@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpQueryStrings.cs" />
     <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Core\Async.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />

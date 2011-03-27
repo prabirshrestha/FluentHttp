@@ -39,6 +39,11 @@ namespace FluentHttp
         private FluentHttpHeaders _headers;
 
         /// <summary>
+        /// The fluent query strings.
+        /// </summary>
+        private FluentQueryStrings _queryStrings;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
         /// </summary>
         public FluentHttpRequest()
@@ -219,6 +224,37 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Access query strings.
+        /// </summary>
+        /// <param name="queryStrings">
+        /// The query strings.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest QueryStrings(Action<FluentQueryStrings> queryStrings)
+        {
+            if (queryStrings != null)
+            {
+                queryStrings(_queryStrings);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the query strings.
+        /// </summary>
+        /// <returns>
+        /// The query strings.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentQueryStrings GetQueryStrings()
+        {
+            return _queryStrings;
+        }
+
+        /// <summary>
         /// Starts the http request.
         /// </summary>
         /// <param name="callback">
@@ -255,6 +291,7 @@ namespace FluentHttp
         private void Initialize()
         {
             _headers = new FluentHttpHeaders();
+            _queryStrings = new FluentQueryStrings();
         }
     }
 }
