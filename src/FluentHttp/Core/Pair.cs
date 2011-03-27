@@ -1,10 +1,20 @@
 namespace FluentHttp
 {
+    using System.ComponentModel;
+
     /// <summary>
     /// Represents a pair.
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class Pair<TName, TValue>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Pair{TName,TValue}"/> class.
+        /// </summary>
+        public Pair()
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Pair{TName,TValue}"/> class.
         /// </summary>

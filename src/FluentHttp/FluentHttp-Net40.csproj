@@ -94,7 +94,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authenticators\IFluentAuthenticator.cs" />
+    <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Core\Async.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />
     <Compile Include="Core\HttpWebRequestWrapper.cs" />
