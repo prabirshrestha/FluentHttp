@@ -43,6 +43,11 @@ namespace FluentHttp
         /// </summary>
         public FluentHttpResponse Response { get; set; }
 
+        /// <summary>
+        /// Gets or sets the exception.
+        /// </summary>
+        internal Exception Exception { get; set; }
+
         public bool IsCompleted
         {
             get { return true; }

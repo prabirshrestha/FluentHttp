@@ -53,6 +53,11 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Occurs when the response headers are received.
+        /// </summary>
+        public event EventHandler<ResponseHeadersReceivedEventArgs> ResponseHeadersReceived;
+
+        /// <summary>
         /// Adds a forward slash if not present.
         /// </summary>
         /// <param name="input">
@@ -296,6 +301,39 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Occurs when http response headers are received.
+        /// </summary>
+        /// <param name="onResponseHeadersReceived">
+        /// On response headers received.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest OnResponseHeadersReceived(EventHandler<ResponseHeadersReceivedEventArgs> onResponseHeadersReceived)
+        {
+            if (onResponseHeadersReceived != null)
+            {
+                ResponseHeadersReceived += onResponseHeadersReceived;
+            }
+
+            return this;
+        }
+
+        /// <summary
+        /// Notify reponse headers received.
+        /// </summary>
+        /// <param name="e">
+        /// The event args.
+        /// </param>
+        protected void OnResponseHeadersRecived(ResponseHeadersReceivedEventArgs e)
+        {
+            if (ResponseHeadersReceived != null)
+            {
+                ResponseHeadersReceived(this, e);
+            }
+        }
+
+        /// <summary>
         /// Starts the http request.
         /// </summary>
         /// <param name="callback">
@@ -324,10 +362,20 @@ namespace FluentHttp
                 null,
                 responseHeadersReceived =>
                 {
-                    asyncResult.Response = new FluentHttpResponse(responseHeadersReceived.Response);
+                    asyncResult.Response = new FluentHttpResponse(asyncResult.Request, responseHeadersReceived.Response);
+                    var args = new ResponseHeadersReceivedEventArgs(asyncResult.Response);
+                    OnResponseHeadersRecived(args);
+                    responseHeadersReceived.ResponseSaveStream = args.ResponseSaveStream;
                 });
 
-            Prabir.Async.Async.Run(enumerableAsync.GetEnumerator(), ex => asyncResult.SetAsyncWaitHandle());
+
+            Prabir.Async.Async.Run(
+                enumerableAsync.GetEnumerator(),
+                ex =>
+                {
+                    asyncResult.Exception = ex;
+                    asyncResult.SetAsyncWaitHandle();
+                });
 
             return asyncResult;
         }
@@ -357,7 +405,11 @@ namespace FluentHttp
             // wait for the request to end
             ar.AsyncWaitHandle.WaitOne();
 
-            // todo: propagate the exception to the one who calls EndRequest.
+            // propagate the exception to the one who calls EndRequest.
+            if (ar.Exception != null)
+            {
+                throw ar.Exception;
+            }
 
             return ar.Response;
         }

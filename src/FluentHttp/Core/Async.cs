@@ -190,18 +190,26 @@ namespace Prabir.Async
     {
         internal static void Run(IEnumerator<IAsync> en, Action<Exception> cont)
         {
-            if (!en.MoveNext())
+            try
             {
-                cont(null);
+                if (!en.MoveNext())
+                {
+                    cont(null);
+                    return;
+                }
+
+                en.Current.ExecuteStep
+                (ex =>
+                {
+                    en.Current.Exception = ex;
+                    Run(en, cont);
+                });
+            }
+            catch (Exception e)
+            {
+                cont(e);
                 return;
             }
-
-            en.Current.ExecuteStep
-                (ex =>
-                     {
-                         en.Current.Exception = ex;
-                         Run(en, cont);
-                     });
         }
 
         public static void ExecuteAndWait(IEnumerable<IAsync> en)
