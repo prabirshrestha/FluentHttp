@@ -41,31 +41,25 @@ namespace FluentHttp
         /// <summary>
         /// Gets or sets the fluent http response.
         /// </summary>
-        public FluentHttpResponse Response { get; set; }
+        public FluentHttpResponse Response { get; internal set; }
 
         /// <summary>
         /// Gets or sets the exception.
         /// </summary>
         internal Exception Exception { get; set; }
 
-        public bool IsCompleted
-        {
-            get { return true; }
-        }
+        public bool IsCompleted { get; internal set; }
 
         public WaitHandle AsyncWaitHandle
         {
             get { return _waitHandle; }
         }
 
-        public object AsyncState
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public object AsyncState { get; internal set; }
 
         public bool CompletedSynchronously
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         internal void SetAsyncWaitHandle()

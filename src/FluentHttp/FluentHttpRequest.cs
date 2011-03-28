@@ -2,6 +2,7 @@ namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
+    using System.IO;
     using System.Text;
 
     /// <summary>
@@ -43,6 +44,8 @@ namespace FluentHttp
         /// The fluent query strings.
         /// </summary>
         private FluentQueryStrings _queryStrings;
+
+        private FluentHttpRequestBody _body;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
@@ -319,18 +322,35 @@ namespace FluentHttp
             return this;
         }
 
-        /// <summary
-        /// Notify reponse headers received.
+        /// <summary>
+        /// Access the request body.
         /// </summary>
-        /// <param name="e">
-        /// The event args.
+        /// <param name="body">
+        /// The request body.
         /// </param>
-        protected void OnResponseHeadersRecived(ResponseHeadersReceivedEventArgs e)
+        /// <returns>
+        /// Returns the Fluent http request.
+        /// </returns>
+        public FluentHttpRequest Body(Action<FluentHttpRequestBody> body)
         {
-            if (ResponseHeadersReceived != null)
+            if (body != null)
             {
-                ResponseHeadersReceived(this, e);
+                body(_body);
             }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the request body.
+        /// </summary>
+        /// <returns>
+        /// The resquest body.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequestBody GetBody()
+        {
+            return _body;
         }
 
         /// <summary>
@@ -352,6 +372,7 @@ namespace FluentHttp
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
+            // todo add cookies
             var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), GetHeaders().GetHeaderCollection(), null);
             PrepareHttpWebRequest(httpWebRequest);
 
@@ -359,7 +380,7 @@ namespace FluentHttp
 
             var enumerableAsync = httpWebHelper.ExecuteAsync(
                 httpWebRequest,
-                null,
+                GetBody().Stream,
                 responseHeadersReceived =>
                 {
                     asyncResult.Response = new FluentHttpResponse(asyncResult.Request, responseHeadersReceived.Response);
@@ -367,7 +388,6 @@ namespace FluentHttp
                     OnResponseHeadersRecived(args);
                     responseHeadersReceived.ResponseSaveStream = args.ResponseSaveStream;
                 });
-
 
             Prabir.Async.Async.Run(
                 enumerableAsync.GetEnumerator(),
@@ -415,12 +435,27 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Notify response headers received.
+        /// </summary>
+        /// <param name="e">
+        /// The event args.
+        /// </param>
+        protected void OnResponseHeadersRecived(ResponseHeadersReceivedEventArgs e)
+        {
+            if (ResponseHeadersReceived != null)
+            {
+                ResponseHeadersReceived(this, e);
+            }
+        }
+
+        /// <summary>
         /// Initializes Fluent Http Request.
         /// </summary>
         private void Initialize()
         {
             _headers = new FluentHttpHeaders();
             _queryStrings = new FluentQueryStrings();
+            _body = new FluentHttpRequestBody();
         }
 
         /// <summary>

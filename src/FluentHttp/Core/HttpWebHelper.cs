@@ -83,10 +83,53 @@ namespace FluentHttp
                 throw new ArgumentNullException("httpWebRequest");
             }
 
+            // buffer space for the data to be read and written.
+            byte[] buffer = new byte[4096];
+
             if (requestBody != null && requestBody.Length != 0)
             {
-                // we have a request body.
-                throw new NotImplementedException();
+                // we have a request body, so write it asynchronously.
+
+#if !WINDOWS_PHONE
+                httpWebRequest.ContentLength = requestBody.Length;
+#endif
+                // assume content-type and content-lenght is already set.
+                var request = Async.FromAsync(httpWebRequest.BeginGetRequestStream, httpWebRequest.EndGetRequestStream);
+                yield return request;
+
+                if (request.Exception != null)
+                {
+                    throw new NotImplementedException();
+                }
+
+                // while there is data to be read and written.
+                var requestStream = request.Result;
+                while (true)
+                {
+                    // read data asynchronously.
+                    // when the operation completes, if no data could be read then we are done.
+                    var count = Async.FromAsync<int>(requestBody.BeginRead, requestBody.EndRead, buffer, 0, buffer.Length, null);
+                    yield return count;
+
+                    if (count.Exception != null)
+                    {
+                        throw count.Exception;
+                    }
+
+                    if (count.Result == 0)
+                    {
+                        break;
+                    }
+
+                    // write data asynchronously.
+                    var write = Async.FromAsync(requestStream.BeginWrite, requestStream.EndWrite, buffer, 0, count.Result, null);
+                    yield return write;
+
+                    if (write.Exception != null)
+                    {
+                        throw write.Exception;
+                    }
+                }
             }
 
             // asynchronously get the response from the http server.
@@ -136,9 +179,6 @@ namespace FluentHttp
 
             // read response stream
             var responseStream = httpWebResponse.GetResponseStream();
-
-            // buffer space for the data to be read and written.
-            byte[] buffer = new byte[4096];
 
             if (responseSaveStream == null)
             {

@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpRequestBody.cs" />
     <Compile Include="FluentQueryStrings.cs" />
     <Compile Include="HttpEncoder.cs" />
     <Compile Include="HttpUtility.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="FluentHttpResponse.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CombinationStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHeadersReceivedEventArgs.cs" />
   </ItemGroup>
