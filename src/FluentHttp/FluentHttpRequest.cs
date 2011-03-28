@@ -2,7 +2,6 @@ namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
-    using System.IO;
     using System.Text;
 
     /// <summary>
@@ -10,11 +9,6 @@ namespace FluentHttp
     /// </summary>
     public class FluentHttpRequest
     {
-        /// <summary>
-        /// The buffer size.
-        /// </summary>
-        private const int BufferSize = 4096;
-
         /// <summary>
         /// The base url.
         /// </summary>
@@ -45,7 +39,15 @@ namespace FluentHttp
         /// </summary>
         private FluentQueryStrings _queryStrings;
 
+        /// <summary>
+        /// The fluent http request body.
+        /// </summary>
         private FluentHttpRequestBody _body;
+
+        /// <summary>
+        /// The fluent authenticator.
+        /// </summary>
+        private IFluentAuthenticator _authenticator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
@@ -304,6 +306,47 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Sets the authenticator.
+        /// </summary>
+        /// <param name="authenticator">
+        /// The authenticator.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest AuthenticateUsing(IFluentAuthenticator authenticator)
+        {
+            _authenticator = authenticator;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the authenticator.
+        /// </summary>
+        /// <param name="authenticator">
+        /// The authenticator.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest AuthenticateUsing(Func<IFluentAuthenticator> authenticator)
+        {
+            return authenticator != null ? AuthenticateUsing(authenticator()) : this;
+        }
+
+        /// <summary>
+        /// Gets the authenticator.
+        /// </summary>
+        /// <returns>
+        /// The authenticator.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public IFluentAuthenticator GetAuthenticator()
+        {
+            return _authenticator;
+        }
+
+        /// <summary>
         /// Occurs when http response headers are received.
         /// </summary>
         /// <param name="onResponseHeadersReceived">
@@ -434,6 +477,52 @@ namespace FluentHttp
             return ar.Response;
         }
 
+#if TPL
+
+        /// <summary>
+        /// Converts the <see cref="FluentHttpRequest"/> to Task.
+        /// </summary>
+        /// <param name="state">
+        /// The state.
+        /// </param>
+        /// <param name="taskCreationOptions">
+        /// The task creation options.
+        /// </param>
+        /// <returns>
+        /// Returns the task of <see cref="FluentHttpResponse"/>.
+        /// </returns>
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state, System.Threading.Tasks.TaskCreationOptions taskCreationOptions)
+        {
+            return System.Threading.Tasks.Task.Factory.FromAsync<FluentHttpResponse>(BeginExecute, EndExecute, state, taskCreationOptions);
+        }
+
+        /// <summary>
+        /// Converts the <see cref="FluentHttpRequest"/> to Task.
+        /// </summary>
+        /// <param name="state">
+        /// The state.
+        /// </param>
+        /// <returns>
+        /// Returns the task of <see cref="FluentHttpResponse"/>.
+        /// </returns>
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state)
+        {
+            return this.ToTask(state, System.Threading.Tasks.TaskCreationOptions.None);
+        }
+
+        /// <summary>
+        /// Converts the <see cref="FluentHttpRequest"/> to Task.
+        /// </summary>
+        /// <returns>
+        /// Returns the task of <see cref="FluentHttpResponse"/>.
+        /// </returns>
+        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask()
+        {
+            return this.ToTask(null);
+        }
+
+#endif
+
         /// <summary>
         /// Notify response headers received.
         /// </summary>
@@ -463,11 +552,11 @@ namespace FluentHttp
         /// </summary>
         private void AuthenticateIfRequried()
         {
-            //var authenticator = this.GetAuthenticator();
-            //if (authenticator != null)
-            //{
-            //    authenticator.Authenticate(this);
-            //}
+            var authenticator = GetAuthenticator();
+            if (authenticator != null)
+            {
+                authenticator.Authenticate(this);
+            }
         }
 
         /// <summary>

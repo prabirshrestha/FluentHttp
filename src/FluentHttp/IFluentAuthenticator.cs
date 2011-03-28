@@ -1,4 +1,4 @@
-namespace FluentHttp.Authenticators
+namespace FluentHttp
 {
     /// <summary>
     /// Interface for Authenticator
