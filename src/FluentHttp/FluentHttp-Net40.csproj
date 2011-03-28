@@ -94,8 +94,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FluentHttpAsyncResult.cs" />
     <Compile Include="FluentHttpHeaders.cs" />
-    <Compile Include="FluentHttpQueryStrings.cs" />
+    <Compile Include="FluentQueryStrings.cs" />
+    <Compile Include="HttpEncoder.cs" />
+    <Compile Include="HttpUtility.cs" />
     <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Core\Async.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />

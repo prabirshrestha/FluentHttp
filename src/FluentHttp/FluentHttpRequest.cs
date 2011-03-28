@@ -2,6 +2,7 @@ namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
+    using System.Text;
 
     /// <summary>
     /// Represents a Fluent Http Request.
@@ -79,6 +80,46 @@ namespace FluentHttp
                 // else return the original input.
                 return input;
             }
+        }
+
+        /// <summary>
+        /// Url decode the input string.
+        /// </summary>
+        /// <param name="input">
+        /// The string to url decode.
+        /// </param>
+        /// <returns>
+        /// The url decoded string.
+        /// </returns>
+        public static string UrlDecode(string input)
+        {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.UrlDecode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.UrlDecode(input);
+#else
+            return External.HttpUtility.UrlDecode(input);
+#endif
+        }
+
+        /// <summary>
+        /// Url encode the input string.
+        /// </summary>
+        /// <param name="input">
+        /// The string to url encode.
+        /// </param>
+        /// <returns>
+        /// The url encoded string.
+        /// </returns>
+        public static string UrlEncode(string input)
+        {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.UrlEncode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.UrlEncode(input);
+#else
+            return External.HttpUtility.UrlEncode(input);
+#endif
         }
 
         /// <summary>
@@ -268,7 +309,27 @@ namespace FluentHttp
         /// </returns>
         public IAsyncResult BeginExecute(AsyncCallback callback, object state)
         {
-            throw new NotImplementedException();
+            AuthenticateIfRequried();
+
+            var requestUrl = BuildRequestUrl();
+
+            var httpWebHelper = new HttpWebHelper();
+            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), GetHeaders().GetHeaderCollection(), null);
+            PrepareHttpWebRequest(httpWebRequest);
+
+            var asyncResult = new FluentHttpAsyncResult(this);
+
+            var enumerableAsync = httpWebHelper.ExecuteAsync(
+                httpWebRequest,
+                null,
+                responseHeadersReceived =>
+                {
+                    asyncResult.Response = new FluentHttpResponse(responseHeadersReceived.Response);
+                });
+
+            Prabir.Async.Async.Run(enumerableAsync.GetEnumerator(), ex => asyncResult.SetAsyncWaitHandle());
+
+            return asyncResult;
         }
 
         /// <summary>
@@ -282,7 +343,23 @@ namespace FluentHttp
         /// </returns>
         public FluentHttpResponse EndExecute(IAsyncResult asyncResult)
         {
-            throw new NotImplementedException();
+            if (asyncResult == null)
+            {
+                throw new ArgumentNullException("asyncResult");
+            }
+
+            var ar = asyncResult as FluentHttpAsyncResult;
+            if (ar == null)
+            {
+                throw new ArgumentException("asyncResult");
+            }
+
+            // wait for the request to end
+            ar.AsyncWaitHandle.WaitOne();
+
+            // todo: propagate the exception to the one who calls EndRequest.
+
+            return ar.Response;
         }
 
         /// <summary>
@@ -292,6 +369,56 @@ namespace FluentHttp
         {
             _headers = new FluentHttpHeaders();
             _queryStrings = new FluentQueryStrings();
+        }
+
+        /// <summary>
+        /// Authenticates the <see cref="FluentHttpRequest"/> if it has an authenticator.
+        /// </summary>
+        private void AuthenticateIfRequried()
+        {
+            //var authenticator = this.GetAuthenticator();
+            //if (authenticator != null)
+            //{
+            //    authenticator.Authenticate(this);
+            //}
+        }
+
+        /// <summary>
+        /// Builds the request url.
+        /// </summary>
+        /// <returns>
+        /// The request url.
+        /// </returns>
+        private string BuildRequestUrl()
+        {
+            var sb = new StringBuilder();
+
+            var baseUrl = GetBaseUrl();
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new ArgumentNullException("baseUrl");
+            }
+
+            sb.Append(GetBaseUrl());
+            sb.Append(GetResourcePath());
+            sb.Append("?");
+
+            foreach (var qs in GetQueryStrings().GetQueryStringCollection())
+            {
+                // these querystrings are already url encoded.
+                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
+            }
+
+            // remove the last & or ?
+            --sb.Length;
+
+            return sb.ToString();
+        }
+
+        private void PrepareHttpWebRequest(IHttpWebRequest httpWebRequest)
+        {
+            // todo: set additional stuffs in web request.
         }
     }
 }

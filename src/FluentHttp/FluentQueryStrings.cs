@@ -14,14 +14,40 @@ namespace FluentHttp
         /// Initializes a new instance of the <see cref="FluentQueryString"/> class.
         /// </summary>
         /// <param name="name">
-        /// The header name.
+        /// The query string name.
         /// </param>
         /// <param name="value">
-        /// The header value.
+        /// The query string value.
         /// </param>
         public FluentQueryString(string name, string value)
-            : base(name, value)
+            : this(name, value, true)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FluentQueryString"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The query string name.
+        /// </param>
+        /// <param name="value">
+        /// The query string value.
+        /// </param>
+        /// <param name="encode">
+        /// Indicates whether to encode the querystring name and value.
+        /// </param>
+        public FluentQueryString(string name, string value, bool encode)
+        {
+            if (encode)
+            {
+                this.Name = FluentHttpRequest.UrlEncode(name);
+                this.Value = FluentHttpRequest.UrlEncode(value);
+            }
+            else
+            {
+                this.Name = name;
+                this.Value = value;
+            }
         }
     }
 
@@ -67,6 +93,26 @@ namespace FluentHttp
         public FluentQueryStrings Add(string name, string value)
         {
             return Add(new FluentQueryString(name, value));
+        }
+
+        /// <summary>
+        /// Adds the query string with the specified name and value.
+        /// </summary>
+        /// <param name="name">
+        /// The http query string name.
+        /// </param>
+        /// <param name="value">
+        /// The http query string value.
+        /// </param>
+        /// <param name="encode">
+        /// The encode.
+        /// </param>
+        /// <returns>
+        /// The fluent query string.
+        /// </returns>
+        public FluentQueryStrings Add(string name, string value, bool encode)
+        {
+            return Add(new FluentQueryString(name, value, encode));
         }
 
         /// <summary>

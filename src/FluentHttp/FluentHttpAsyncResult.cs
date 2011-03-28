@@ -1,133 +1,71 @@
 namespace FluentHttp
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
     using System.Threading;
 
     /// <summary>
-    /// Represents the internal fluent http async result.
+    /// Represents the fluent http async result.
     /// </summary>
-    internal class FluentHttpAsyncResult : IAsyncResult
+    public class FluentHttpAsyncResult : IAsyncResult
     {
         /// <summary>
-        /// Internal state.
+        /// The fluent http request
         /// </summary>
-        private readonly InternalState internalState;
+        private readonly FluentHttpRequest _request;
 
         /// <summary>
         /// The wait handle.
         /// </summary>
-        private readonly ManualResetEvent waitHandle;
+        private readonly ManualResetEvent _waitHandle;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpAsyncResult"/> class.
         /// </summary>
-        /// <param name="internalState">
-        /// The internal state.
+        /// <param name="request">
+        /// The request.
         /// </param>
-        internal FluentHttpAsyncResult(InternalState internalState)
+        public FluentHttpAsyncResult(FluentHttpRequest request)
         {
-            Contract.Requires(internalState != null);
-
-            this.internalState = internalState;
-            this.waitHandle = new ManualResetEvent(false);
+            _request = request;
+            _waitHandle = new ManualResetEvent(false);
         }
 
-#if !SILVERLIGHT
         /// <summary>
-        /// Gets a value indicating whether the asynchronous operation has completed.
+        /// Gets the fluent http request.
         /// </summary>
-        /// <returns>
-        /// true if the operation is complete; otherwise, false.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
+        public FluentHttpRequest Request
+        {
+            get { return _request; }
+        }
+
+        /// <summary>
+        /// Gets or sets the fluent http response.
+        /// </summary>
+        public FluentHttpResponse Response { get; set; }
+
         public bool IsCompleted
         {
-            get
-            {
-
-                return this.waitHandle.WaitOne(0, false);
-            }
+            get { return true; }
         }
-#else
-        public bool IsCompleted { get; private set; }
-#endif
 
-        /// <summary>
-        /// Gets a <see cref="T:System.Threading.WaitHandle"/> that is used to wait for an asynchronous operation to complete.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Threading.WaitHandle"/> that is used to wait for an asynchronous operation to complete.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
         public WaitHandle AsyncWaitHandle
         {
-            get
-            {
-                Contract.Ensures(Contract.Result<WaitHandle>() != null);
-                return this.waitHandle;
-            }
+            get { return _waitHandle; }
         }
 
-        /// <summary>
-        /// Gets a user-defined object that qualifies or contains information about an asynchronous operation.
-        /// </summary>
-        /// <returns>
-        /// A user-defined object that qualifies or contains information about an asynchronous operation.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
         public object AsyncState
         {
-            get { return this.InternalState.State; }
+            get { throw new NotImplementedException(); }
         }
 
-        /// <summary>
-        /// Gets a value indicating whether the asynchronous operation completed synchronously.
-        /// </summary>
-        /// <returns>
-        /// true if the asynchronous operation completed synchronously; otherwise, false.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
         public bool CompletedSynchronously
         {
-            get { return false; }
+            get { throw new NotImplementedException(); }
         }
 
-        /// <summary>
-        /// Gets the internal state.
-        /// </summary>
-        internal InternalState InternalState
+        internal void SetAsyncWaitHandle()
         {
-            get { return internalState; }
-        }
-
-        /// <summary>
-        /// Set status as completed.
-        /// </summary>
-        internal void Complete()
-        {
-            this.waitHandle.Set();
-
-#if SILVERLIGHT
-            this.IsCompleted = true;
-#endif
-            
-            if (this.InternalState != null)
-            {
-                if (this.internalState.Callback != null)
-                {
-                    this.internalState.Callback(this);
-                }
-            }
-        }
-
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
-          Justification = "Reviewed. Suppression is OK here."), ContractInvariantMethod]
-        private void InvarianObject()
-        {
-            Contract.Invariant(this.internalState != null);
-            Contract.Invariant(this.waitHandle != null);
+            _waitHandle.Set();
         }
     }
 }
