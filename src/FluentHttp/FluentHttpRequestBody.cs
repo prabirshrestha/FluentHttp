@@ -119,5 +119,34 @@ namespace FluentHttp
         {
             return Append(contents, Encoding.UTF8);
         }
+
+        /// <summary>
+        /// Appends the form parameters.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// The fluent http request body.
+        /// </returns>
+        public FluentHttpRequestBody Append(IDictionary<string, object> parameters)
+        {
+            if (parameters == null || parameters.Count == 0)
+            {
+                return this;
+            }
+
+            var sb = new StringBuilder();
+
+            foreach (var parameter in parameters)
+            {
+                sb.AppendFormat("{0}={1}&", FluentHttpRequest.UrlEncode(parameter.Key), FluentHttpRequest.UrlEncode(parameter.Value.ToString()));
+            }
+
+            // remove the last &
+            --sb.Length;
+
+            return Append(sb.ToString());
+        }
     }
 }

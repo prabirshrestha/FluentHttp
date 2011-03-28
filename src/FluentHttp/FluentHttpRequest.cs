@@ -1,7 +1,10 @@
+using System.IO;
+
 namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
+    using System.Net;
     using System.Text;
 
     /// <summary>
@@ -48,6 +51,20 @@ namespace FluentHttp
         /// The fluent authenticator.
         /// </summary>
         private IFluentAuthenticator _authenticator;
+
+#if !SILVERLIGHT
+
+        /// <summary>
+        /// The proxy.
+        /// </summary>
+        private IWebProxy _proxy;
+
+        /// <summary>
+        /// The credentials
+        /// </summary>
+        private ICredentials _credentials;
+
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequest"/> class.
@@ -133,6 +150,23 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Converts stream to string.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <returns>
+        /// The string.
+        /// </returns>
+        public static string ToString(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
         /// Sets the base url.
         /// </summary>
         /// <param name="url">
@@ -154,7 +188,7 @@ namespace FluentHttp
         /// The base url.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string GetBaseUrl()
+        public virtual string GetBaseUrl()
         {
             return _baseUrl;
         }
@@ -183,7 +217,7 @@ namespace FluentHttp
         /// The resource path.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string GetResourcePath()
+        public virtual string GetResourcePath()
         {
             return _resourcePath ?? string.Empty;
         }
@@ -210,7 +244,7 @@ namespace FluentHttp
         /// The http method.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string GetMethod()
+        public virtual string GetMethod()
         {
             return _httpMethod;
         }
@@ -238,7 +272,7 @@ namespace FluentHttp
         /// Func method for creating HttpWebRequest.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Func<FluentHttpRequest, string, IHttpWebRequest> GetHttpWebRequestFactory()
+        public virtual Func<FluentHttpRequest, string, IHttpWebRequest> GetHttpWebRequestFactory()
         {
             return _httpWebRequestFactory;
         }
@@ -269,7 +303,7 @@ namespace FluentHttp
         /// The http headers.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpHeaders GetHeaders()
+        public virtual FluentHttpHeaders GetHeaders()
         {
             return _headers;
         }
@@ -300,7 +334,7 @@ namespace FluentHttp
         /// The query strings.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentQueryStrings GetQueryStrings()
+        public virtual FluentQueryStrings GetQueryStrings()
         {
             return _queryStrings;
         }
@@ -341,10 +375,68 @@ namespace FluentHttp
         /// The authenticator.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public IFluentAuthenticator GetAuthenticator()
+        public virtual IFluentAuthenticator GetAuthenticator()
         {
             return _authenticator;
         }
+
+#if !SILVERLIGHT
+
+        /// <summary>
+        /// Sets the proxy.
+        /// </summary>
+        /// <param name="proxy">
+        /// The proxy.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest Proxy(IWebProxy proxy)
+        {
+            _proxy = proxy;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the proxy.
+        /// </summary>
+        /// <returns>
+        /// The proxy.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual IWebProxy GetProxy()
+        {
+            return _proxy;
+        }
+
+        /// <summary>
+        /// Sets the credentails.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentails.
+        /// </param>
+        /// <returns>
+        /// The fluent http request.
+        /// </returns>
+        public FluentHttpRequest Credentials(ICredentials credentials)
+        {
+            _credentials = credentials;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the credentials.
+        /// </summary>
+        /// <returns>
+        /// The credentials.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual ICredentials GetCredentials()
+        {
+            return _credentials;
+        }
+
+#endif
 
         /// <summary>
         /// Occurs when http response headers are received.
@@ -391,7 +483,7 @@ namespace FluentHttp
         /// The resquest body.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public FluentHttpRequestBody GetBody()
+        public virtual FluentHttpRequestBody GetBody()
         {
             return _body;
         }
@@ -408,13 +500,14 @@ namespace FluentHttp
         /// <returns>
         /// The async result.
         /// </returns>
-        public IAsyncResult BeginExecute(AsyncCallback callback, object state)
+        public virtual IAsyncResult BeginExecute(AsyncCallback callback, object state)
         {
             AuthenticateIfRequried();
 
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
+
             // todo add cookies
             var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), GetHeaders().GetHeaderCollection(), null);
             PrepareHttpWebRequest(httpWebRequest);
@@ -452,7 +545,7 @@ namespace FluentHttp
         /// <returns>
         /// Returns the <see cref="FluentHttpResponse"/>.
         /// </returns>
-        public FluentHttpResponse EndExecute(IAsyncResult asyncResult)
+        public virtual FluentHttpResponse EndExecute(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
             {
@@ -473,6 +566,8 @@ namespace FluentHttp
             {
                 throw ar.Exception;
             }
+
+            ar.Response.ResponseStatus = ResponseStatus.Completed;
 
             return ar.Response;
         }
@@ -524,6 +619,40 @@ namespace FluentHttp
 #endif
 
         /// <summary>
+        /// Builds the request url.
+        /// </summary>
+        /// <returns>
+        /// The request url.
+        /// </returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string BuildRequestUrl()
+        {
+            var sb = new StringBuilder();
+
+            var baseUrl = GetBaseUrl();
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new ArgumentNullException("baseUrl");
+            }
+
+            sb.Append(GetBaseUrl());
+            sb.Append(GetResourcePath());
+            sb.Append("?");
+
+            foreach (var qs in GetQueryStrings().GetQueryStringCollection())
+            {
+                // these querystrings are already url encoded.
+                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
+            }
+
+            // remove the last & or ?
+            --sb.Length;
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Notify response headers received.
         /// </summary>
         /// <param name="e">
@@ -560,41 +689,27 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Builds the request url.
+        /// Prepares http web request.
         /// </summary>
-        /// <returns>
-        /// The request url.
-        /// </returns>
-        private string BuildRequestUrl()
-        {
-            var sb = new StringBuilder();
-
-            var baseUrl = GetBaseUrl();
-
-            if (string.IsNullOrEmpty(baseUrl))
-            {
-                throw new ArgumentNullException("baseUrl");
-            }
-
-            sb.Append(GetBaseUrl());
-            sb.Append(GetResourcePath());
-            sb.Append("?");
-
-            foreach (var qs in GetQueryStrings().GetQueryStringCollection())
-            {
-                // these querystrings are already url encoded.
-                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
-            }
-
-            // remove the last & or ?
-            --sb.Length;
-
-            return sb.ToString();
-        }
-
+        /// <param name="httpWebRequest">
+        /// The http web request.
+        /// </param>
         private void PrepareHttpWebRequest(IHttpWebRequest httpWebRequest)
         {
-            // todo: set additional stuffs in web request.
+#if !SILVERLIGHT
+
+            var proxy = GetProxy();
+            if (proxy != null)
+            {
+                httpWebRequest.Proxy = proxy;
+            }
+
+            var credentials = GetCredentials();
+            if (credentials != null)
+            {
+                httpWebRequest.Credentials = credentials;
+            }
+#endif
         }
     }
 }

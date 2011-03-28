@@ -16,11 +16,6 @@ namespace FluentHttp
         Completed,
 
         /// <summary>
-        /// Error occurred executing web request.
-        /// </summary>
-        Error,
-
-        /// <summary>
         /// Web request cancelled.
         /// </summary>
         Cancelled

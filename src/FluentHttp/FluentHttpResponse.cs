@@ -1,5 +1,7 @@
 namespace FluentHttp
 {
+    using System.ComponentModel;
+
     /// <summary>
     /// Represents a Fluent Http Response.
     /// </summary>
@@ -16,6 +18,20 @@ namespace FluentHttp
         private readonly IHttpWebResponse _httpWebResponse;
 
         /// <summary>
+        /// The response status;
+        /// </summary>
+        private ResponseStatus _responseStatus;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FluentHttpResponse"/> class.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpResponse()
+        {
+            _responseStatus = ResponseStatus.Non;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpResponse"/> class.
         /// </summary>
         /// <param name="request">
@@ -25,6 +41,7 @@ namespace FluentHttp
         /// The http web response.
         /// </param>
         public FluentHttpResponse(FluentHttpRequest request, IHttpWebResponse httpWebResponse)
+            : this()
         {
             _request = request;
             _httpWebResponse = httpWebResponse;
@@ -33,7 +50,7 @@ namespace FluentHttp
         /// <summary>
         /// Gets the fluent http request.
         /// </summary>
-        public FluentHttpRequest Request
+        public virtual FluentHttpRequest Request
         {
             get { return _request; }
         }
@@ -41,9 +58,18 @@ namespace FluentHttp
         /// <summary>
         /// Gets the http web response..
         /// </summary>
-        public IHttpWebResponse HttpWebResponse
+        public virtual IHttpWebResponse HttpWebResponse
         {
             get { return _httpWebResponse; }
+        }
+
+        /// <summary>
+        /// Gets or sets the response status.
+        /// </summary>
+        public virtual ResponseStatus ResponseStatus
+        {
+            get { return _responseStatus; }
+            set { _responseStatus = value; }
         }
     }
 }

@@ -108,11 +108,33 @@ namespace FluentHttp
         /// The encode.
         /// </param>
         /// <returns>
-        /// The fluent query string.
+        /// The fluent query strings.
         /// </returns>
         public FluentQueryStrings Add(string name, string value, bool encode)
         {
             return Add(new FluentQueryString(name, value, encode));
+        }
+
+        /// <summary>
+        /// Adds the query string with the sepcified name and value.
+        /// </summary>
+        /// <param name="parameters">
+        /// The query strings.
+        /// </param>
+        /// <returns>
+        /// The fluent query strings.
+        /// </returns>
+        public FluentQueryStrings Add(IDictionary<string, object> parameters)
+        {
+            if (parameters != null)
+            {
+                foreach (var parameter in parameters)
+                {
+                    this.Add(parameter.Key, parameter.Value.ToString());
+                }
+            }
+
+            return this;
         }
 
         /// <summary>
