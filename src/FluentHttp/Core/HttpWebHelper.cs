@@ -5,7 +5,7 @@ namespace FluentHttp
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
-    using Prabir.Async;
+    using AsyncEnumerator;
 
     internal class HttpWebHelper
     {

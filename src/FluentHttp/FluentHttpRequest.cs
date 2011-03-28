@@ -525,7 +525,7 @@ namespace FluentHttp
                     responseHeadersReceived.ResponseSaveStream = args.ResponseSaveStream;
                 });
 
-            Prabir.Async.Async.Run(
+            AsyncEnumerator.Async.Run(
                 enumerableAsync.GetEnumerator(),
                 ex =>
                 {

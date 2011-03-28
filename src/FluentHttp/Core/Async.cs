@@ -1,7 +1,7 @@
 // original code from http://tomasp.net/blog/csharp-async.aspx
 // converted to C# 2.0 compatible code and modified to support exceptions.
 
-namespace Prabir.Async
+namespace AsyncEnumerator
 {
     using System;
     using System.Collections.Generic;
