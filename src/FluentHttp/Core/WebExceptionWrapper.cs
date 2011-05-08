@@ -38,7 +38,9 @@ namespace FluentHttp
 
         public virtual IHttpWebResponse GetResponse()
         {
-            return new HttpWebResponseWrapper((HttpWebResponse)_webException.Response);
+            return _webException.Response == null
+                       ? null
+                       : new HttpWebResponseWrapper((HttpWebResponse)_webException.Response);
         }
 
         public WebException ActualWebException
