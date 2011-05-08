@@ -18,6 +18,11 @@ namespace FluentHttp
         /// <summary>
         /// Web request cancelled.
         /// </summary>
-        Cancelled
+        Cancelled,
+
+        /// <summary>
+        /// Error occurred.
+        /// </summary>
+        Error
     }
 }

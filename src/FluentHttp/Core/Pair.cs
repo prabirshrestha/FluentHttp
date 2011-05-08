@@ -19,10 +19,10 @@ namespace FluentHttp
         /// Initializes a new instance of the <see cref="Pair{TName,TValue}"/> class.
         /// </summary>
         /// <param name="name">
-        /// The name.
+        /// The pair name.
         /// </param>
         /// <param name="value">
-        /// The value.
+        /// The pair value.
         /// </param>
         public Pair(TName name, TValue value)
         {

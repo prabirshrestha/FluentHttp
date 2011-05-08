@@ -14,6 +14,16 @@ namespace FluentHttp
         private readonly FluentHttpRequest _request;
 
         /// <summary>
+        /// The callback.
+        /// </summary>
+        private readonly AsyncCallback _callback;
+
+        /// <summary>
+        /// The async state.
+        /// </summary>
+        private readonly object _asyncState;
+
+        /// <summary>
         /// The wait handle.
         /// </summary>
         private readonly ManualResetEvent _waitHandle;
@@ -24,10 +34,26 @@ namespace FluentHttp
         /// <param name="request">
         /// The request.
         /// </param>
-        public FluentHttpAsyncResult(FluentHttpRequest request)
+        /// <param name="callback">
+        /// The callback.
+        /// </param>
+        /// <param name="asyncState">
+        /// The async state.
+        /// </param>
+        public FluentHttpAsyncResult(FluentHttpRequest request, AsyncCallback callback, object asyncState)
         {
             _request = request;
+            _callback = callback;
+            _asyncState = asyncState;
             _waitHandle = new ManualResetEvent(false);
+        }
+
+        /// <summary>
+        /// Gets Callback.
+        /// </summary>
+        internal AsyncCallback Callback
+        {
+            get { return _callback; }
         }
 
         /// <summary>
@@ -55,7 +81,10 @@ namespace FluentHttp
             get { return _waitHandle; }
         }
 
-        public object AsyncState { get; internal set; }
+        public object AsyncState
+        {
+            get { return _asyncState; }
+        }
 
         public bool CompletedSynchronously
         {

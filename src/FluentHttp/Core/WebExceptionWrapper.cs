@@ -7,7 +7,12 @@ namespace FluentHttp
 #if (!SILVERLIGHT)
     [Serializable]
 #endif
-    internal class WebExceptionWrapper : Exception
+#if FLUENTHTTP_CORE_INTERNAL
+    internal
+#else
+    public
+#endif
+ class WebExceptionWrapper : Exception
     {
         private readonly WebException _webException;
 

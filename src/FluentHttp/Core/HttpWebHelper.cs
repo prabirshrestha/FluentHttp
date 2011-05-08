@@ -9,33 +9,35 @@ namespace FluentHttp
 
     internal class HttpWebHelper
     {
-        //public virtual string BuildRequestUrl(string baseUrl, string resourcePath, IEnumerable<Pair<string, string>> queryStrings)
-        //{
-        //    var sb = new System.Text.StringBuilder();
+        /*
+        public virtual string BuildRequestUrl(string baseUrl, string resourcePath, IEnumerable<Pair<string, string>> queryStrings)
+        {
+            var sb = new System.Text.StringBuilder();
 
-        //    if (string.IsNullOrEmpty(baseUrl))
-        //    {
-        //        throw new System.ArgumentNullException("baseUrl");
-        //    }
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new System.ArgumentNullException("baseUrl");
+            }
 
-        //    sb.Append(baseUrl);
-        //    sb.Append(AddStartingSlashIfNotPresent(resourcePath));
-        //    sb.Append("?");
+            sb.Append(baseUrl);
+            sb.Append(AddStartingSlashIfNotPresent(resourcePath));
+            sb.Append("?");
 
-        //    if (queryStrings != null)
-        //    {
-        //        foreach (var queryString in queryStrings)
-        //        {
-        //            // note: assume queryString is already url encoded.
-        //            sb.AppendFormat("{0}={1}&", queryString.Name, queryString.Value);
-        //        }
-        //    }
+            if (queryStrings != null)
+            {
+                foreach (var queryString in queryStrings)
+                {
+                    // note: assume queryString is already url encoded.
+                    sb.AppendFormat("{0}={1}&", queryString.Name, queryString.Value);
+                }
+            }
 
-        //    // remote the last & or ?
-        //    --sb.Length;
+            // remote the last & or ?
+            --sb.Length;
 
-        //    return sb.ToString();
-        //}
+            return sb.ToString();
+        }
+        */
 
         public virtual IHttpWebRequest CreateHttpWebRequest(string requestUrl, string httpMethod, IEnumerable<Pair<string, string>> requestHeaders, CookieCollection requestCookies)
         {
@@ -84,7 +86,7 @@ namespace FluentHttp
             }
 
             // buffer space for the data to be read and written.
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[1024 * 4]; // 4 kb
 
             if (requestBody != null && requestBody.Length != 0)
             {
@@ -121,6 +123,8 @@ namespace FluentHttp
                         break;
                     }
 
+                    requestBody.Flush();
+
                     // write data asynchronously.
                     var write = Async.FromAsync(requestStream.BeginWrite, requestStream.EndWrite, buffer, 0, count.Result, null);
                     yield return write;
@@ -129,6 +133,8 @@ namespace FluentHttp
                     {
                         throw write.Exception;
                     }
+
+                    requestStream.Flush();
                 }
             }
 
@@ -197,6 +203,8 @@ namespace FluentHttp
                     {
                         break;
                     }
+
+                    responseStream.Flush();
                 }
             }
             else
@@ -224,6 +232,8 @@ namespace FluentHttp
                         break;
                     }
 
+                    responseStream.Flush();
+
                     // write data asynchronously.
                     var write = Async.FromAsync(responseSaveStream.BeginWrite, responseSaveStream.EndWrite, buffer, 0, count.Result, null);
                     yield return write;
@@ -232,6 +242,8 @@ namespace FluentHttp
                     {
                         throw write.Exception;
                     }
+
+                    responseSaveStream.Flush();
                 }
             }
         }
@@ -293,24 +305,26 @@ namespace FluentHttp
         //    return responseHeaders;
         //}
 
-        //public static string AddStartingSlashIfNotPresent(string input)
-        //{
-        //    if (string.IsNullOrEmpty(input))
-        //    {
-        //        return "/";
-        //    }
+        /*
+        public static string AddStartingSlashIfNotPresent(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return "/";
+            }
 
-        //    // if not null or empty
-        //    if (input[0] != '/')
-        //    {
-        //        // if doesn't start with / then add /
-        //        return "/" + input;
-        //    }
-        //    else
-        //    {
-        //        // else return the original input.
-        //        return input;
-        //    }
-        //}
+            // if not null or empty
+            if (input[0] != '/')
+            {
+                // if doesn't start with / then add /
+                return "/" + input;
+            }
+            else
+            {
+                // else return the original input.
+                return input;
+            }
+        }
+        */
     }
 }

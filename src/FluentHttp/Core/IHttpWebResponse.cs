@@ -7,7 +7,12 @@ namespace FluentHttp
     /// <summary>
     /// Represents the http web response.
     /// </summary>
-    public interface IHttpWebResponse
+#if FLUENTHTTP_CORE_INTERNAL
+    internal
+#else
+    public
+#endif
+ interface IHttpWebResponse
     {
         /// <summary>
         /// Gets the http method.

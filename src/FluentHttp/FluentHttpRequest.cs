@@ -1,9 +1,9 @@
-using System.IO;
 
 namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
+    using System.IO;
     using System.Net;
     using System.Text;
 
@@ -502,6 +502,7 @@ namespace FluentHttp
         /// </returns>
         public virtual IAsyncResult BeginExecute(AsyncCallback callback, object state)
         {
+            // todo execute callback
             AuthenticateIfRequried();
 
             var requestUrl = BuildRequestUrl();
@@ -512,7 +513,7 @@ namespace FluentHttp
             var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), GetHeaders().GetHeaderCollection(), null);
             PrepareHttpWebRequest(httpWebRequest);
 
-            var asyncResult = new FluentHttpAsyncResult(this);
+            var asyncResult = new FluentHttpAsyncResult(this, callback, state);
 
             var enumerableAsync = httpWebHelper.ExecuteAsync(
                 httpWebRequest,
@@ -529,7 +530,13 @@ namespace FluentHttp
                 enumerableAsync.GetEnumerator(),
                 ex =>
                 {
+                    if (asyncResult.Response != null)
+                    {
+                        asyncResult.Response.ResponseStatus = ResponseStatus.Error;
+                    }
+
                     asyncResult.Exception = ex;
+                    asyncResult.IsCompleted = true;
                     asyncResult.SetAsyncWaitHandle();
                 });
 
@@ -560,6 +567,7 @@ namespace FluentHttp
 
             // wait for the request to end
             ar.AsyncWaitHandle.WaitOne();
+            ar.IsCompleted = true;
 
             // propagate the exception to the one who calls EndRequest.
             if (ar.Exception != null)

@@ -7,7 +7,12 @@ namespace FluentHttp
     /// <summary>
     /// Represents the http web request wrapper.
     /// </summary>
-    public class HttpWebRequestWrapper : IHttpWebRequest
+#if FLUENTHTTP_CORE_INTERNAL
+    internal
+#else
+    public
+#endif
+ class HttpWebRequestWrapper : IHttpWebRequest
     {
         /// <summary>
         /// The http web request.

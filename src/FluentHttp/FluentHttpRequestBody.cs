@@ -4,9 +4,10 @@ namespace FluentHttp
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using CombinationStream;
 
     /// <summary>
-    /// Represnets the fluent http request body
+    /// Represents the fluent http request body
     /// </summary>
     public class FluentHttpRequestBody
     {
@@ -30,7 +31,15 @@ namespace FluentHttp
         {
             get
             {
-                return _streams.Count == 0 ? null : new CombinationStream(_streams);
+                switch (_streams.Count)
+                {
+                    case 0:
+                        return null;
+                    case 1:
+                        return _streams[0];
+                    default:
+                        return new CombinationStream(_streams);
+                }
             }
         }
 

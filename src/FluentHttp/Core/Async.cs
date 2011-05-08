@@ -6,14 +6,14 @@ namespace AsyncEnumerator
     using System;
     using System.Collections.Generic;
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
 #endif
  delegate void Action();
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
@@ -22,21 +22,21 @@ namespace AsyncEnumerator
 
     #region Helpers
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
 #endif
  delegate IAsyncResult Func<TArg1, TArg2, TArg3>(TArg1 buffer, TArg2 offset, TArg3 length, AsyncCallback callback, object state);
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
 #endif
  delegate TResult Func<TArg1, TResult>(TArg1 arg1);
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
@@ -50,7 +50,7 @@ namespace AsyncEnumerator
     /// Represents a primitive untyped asynchronous operation.
     /// This interface should be used only in asynchronous method declaration.
     /// </summary>
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
@@ -66,7 +66,7 @@ namespace AsyncEnumerator
     /// Represents a type with no value - alternative to C# void in 
     /// situations where void can't be used
     /// </summary>
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
@@ -83,7 +83,7 @@ namespace AsyncEnumerator
         public static Unit Value { get; private set; }
     }
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
@@ -181,7 +181,7 @@ namespace AsyncEnumerator
         }
     }
 
-#if PRABIR_ASYNC_INTERNAL
+#if ASYNC_ENUMERATOR_INTERNAL
     internal
 #else
     public
