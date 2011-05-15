@@ -55,38 +55,38 @@ Here are some samples to get started with on FluentHttp.
 ### Using with Task Parallel Library (TPL)
 Note: supported only in .NET 4.0
 
-		private static void GetAsyncWithTask()
-		{
-			// Stream to save the response to
-			var responseSaveStream = new MemoryStream();
+	private static void GetAsyncWithTask()
+	{
+		// Stream to save the response to
+		var responseSaveStream = new MemoryStream();
 
-			// Prepare the request.
-			var request = new FluentHttpRequest()
-				.BaseUrl("https://graph.facebook.com")
-				.ResourcePath("/4")
-				.Method("GET")
-				.Headers(h => h.Add("User-Agent", "FluentHttp"))
-				.QueryStrings(q => q
-										.Add("fields", "name,first_name,last_name")
-										.Add("format", "json"))
-				.Proxy(WebRequest.DefaultWebProxy)
-				.OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+		// Prepare the request.
+		var request = new FluentHttpRequest()
+			.BaseUrl("https://graph.facebook.com")
+			.ResourcePath("/4")
+			.Method("GET")
+			.Headers(h => h.Add("User-Agent", "FluentHttp"))
+			.QueryStrings(q => q
+									.Add("fields", "name,first_name,last_name")
+									.Add("format", "json"))
+			.Proxy(WebRequest.DefaultWebProxy)
+			.OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-			var task = request.ToTask();
+		var task = request.ToTask();
 
-			task.ContinueWith(
-				t =>
-				{
-					var response = t.Result;
+		task.ContinueWith(
+			t =>
+			{
+				var response = t.Result;
 
-					// seek the save stream to beginning.
-					response.SaveStream.Seek(0, SeekOrigin.Begin);
+				// seek the save stream to beginning.
+				response.SaveStream.Seek(0, SeekOrigin.Begin);
 
-					// Print the response
-					Console.WriteLine("GetAsyncWithTask: ");
-					Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
-				});
-		}
+				// Print the response
+				Console.WriteLine("GetAsyncWithTask: ");
+				Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
+			});
+	}
 
 ### Making synchronous requests
 Unlike most of the rest libraries, FluentHttp only supports async web requests. But you 
