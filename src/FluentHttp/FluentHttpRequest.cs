@@ -536,6 +536,7 @@ namespace FluentHttp
                     var args = new ResponseHeadersReceivedEventArgs(asyncResult.Response);
                     OnResponseHeadersRecived(args);
                     responseHeadersReceived.ResponseSaveStream = args.ResponseSaveStream;
+                    asyncResult.Response.SaveStream = args.ResponseSaveStream;
                 });
 
             AsyncEnumerator.Async.Run(

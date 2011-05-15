@@ -52,19 +52,19 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-            var task = request.ToTask(responseSaveStream);
+            var task = request.ToTask();
 
             task.ContinueWith(
                 t =>
                 {
-                    var stateResponseSaveStream = (Stream)t.AsyncState;
+                    var response = t.Result;
 
                     // seek the save stream to beginning.
-                    stateResponseSaveStream.Seek(0, SeekOrigin.Begin);
+                    response.SaveStream.Seek(0, SeekOrigin.Begin);
 
                     // Print the response
                     Console.WriteLine("GetAsyncWithTask: ");
-                    Console.WriteLine(FluentHttpRequest.ToString(stateResponseSaveStream));
+                    Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
                 });
         }
 #endif
@@ -92,11 +92,11 @@ namespace FluentHttpSamples
                                          var response = request.EndExecute(ar);
 
                                          // seek the save stream to beginning.
-                                         responseSaveStream.Seek(0, SeekOrigin.Begin);
+                                         response.SaveStream.Seek(0, SeekOrigin.Begin);
 
                                          // Print the response
                                          Console.WriteLine("GetAsync: ");
-                                         Console.WriteLine(FluentHttpRequest.ToString(responseSaveStream));
+                                         Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
                                      }, null);
         }
 

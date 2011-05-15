@@ -1,6 +1,8 @@
+
 namespace FluentHttp
 {
     using System.ComponentModel;
+    using System.IO;
 
     /// <summary>
     /// Represents a Fluent Http Response.
@@ -71,5 +73,10 @@ namespace FluentHttp
             get { return _responseStatus; }
             set { _responseStatus = value; }
         }
+
+        /// <summary>
+        /// Gets the reponse save stream.
+        /// </summary>
+        public virtual Stream SaveStream { get; internal set; }
     }
 }
