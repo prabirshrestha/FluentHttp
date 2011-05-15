@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\Net40\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;TPL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;TPL;FLUENT_HTTP_HEADER_NOCAST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -54,7 +54,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\Net40\</OutputPath>
-    <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;TPL;</DefineConstants>
+    <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;TPL;FLUENT_HTTP_HEADER_NOCAST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Net40\FluentHttp.xml</DocumentationFile>

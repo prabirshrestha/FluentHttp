@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace FluentHttp
 {
     using System;
@@ -510,7 +512,19 @@ namespace FluentHttp
             var httpWebHelper = new HttpWebHelper();
 
             // todo add cookies
-            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), (System.Collections.Generic.IEnumerable<Pair<string,string>>) GetHeaders().GetHeaderCollection(), null);
+            var headers = GetHeaders().GetHeaderCollection();
+
+#if FLUENT_HTTP_HEADER_NOCAST
+            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headers, null);
+#else
+            var headersPairList = new List<Pair<string, string>>();
+
+            foreach (var fluentHttpHeader in headers)
+                headersPairList.Add(fluentHttpHeader);
+
+            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headersPairList, null);
+#endif
+
             PrepareHttpWebRequest(httpWebRequest);
 
             var asyncResult = new FluentHttpAsyncResult(this, callback, state);
