@@ -62,6 +62,7 @@ namespace FluentHttp
             set { this.httpWebRequest.Headers = value; }
         }
 
+#if !WINDOWS_PHONE
         /// <summary>
         /// Gets or sets the content length.
         /// </summary>
@@ -70,10 +71,8 @@ namespace FluentHttp
             get { return this.httpWebRequest.ContentLength; }
             set { this.httpWebRequest.ContentLength = value; }
         }
+#endif
 
-        
-
-        
         /// <summary>
         /// Gets or sets the user agent.
         /// </summary>
@@ -92,7 +91,7 @@ namespace FluentHttp
             set { this.httpWebRequest.CookieContainer = value; }
         }
 
-        
+
 
         /// <summary>
         /// Gets or sets the credentials.
@@ -103,7 +102,7 @@ namespace FluentHttp
             set { this.httpWebRequest.Credentials = value; }
         }
 
-        
+
 
         /// <summary>
         /// Gets the request uri.
@@ -113,7 +112,7 @@ namespace FluentHttp
             get { return this.httpWebRequest.RequestUri; }
         }
 
-        
+
 
         /// <summary>
         /// Gets or sets the accept.

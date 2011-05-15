@@ -24,11 +24,13 @@ namespace FluentHttp
         /// </summary>
         WebHeaderCollection Headers { get; set; }
 
+#if !WINDOWS_PHONE
         /// <summary>
         /// Gets or sets the content length.
         /// </summary>
         long ContentLength { get; set; }
-        
+#endif
+
         /// <summary>
         /// Gets or sets the user agent.
         /// </summary>

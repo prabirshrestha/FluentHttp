@@ -278,10 +278,12 @@ namespace FluentHttp
                 {
                     httpWebRequest.ContentType = value;
                 }
+#if !WINDOWS_PHONE
                 else if (name.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                 {
                     httpWebRequest.ContentLength = Convert.ToInt64(value);
                 }
+#endif
                 else if (name.Equals("user-agent", StringComparison.OrdinalIgnoreCase))
                 {
                     httpWebRequest.UserAgent = value;
