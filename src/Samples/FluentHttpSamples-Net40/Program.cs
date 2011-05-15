@@ -15,6 +15,10 @@ namespace FluentHttpSamples
         {
             GetAsync();
 
+#if TPL
+            GetAsyncWithTask();
+#endif
+
             Get();
 
             //var postId = Post("message from fluent http");
@@ -29,6 +33,41 @@ namespace FluentHttpSamples
 
             Console.ReadKey();
         }
+
+#if TPL
+        private static void GetAsyncWithTask()
+        {
+            // Stream to save the response to
+            var responseSaveStream = new MemoryStream();
+
+            // Prepare the request.
+            var request = new FluentHttpRequest()
+                .BaseUrl("https://graph.facebook.com")
+                .ResourcePath("/4")
+                .Method("GET")
+                .Headers(h => h.Add("User-Agent", "FluentHttp"))
+                .QueryStrings(q => q
+                                       .Add("fields", "name,first_name,last_name")
+                                       .Add("format", "json"))
+                .Proxy(WebRequest.DefaultWebProxy)
+                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+
+            var task = request.ToTask(responseSaveStream);
+
+            task.ContinueWith(
+                t =>
+                {
+                    var stateResponseSaveStream = (Stream)t.AsyncState;
+
+                    // seek the save stream to beginning.
+                    stateResponseSaveStream.Seek(0, SeekOrigin.Begin);
+
+                    // Print the response
+                    Console.WriteLine("GetAsyncWithTask: ");
+                    Console.WriteLine(FluentHttpRequest.ToString(stateResponseSaveStream));
+                });
+        }
+#endif
 
         private static void GetAsync()
         {
@@ -79,7 +118,7 @@ namespace FluentHttpSamples
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
-            var ar = request.BeginExecute(null, "a");
+            var ar = request.BeginExecute(null, null);
             var response = request.EndExecute(ar);
 
             // seek the save stream to beginning.
