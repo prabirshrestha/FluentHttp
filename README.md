@@ -12,6 +12,7 @@ a rest client wrapper, such as for Facebook, Github, Twitter, Google etc.)
 * .NET 3.5 (client profile supported) ~50kb
 * Silverlight 4.0  ~31kb
 * Windows Phone 7  ~19kb
+* Mono
 
 ## Getting Started
 Reference appropriate FluentHttp.dll depending on your framework.
