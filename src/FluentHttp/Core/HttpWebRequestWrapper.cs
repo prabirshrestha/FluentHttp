@@ -71,6 +71,69 @@ namespace FluentHttp
             set { this.httpWebRequest.ContentLength = value; }
         }
 
+        
+
+        
+        /// <summary>
+        /// Gets or sets the user agent.
+        /// </summary>
+        public string UserAgent
+        {
+            get { return this.httpWebRequest.UserAgent; }
+            set { this.httpWebRequest.UserAgent = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the cookie container.
+        /// </summary>
+        public CookieContainer CookieContainer
+        {
+            get { return this.httpWebRequest.CookieContainer; }
+            set { this.httpWebRequest.CookieContainer = value; }
+        }
+
+        
+
+        /// <summary>
+        /// Gets or sets the credentials.
+        /// </summary>
+        public ICredentials Credentials
+        {
+            get { return this.httpWebRequest.Credentials; }
+            set { this.httpWebRequest.Credentials = value; }
+        }
+
+        
+
+        /// <summary>
+        /// Gets the request uri.
+        /// </summary>
+        public Uri RequestUri
+        {
+            get { return this.httpWebRequest.RequestUri; }
+        }
+
+        
+
+        /// <summary>
+        /// Gets or sets the accept.
+        /// </summary>
+        public string Accept
+        {
+            get { return this.httpWebRequest.Accept; }
+            set { this.httpWebRequest.Accept = value; }
+        }
+
+#if !SILVERLIGHT
+        /// <summary>
+        /// Gets or sets the proxy.
+        /// </summary>
+        public IWebProxy Proxy
+        {
+            get { return this.httpWebRequest.Proxy; }
+            set { this.httpWebRequest.Proxy = value; }
+        }
+
         /// <summary>
         /// Gets or sets the if modified since.
         /// </summary>
@@ -99,24 +162,6 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Gets or sets the user agent.
-        /// </summary>
-        public string UserAgent
-        {
-            get { return this.httpWebRequest.UserAgent; }
-            set { this.httpWebRequest.UserAgent = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the cookie container.
-        /// </summary>
-        public CookieContainer CookieContainer
-        {
-            get { return this.httpWebRequest.CookieContainer; }
-            set { this.httpWebRequest.CookieContainer = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the timeout.
         /// </summary>
         public int Timeout
@@ -126,38 +171,12 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Gets or sets the proxy.
-        /// </summary>
-        public IWebProxy Proxy
-        {
-            get { return this.httpWebRequest.Proxy; }
-            set { this.httpWebRequest.Proxy = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the credentials.
-        /// </summary>
-        public ICredentials Credentials
-        {
-            get { return this.httpWebRequest.Credentials; }
-            set { this.httpWebRequest.Credentials = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the decompression method.
         /// </summary>
         public DecompressionMethods AutomaticDecompression
         {
             get { return this.httpWebRequest.AutomaticDecompression; }
             set { this.httpWebRequest.AutomaticDecompression = value; }
-        }
-
-        /// <summary>
-        /// Gets the request uri.
-        /// </summary>
-        public Uri RequestUri
-        {
-            get { return this.httpWebRequest.RequestUri; }
         }
 
         /// <summary>
@@ -177,15 +196,7 @@ namespace FluentHttp
             get { return this.httpWebRequest.Connection; }
             set { this.httpWebRequest.Connection = value; }
         }
-
-        /// <summary>
-        /// Gets or sets the accept.
-        /// </summary>
-        public string Accept
-        {
-            get { return this.httpWebRequest.Accept; }
-            set { this.httpWebRequest.Accept = value; }
-        }
+#endif
 
         /// <summary>
         /// Begins the get response.

@@ -288,7 +288,11 @@ namespace FluentHttp
                 }
                 else
                 {
+#if SILVERLIGHT
+                    httpWebRequest.Headers[name] = value;
+#else
                     httpWebRequest.Headers.Add(name, value);
+#endif
                 }
             }
         }

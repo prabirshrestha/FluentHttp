@@ -28,6 +28,42 @@ namespace FluentHttp
         /// Gets or sets the content length.
         /// </summary>
         long ContentLength { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the user agent.
+        /// </summary>
+        string UserAgent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cookie container.
+        /// </summary>
+        CookieContainer CookieContainer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the credentials.
+        /// </summary>
+        ICredentials Credentials { get; set; }
+
+        /// <summary>
+        /// Gets the request uri.
+        /// </summary>
+        Uri RequestUri { get; }
+
+        /// <summary>
+        /// Gets or sets the content type.
+        /// </summary>
+        string ContentType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the accept.
+        /// </summary>
+        string Accept { get; set; }
+
+#if !SILVERLIGHT
+        /// <summary>
+        /// Gets or sets the proxy.
+        /// </summary>
+        IWebProxy Proxy { get; set; }
 
         /// <summary>
         /// Gets or sets the if modified since.
@@ -45,34 +81,14 @@ namespace FluentHttp
         string TransferEncoding { get; set; }
 
         /// <summary>
-        /// Gets or sets the user agent.
-        /// </summary>
-        string UserAgent { get; set; }
-
-        /// <summary>
-        /// Gets or sets the cookie container.
-        /// </summary>
-        CookieContainer CookieContainer { get; set; }
-
-        /// <summary>
         /// Gets or sets the timeout.
         /// </summary>
         int Timeout { get; set; }
 
         /// <summary>
-        /// Gets or sets the proxy.
+        /// Gets or sets the decompression method.
         /// </summary>
-        IWebProxy Proxy { get; set; }
-
-        /// <summary>
-        /// Gets or sets the credentials.
-        /// </summary>
-        ICredentials Credentials { get; set; }
-
-        /// <summary>
-        /// Gets the request uri.
-        /// </summary>
-        Uri RequestUri { get; }
+        DecompressionMethods AutomaticDecompression { get; set; }
 
         /// <summary>
         /// Gets or sets the expect.
@@ -83,21 +99,7 @@ namespace FluentHttp
         /// Gets or sets the connection.
         /// </summary>
         string Connection { get; set; }
-
-        /// <summary>
-        /// Gets or sets the content type.
-        /// </summary>
-        string ContentType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the accept.
-        /// </summary>
-        string Accept { get; set; }
-
-        /// <summary>
-        /// Gets or sets the decompression method.
-        /// </summary>
-        DecompressionMethods AutomaticDecompression { get; set; }
+#endif
 
         /// <summary>
         /// Begins the get response.
