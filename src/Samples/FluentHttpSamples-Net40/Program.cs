@@ -13,19 +13,52 @@ namespace FluentHttpSamples
 
         static void Main(string[] args)
         {
+            GetAsync();
+
             Get();
 
-            var postId = Post("message from fluent http");
+            //var postId = Post("message from fluent http");
 
-            Console.WriteLine("Check if message was posted in fb.com");
-            Console.ReadKey();
+            //Console.WriteLine("Check if message was posted in fb.com");
+            //Console.ReadKey();
 
-            Delete(postId);
-            Console.WriteLine("Check if message was deleted in fb.com");
+            //Delete(postId);
+            //Console.WriteLine("Check if message was deleted in fb.com");
 
             //UploadPhoto(@"C:\Users\Public\Pictures\Sample Pictures\Koala.jpg", "koala.jpg", "image/jpeg", "Uploaded using FluentHttp");
 
             Console.ReadKey();
+        }
+
+        private static void GetAsync()
+        {
+            // Stream to save the response to
+            var responseSaveStream = new MemoryStream();
+
+            // Prepare the request.
+            var request = new FluentHttpRequest()
+                .BaseUrl("https://graph.facebook.com")
+                .ResourcePath("/4")
+                .Method("GET")
+                .Headers(h => h.Add("User-Agent", "FluentHttp"))
+                .QueryStrings(q => q
+                                       .Add("fields", "name,first_name,last_name")
+                                       .Add("format", "json"))
+                .Proxy(WebRequest.DefaultWebProxy)
+                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+
+            // Execute the request. Call EndRequest immediately so it behaves synchronously.
+            request.BeginExecute(ar =>
+                                     {
+                                         var response = request.EndExecute(ar);
+
+                                         // seek the save stream to beginning.
+                                         responseSaveStream.Seek(0, SeekOrigin.Begin);
+
+                                         // Print the response
+                                         Console.WriteLine("GetAsync: ");
+                                         Console.WriteLine(FluentHttpRequest.ToString(responseSaveStream));
+                                     }, null);
         }
 
         private static void Get()

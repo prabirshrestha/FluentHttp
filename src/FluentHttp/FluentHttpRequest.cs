@@ -1,6 +1,4 @@
 
-using System.Collections.Generic;
-
 namespace FluentHttp
 {
     using System;
@@ -517,7 +515,7 @@ namespace FluentHttp
 #if FLUENT_HTTP_HEADER_NOCAST
             var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headers, null);
 #else
-            var headersPairList = new List<Pair<string, string>>();
+            var headersPairList = new System.Collections.Generic.List<Pair<string, string>>();
 
             foreach (var fluentHttpHeader in headers)
                 headersPairList.Add(fluentHttpHeader);
@@ -552,6 +550,9 @@ namespace FluentHttp
                     asyncResult.Exception = ex;
                     asyncResult.IsCompleted = true;
                     asyncResult.SetAsyncWaitHandle();
+
+                    if (asyncResult.Callback != null)
+                        asyncResult.Callback(asyncResult);
                 });
 
             return asyncResult;
