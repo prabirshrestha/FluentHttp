@@ -86,7 +86,6 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-            // Execute the request. Call EndRequest immediately so it behaves synchronously.
             request.BeginExecute(ar =>
                                      {
                                          var response = request.EndExecute(ar);
