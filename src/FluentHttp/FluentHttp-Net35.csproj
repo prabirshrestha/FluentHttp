@@ -20,16 +20,16 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\Net35\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MOBILE;NET35;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Debug\Net35\FluentHttp.xml</DocumentationFile>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
     <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
     <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
     <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
@@ -37,7 +37,7 @@
     <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
     <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
     <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
     <CodeContractsCustomRewriterAssembly />
     <CodeContractsCustomRewriterClass />
     <CodeContractsLibPaths />
@@ -46,18 +46,19 @@
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\Net35\</OutputPath>
-    <DefineConstants>TRACE;MOBILE;NET35;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Net35\FluentHttp.xml</DocumentationFile>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
@@ -78,12 +79,10 @@
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <HintPath>..\..\libs\CodeContracts\v3.5\Microsoft.Contracts.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -92,36 +91,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authenticator\HttpBasicAuthenticatior.cs" />
-    <Compile Include="Authenticator\IFluentAuthenticator.cs" />
-    <Compile Include="Authenticator\OAuth2Authenticators.cs" />
-    <Compile Include="Body\FluentHttpRequestBody.cs" />
-    <Compile Include="Cookies\FluentCookies.cs" />
-    <Compile Include="Events\CompletedEventArgs.cs" />
-    <Compile Include="Events\FluentHttpRequestEventArgs.cs" />
-    <Compile Include="Events\ResponseHeadersReceivedEventArgs.cs" />
-    <Compile Include="Events\ResponseReadEventArgs.cs" />
-    <Compile Include="FluentHttpAsyncResult.cs" />
-    <Compile Include="FluentHttpRequest.cs" />
-    <Compile Include="FluentHttpRequestContracts.cs" />
-    <Compile Include="FluentHttpResponse.cs" />
-    <Compile Include="HttpHeader\FluentHttpHeader.cs" />
-    <Compile Include="HttpHeader\FluentHttpHeaders.cs" />
-    <Compile Include="IFluentHttpRequest.cs" />
-    <Compile Include="IFluentHttpResponse.cs" />
-    <Compile Include="InternalState.cs" />
+    <Compile Include="CombinationStream.cs" />
+    <Compile Include="Core\Async.cs" />
+    <Compile Include="Core\HttpWebHelper.cs" />
+    <Compile Include="Core\HttpWebRequestWrapper.cs" />
+    <Compile Include="Core\HttpWebResponseWrapper.cs" />
+    <Compile Include="Core\IHttpWebRequest.cs" />
+    <Compile Include="Core\IHttpWebResponse.cs" />
+    <Compile Include="Core\Pair.cs" />
+    <Compile Include="Core\ResponseReceivedEventArgs.cs" />
+    <Compile Include="Core\WebExceptionWrapper.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpRequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FluentHttpRequestBody.cs" />
+    <Compile Include="FluentHttpResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FluentQueryStrings.cs" />
+    <Compile Include="HttpEncoder.cs" />
+    <Compile Include="HttpUtility.cs" />
+    <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryString\FluentQueryString.cs" />
-    <Compile Include="QueryString\FluentQueryStrings.cs" />
-    <Compile Include="ResponseStatus.cs" />
-    <Compile Include="Utils\HttpEncoder.cs" />
-    <Compile Include="Utils\HttpUtility.cs" />
-    <Compile Include="Utils\MultiReadStream.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopier.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopierAsyncResult.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopierState.cs" />
-    <Compile Include="Utils\StreamCopier\StreamCopyEventArgs.cs" />
-    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="ResponseHeadersReceivedEventArgs.cs" />
+    <Compile Include="ResponseStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

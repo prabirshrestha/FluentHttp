@@ -510,7 +510,7 @@ namespace FluentHttp
             var httpWebHelper = new HttpWebHelper();
 
             // todo add cookies
-            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), GetHeaders().GetHeaderCollection(), null);
+            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), (System.Collections.Generic.IEnumerable<Pair<string,string>>) GetHeaders().GetHeaderCollection(), null);
             PrepareHttpWebRequest(httpWebRequest);
 
             var asyncResult = new FluentHttpAsyncResult(this, callback, state);
