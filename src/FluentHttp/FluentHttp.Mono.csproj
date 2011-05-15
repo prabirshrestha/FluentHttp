@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{14C02613-EEB1-4F82-82C4-878548AB3FB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FluentHttp.Mono</RootNamespace>
+    <AssemblyName>FluentHttp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\mono</OutputPath>
+    <DefineConstants>DEBUG;ASYNC_ENUMERATOR_INTERNAL;TPL;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Release\mono</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>ASYNC_ENUMERATOR_INTERNAL;TPL;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\Async.cs" />
+    <Compile Include="Core\HttpWebHelper.cs" />
+    <Compile Include="Core\HttpWebRequestWrapper.cs" />
+    <Compile Include="Core\HttpWebResponseWrapper.cs" />
+    <Compile Include="Core\IHttpWebRequest.cs" />
+    <Compile Include="Core\IHttpWebResponse.cs" />
+    <Compile Include="Core\Pair.cs" />
+    <Compile Include="Core\ResponseReceivedEventArgs.cs" />
+    <Compile Include="Core\WebExceptionWrapper.cs" />
+    <Compile Include="CombinationStream.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs" />
+    <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestBody.cs" />
+    <Compile Include="FluentHttpResponse.cs" />
+    <Compile Include="FluentQueryStrings.cs" />
+    <Compile Include="HttpEncoder.cs" />
+    <Compile Include="HttpUtility.cs" />
+    <Compile Include="IFluentAuthenticator.cs" />
+    <Compile Include="ResponseHeadersReceivedEventArgs.cs" />
+    <Compile Include="ResponseStatus.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Core\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

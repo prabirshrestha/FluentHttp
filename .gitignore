@@ -10,6 +10,8 @@ App_Data/
 *.ncb
 *sln.docstates
 
+*.userprefs
+
 # Visual Studio Extensions Ignores
 .vs10x
 *.vs10x
