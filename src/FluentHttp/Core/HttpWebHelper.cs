@@ -204,7 +204,9 @@ namespace FluentHttp
                         break;
                     }
 
+#if !SILVERLIGHT
                     responseStream.Flush();
+#endif
                 }
             }
             else
@@ -232,8 +234,10 @@ namespace FluentHttp
                         break;
                     }
 
+#if !SILVERLIGHT
+                    // note: silverlight memorystream doesn't support flush. other streams may support.
                     responseStream.Flush();
-
+#endif
                     // write data asynchronously.
                     var write = Async.FromAsync(responseSaveStream.BeginWrite, responseSaveStream.EndWrite, buffer, 0, count.Result, null);
                     yield return write;
