@@ -194,7 +194,7 @@ namespace AsyncEnumerator
             {
                 if (!en.MoveNext())
                 {
-                    cont(null);
+                    cont(en.Current == null ? null : en.Current.Exception);
                     return;
                 }
 

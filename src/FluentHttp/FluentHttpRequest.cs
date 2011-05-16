@@ -543,10 +543,11 @@ namespace FluentHttp
                 enumerableAsync.GetEnumerator(),
                 ex =>
                 {
-                    if (asyncResult.Response != null)
-                    {
+                    if (asyncResult.IsCompleted)
+                        throw ex;
+
+                    if (asyncResult.Response != null && ex != null)
                         asyncResult.Response.ResponseStatus = ResponseStatus.Error;
-                    }
 
                     asyncResult.Exception = ex;
                     asyncResult.IsCompleted = true;
@@ -554,6 +555,7 @@ namespace FluentHttp
 
                     if (asyncResult.Callback != null)
                         asyncResult.Callback(asyncResult);
+
                 });
 
             return asyncResult;
