@@ -21,13 +21,13 @@ namespace FluentHttpSamples
 
             Get();
 
-            //var postId = Post("message from fluent http");
+            var postId = Post("message from fluent http");
 
-            //Console.WriteLine("Check if message was posted in fb.com");
-            //Console.ReadKey();
+            Console.WriteLine("Check if message was posted in fb.com");
+            Console.ReadKey();
 
-            //Delete(postId);
-            //Console.WriteLine("Check if message was deleted in fb.com");
+            Delete(postId);
+            Console.WriteLine("Check if message was deleted in fb.com");
 
             //UploadPhoto(@"C:\Users\Public\Pictures\Sample Pictures\Koala.jpg", "koala.jpg", "image/jpeg", "Uploaded using FluentHttp");
 
@@ -145,7 +145,7 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream)
                 .Body(body =>
-                      body.Append(string.Format("{0}={1}", FluentHttpRequest.UrlEncode("message"), FluentHttpRequest.UrlEncode(message))));
+                      body.Append(string.Format("{0}={1}", FluentHttpRequest.UrlEncode("message"), message)));
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
             var ar = request.BeginExecute(null, null);
@@ -229,7 +229,7 @@ namespace FluentHttpSamples
                                       fd.Append(multipartNewline);
                                   };
 
-                              formData(sb, "message", FluentHttpRequest.UrlEncode(message));
+                              formData(sb, "message", message);
 
                               sb.AppendFormat("{0}{1}{2}", multipartFormPrefix, multipartBoundary, multipartNewline);
                               sb.AppendFormat("Content-Disposition: form-data; filename=\"{0}\"{1}", filename, multipartNewline);
