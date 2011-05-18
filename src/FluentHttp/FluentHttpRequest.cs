@@ -504,8 +504,7 @@ namespace FluentHttp
                     fluentHttpResponse = new FluentHttpResponse(this, e.Response);
                     var args = new ResponseHeadersReceivedEventArgs(fluentHttpResponse, state);
                     OnResponseHeadersRecived(args);
-                    e.ResponseSaveStream = args.ResponseSaveStream;
-                    fluentHttpResponse.SaveStream = args.ResponseSaveStream;
+                    e.ResponseSaveStream = fluentHttpResponse.SaveStream;
                 };
 
             httpWebHelper.ExecuteAsync(httpWebRequest, GetBody().Stream,

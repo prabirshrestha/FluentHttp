@@ -13,6 +13,9 @@ namespace FluentHttp
         /// </summary>
         private readonly FluentHttpResponse _response;
 
+        /// <summary>
+        /// The async state.
+        /// </summary>
         private readonly object _asyncState;
 
         /// <summary>
@@ -21,12 +24,16 @@ namespace FluentHttp
         /// <param name="response">
         /// The response.
         /// </param>
+        /// <param name="asyncState">The async state</param>
         public ResponseHeadersReceivedEventArgs(FluentHttpResponse response, object asyncState)
         {
             _response = response;
             _asyncState = asyncState;
         }
 
+        /// <summary>
+        /// Gets the async state.
+        /// </summary>
         public object AsyncState
         {
             get { return _asyncState; }
@@ -41,8 +48,12 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Gets or sets the response save stream.
+        /// Sets the response stream.
         /// </summary>
-        public Stream ResponseSaveStream { get; set; }
+        /// <param name="stream">The stream to save reponse into.</param>
+        public void SaveResponseIn(Stream stream)
+        {
+            Response.SaveStream = stream;
+        }
     }
 }

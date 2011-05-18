@@ -50,7 +50,7 @@ namespace FluentHttpSamples
                                        .Add("fields", "name,first_name,last_name")
                                        .Add("format", "json"))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
             var task = request.ExecuteTaskAsync();
 
@@ -84,7 +84,7 @@ namespace FluentHttpSamples
                                        .Add("fields", "name,first_name,last_name")
                                        .Add("format", "json"))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
             request.ExecuteAsync(ar =>
                                      {
@@ -114,7 +114,7 @@ namespace FluentHttpSamples
                                        .Add("fields", "name,first_name,last_name")
                                        .Add("format", "json"))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
             var asyncResult = request.Execute();
 
@@ -141,7 +141,7 @@ namespace FluentHttpSamples
                                        .Add("oauth_token", AccessToken)
                                        .Add("format", "json"))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream)
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream))
                 .Body(body =>
                       body.Append(string.Format("{0}={1}", FluentHttpRequest.UrlEncode("message"), message)));
 
@@ -176,7 +176,7 @@ namespace FluentHttpSamples
                 .QueryStrings(q => q
                                        .Add("oauth_token", AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
             var ar = request.Execute();
@@ -207,7 +207,7 @@ namespace FluentHttpSamples
                 .QueryStrings(q => q
                                        .Add("oauth_token", AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
-                .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream)
+                .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream))
                 .Body(body =>
                           {
                               // Build up the post message header
