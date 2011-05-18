@@ -149,6 +149,14 @@ namespace FluentHttp
             return _queryStrings;
         }
 
+        internal IEnumerable<Pair<string, string>> GetQueryStringPairs()
+        {
+            foreach (var qs in _queryStrings)
+            {
+                yield return qs;
+            }
+        }
+
         #region Hide defualt object methods
 
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",

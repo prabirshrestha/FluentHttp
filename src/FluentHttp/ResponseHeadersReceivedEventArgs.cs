@@ -13,15 +13,23 @@ namespace FluentHttp
         /// </summary>
         private readonly FluentHttpResponse _response;
 
+        private readonly object _asyncState;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseHeadersReceivedEventArgs"/> class.
         /// </summary>
         /// <param name="response">
         /// The response.
         /// </param>
-        public ResponseHeadersReceivedEventArgs(FluentHttpResponse response)
+        public ResponseHeadersReceivedEventArgs(FluentHttpResponse response, object asyncState)
         {
             _response = response;
+            _asyncState = asyncState;
+        }
+
+        public object AsyncState
+        {
+            get { return _asyncState; }
         }
 
         /// <summary>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using FluentHttp;
-using System.Net;
 
 namespace FluentHttpSamples
 {
@@ -21,13 +21,13 @@ namespace FluentHttpSamples
 
             Get();
 
-            var postId = Post("message from fluent http");
+            //var postId = Post("message from fluent http");
 
-            Console.WriteLine("Check if message was posted in fb.com");
-            Console.ReadKey();
+            //Console.WriteLine("Check if message was posted in fb.com");
+            //Console.ReadKey();
 
-            Delete(postId);
-            Console.WriteLine("Check if message was deleted in fb.com");
+            //Delete(postId);
+            //Console.WriteLine("Check if message was deleted in fb.com");
 
             //UploadPhoto(@"C:\Users\Public\Pictures\Sample Pictures\Koala.jpg", "koala.jpg", "image/jpeg", "Uploaded using FluentHttp");
 
@@ -52,19 +52,19 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-            var task = request.ToTask();
+            var task = request.ExecuteTaskAsync();
 
             task.ContinueWith(
                 t =>
                 {
-                    var response = t.Result;
+                    var ar = t.Result;
 
                     // seek the save stream to beginning.
-                    response.SaveStream.Seek(0, SeekOrigin.Begin);
+                    ar.Response.SaveStream.Seek(0, SeekOrigin.Begin);
 
                     // Print the response
                     Console.WriteLine("GetAsyncWithTask: ");
-                    Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
+                    Console.WriteLine(FluentHttpRequest.ToString(ar.Response.SaveStream));
                 });
         }
 #endif
@@ -86,9 +86,9 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-            request.BeginExecute(ar =>
+            request.ExecuteAsync(ar =>
                                      {
-                                         var response = request.EndExecute(ar);
+                                         var response = ar.Response;
 
                                          // seek the save stream to beginning.
                                          response.SaveStream.Seek(0, SeekOrigin.Begin);
@@ -101,10 +101,10 @@ namespace FluentHttpSamples
 
         private static void Get()
         {
-            // Stream to save the response to
+            //Stream to save the response to
             var responseSaveStream = new MemoryStream();
 
-            // Prepare the request.
+            //Prepare the request.
             var request = new FluentHttpRequest()
                 .BaseUrl("https://graph.facebook.com")
                 .ResourcePath("/4")
@@ -116,16 +116,14 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
-            // Execute the request. Call EndRequest immediately so it behaves synchronously.
-            var ar = request.BeginExecute(null, null);
-            var response = request.EndExecute(ar);
+            var asyncResult = request.Execute();
 
-            // seek the save stream to beginning.
-            responseSaveStream.Seek(0, SeekOrigin.Begin);
+            //seek the save stream to beginning.
+            asyncResult.Response.SaveStream.Seek(0, SeekOrigin.Begin);
 
-            // Print the response
+            //Print the response
             Console.WriteLine("Get: ");
-            Console.WriteLine(FluentHttpRequest.ToString(responseSaveStream));
+            Console.WriteLine(FluentHttpRequest.ToString(asyncResult.Response.SaveStream));
         }
 
         private static string Post(string message)
@@ -148,8 +146,7 @@ namespace FluentHttpSamples
                       body.Append(string.Format("{0}={1}", FluentHttpRequest.UrlEncode("message"), message)));
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
-            var ar = request.BeginExecute(null, null);
-            var response = request.EndExecute(ar);
+            var ar = request.Execute();
 
             // seek the save stream to beginning.
             responseSaveStream.Seek(0, SeekOrigin.Begin);
@@ -182,8 +179,7 @@ namespace FluentHttpSamples
                 .OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
-            var ar = request.BeginExecute(null, null);
-            var response = request.EndExecute(ar);
+            var ar = request.Execute();
 
             // seek the save stream to beginning.
             responseSaveStream.Seek(0, SeekOrigin.Begin);
@@ -249,8 +245,7 @@ namespace FluentHttpSamples
                           });
 
             // Execute the request. Call EndRequest immediately so it behaves synchronously.
-            var ar = request.BeginExecute(null, null);
-            var response = request.EndExecute(ar);
+            var ar = request.Execute();
 
             // seek the save stream to beginning.
             responseSaveStream.Seek(0, SeekOrigin.Begin);

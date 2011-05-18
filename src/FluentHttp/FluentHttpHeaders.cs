@@ -81,6 +81,14 @@ namespace FluentHttp
             return _httpHeaders;
         }
 
+        internal IEnumerable<Pair<string, string>> GetHeaderPairs()
+        {
+            foreach (var header in _httpHeaders)
+            {
+                yield return header;
+            }
+        }
+
         #region Hide defualt object methods
 
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",

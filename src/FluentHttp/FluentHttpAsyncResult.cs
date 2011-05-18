@@ -1,7 +1,11 @@
+
 namespace FluentHttp
 {
     using System;
     using System.Threading;
+    using System.IO;
+
+    public delegate void FluentHttpCallback(FluentHttpAsyncResult asyncResult);
 
     /// <summary>
     /// Represents the fluent http async result.
@@ -12,73 +16,58 @@ namespace FluentHttp
         /// The fluent http request
         /// </summary>
         private readonly FluentHttpRequest _request;
-
-        /// <summary>
-        /// The callback.
-        /// </summary>
-        private readonly AsyncCallback _callback;
-
-        /// <summary>
-        /// The async state.
-        /// </summary>
+        private readonly FluentHttpResponse _response;
         private readonly object _asyncState;
+        private readonly WaitHandle _asyncWaitHandle;
+        private readonly bool _completedSynchronously;
+        private readonly bool _isCompleted;
+        private readonly bool _isCancelled;
+        private readonly Exception _exception;
+        private readonly Exception _innerException;
 
-        /// <summary>
-        /// The wait handle.
-        /// </summary>
-        private readonly ManualResetEvent _waitHandle;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FluentHttpAsyncResult"/> class.
-        /// </summary>
-        /// <param name="request">
-        /// The request.
-        /// </param>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        /// <param name="asyncState">
-        /// The async state.
-        /// </param>
-        public FluentHttpAsyncResult(FluentHttpRequest request, AsyncCallback callback, object asyncState)
+        public FluentHttpAsyncResult(FluentHttpRequest request, FluentHttpResponse response, object asyncState, WaitHandle asyncWaitHandle, bool completedSynchronously, bool isCompleted, bool isCancelled, Exception exception, Exception innerException)
         {
             _request = request;
-            _callback = callback;
+            _response = response;
             _asyncState = asyncState;
-            _waitHandle = new ManualResetEvent(false);
+            _asyncWaitHandle = asyncWaitHandle;
+            _completedSynchronously = completedSynchronously;
+            _isCompleted = isCompleted;
+            _isCancelled = isCancelled;
+            _exception = exception;
+            _innerException = innerException;
         }
 
-        /// <summary>
-        /// Gets Callback.
-        /// </summary>
-        internal AsyncCallback Callback
+        public Exception InnerException
         {
-            get { return _callback; }
+            get { return _innerException; }
+        }
+            
+        public FluentHttpResponse Response
+        {
+            get { return _response; }
         }
 
-        /// <summary>
-        /// Gets the fluent http request.
-        /// </summary>
         public FluentHttpRequest Request
         {
             get { return _request; }
         }
 
-        /// <summary>
-        /// Gets or sets the fluent http response.
-        /// </summary>
-        public FluentHttpResponse Response { get; internal set; }
+        public bool IsCancelled
+        {
+            get { return _isCancelled; }
+        }
 
         /// <summary>
         /// Gets or sets the exception.
         /// </summary>
-        internal Exception Exception { get; set; }
+        public Exception Exception { get { return _exception; } }
 
-        public bool IsCompleted { get; internal set; }
+        public bool IsCompleted { get { return _isCompleted; } }
 
         public WaitHandle AsyncWaitHandle
         {
-            get { return _waitHandle; }
+            get { return _asyncWaitHandle; }
         }
 
         public object AsyncState
@@ -88,12 +77,7 @@ namespace FluentHttp
 
         public bool CompletedSynchronously
         {
-            get { return false; }
-        }
-
-        internal void SetAsyncWaitHandle()
-        {
-            _waitHandle.Set();
+            get { return _completedSynchronously; }
         }
     }
 }

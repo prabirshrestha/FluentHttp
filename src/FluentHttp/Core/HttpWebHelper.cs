@@ -1,22 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.IO;
 
 namespace FluentHttp
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Net;
-    using AsyncEnumerator;
-
     internal class HttpWebHelper
     {
-        /*
-        public virtual string BuildRequestUrl(string baseUrl, string resourcePath, IEnumerable<Pair<string, string>> queryStrings)
+        protected readonly Func<string, IHttpWebRequest> HttpWebRequestFactory;
+
+        public event EventHandler<ResponseReceivedEventArgs> ResponseReceived;
+
+        public bool FlushResponseStream { get; set; }
+        public bool FlushResponseSaveStream { get; set; }
+        public bool FlushRequestStream { get; set; }
+        public bool FlushInputRequestBody { get; set; }
+
+        public bool AsyncRequestStream { get; set; }
+        public bool AsyncResponseStream { get; set; }
+
+        public HttpWebHelper()
+        {
+            Init();
+            HttpWebRequestFactory =
+                requestUrl =>
+                {
+                    if (string.IsNullOrEmpty(requestUrl))
+                    {
+                        throw new ArgumentException("requestUrl is null or empty", "requestUrl");
+                    }
+
+                    return
+                        new HttpWebRequestWrapper(
+                            (System.Net.HttpWebRequest)WebRequest.Create(requestUrl));
+                };
+        }
+
+        public HttpWebHelper(Func<string, IHttpWebRequest> httpWebRequestFactory)
+        {
+            if (httpWebRequestFactory == null)
+            {
+                throw new ArgumentNullException("httpWebRequestFactory");
+            }
+
+            Init();
+            HttpWebRequestFactory = httpWebRequestFactory;
+        }
+
+        private void Init()
+        {
+            FlushResponseStream = true;
+            FlushResponseSaveStream = true;
+        }
+
+        public static string BuildRequestUrl(string baseUrl, string resourcePath, IEnumerable<Pair<string, string>> queryStrings)
         {
             var sb = new System.Text.StringBuilder();
 
             if (string.IsNullOrEmpty(baseUrl))
             {
-                throw new System.ArgumentNullException("baseUrl");
+                throw new ArgumentNullException("baseUrl");
             }
 
             sb.Append(baseUrl);
@@ -37,11 +80,35 @@ namespace FluentHttp
 
             return sb.ToString();
         }
-        */
+
+        public static string AddStartingSlashIfNotPresent(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return "/";
+            }
+
+            // if not null or empty
+            if (input[0] != '/')
+            {
+                // if doesn't start with / then add /
+                return "/" + input;
+            }
+            else
+            {
+                // else return the original input.
+                return input;
+            }
+        }
 
         public virtual IHttpWebRequest CreateHttpWebRequest(string requestUrl, string httpMethod, IEnumerable<Pair<string, string>> requestHeaders, CookieCollection requestCookies)
         {
-            var httpWebRequest = CreateNewHttpWebRequest(requestUrl);
+            var httpWebRequest = HttpWebRequestFactory(requestUrl);
+
+            if (httpWebRequest == null)
+            {
+                throw new Exception("HttpWebRequest factory returned null.");
+            }
 
             httpWebRequest.Method = httpMethod ?? "GET";
 
@@ -75,201 +142,6 @@ namespace FluentHttp
             return httpWebRequest;
         }
 
-        public virtual IEnumerable<IAsync> ExecuteAsync(
-            IHttpWebRequest httpWebRequest,
-            Stream requestBody,
-            Action<ResponseReceivedEventArgs> responseReceivedCallback)
-        {
-            if (httpWebRequest == null)
-            {
-                throw new ArgumentNullException("httpWebRequest");
-            }
-
-            // buffer space for the data to be read and written.
-            byte[] buffer = new byte[1024 * 4]; // 4 kb
-
-            if (requestBody != null && requestBody.Length != 0)
-            {
-                // we have a request body, so write it asynchronously.
-
-#if !WINDOWS_PHONE
-                httpWebRequest.ContentLength = requestBody.Length;
-#endif
-                // assume content-type and content-lenght is already set.
-                var request = Async.FromAsync(httpWebRequest.BeginGetRequestStream, httpWebRequest.EndGetRequestStream);
-                yield return request;
-
-                if (request.Exception != null)
-                {
-                    throw new NotImplementedException();
-                }
-
-                // while there is data to be read and written.
-                var requestStream = request.Result;
-                while (true)
-                {
-                    // read data asynchronously.
-                    // when the operation completes, if no data could be read then we are done.
-                    var count = Async.FromAsync<int>(requestBody.BeginRead, requestBody.EndRead, buffer, 0, buffer.Length, null);
-                    yield return count;
-
-                    if (count.Exception != null)
-                    {
-                        throw count.Exception;
-                    }
-
-                    if (count.Result == 0)
-                    {
-                        break;
-                    }
-
-                    requestBody.Flush();
-
-                    // write data asynchronously.
-                    var write = Async.FromAsync(requestStream.BeginWrite, requestStream.EndWrite, buffer, 0, count.Result, null);
-                    yield return write;
-
-                    if (write.Exception != null)
-                    {
-                        throw write.Exception;
-                    }
-
-                    requestStream.Flush();
-                }
-            }
-
-            // asynchronously get the response from the http server.
-            var response = Async.FromAsync(httpWebRequest.BeginGetResponse, httpWebRequest.EndGetResponse);
-
-            yield return response;
-
-            var httpWebResponse = response.Result;
-            Exception exception = null;
-
-            if (response.Exception != null)
-            {
-                // exception occurred
-                WebExceptionWrapper webException = null;
-                if (response.Exception is WebException)
-                {
-                    webException = new WebExceptionWrapper((WebException)response.Exception);
-                }
-
-                if (webException != null)
-                {
-                    exception = webException;
-                    httpWebResponse = webException.GetResponse();
-                }
-                else
-                {
-                    exception = response.Exception;
-                }
-            }
-
-            if (exception != null && httpWebResponse == null)
-            {
-                // critical error occurred.
-                // most likely no internet connection or silverlight cross domain policy exception.
-                throw exception;
-            }
-
-            // we have got the response
-            Stream responseSaveStream = null;
-            if (responseReceivedCallback != null)
-            {
-                // we have the response headers.
-                var responseReceived = new ResponseReceivedEventArgs(httpWebResponse);
-                responseReceivedCallback(responseReceived);
-                responseSaveStream = responseReceived.ResponseSaveStream;
-            }
-
-            // read response stream
-            var responseStream = httpWebResponse.GetResponseStream();
-
-            if (responseSaveStream == null)
-            {
-                // read the response stream asynchronosuly but don't write.
-                while (true)
-                {
-                    var count = Async.FromAsync<int>(responseStream.BeginRead, responseStream.EndRead, buffer, 0, buffer.Length, null);
-                    yield return count;
-
-                    if (count.Exception != null)
-                    {
-                        throw count.Exception;
-                    }
-
-                    if (count.Result == 0)
-                    {
-                        break;
-                    }
-
-#if !SILVERLIGHT
-                    responseStream.Flush();
-#endif
-                }
-            }
-            else
-            {
-                if (!responseSaveStream.CanWrite)
-                {
-                    throw new ArgumentException("responseSaveStream is not writable.");
-                }
-
-                // while there is data to be read and written.
-                while (true)
-                {
-                    // read data asynchronously.
-                    // when the operation completes, if no data could be read then we are done.
-                    var count = Async.FromAsync<int>(responseStream.BeginRead, responseStream.EndRead, buffer, 0, buffer.Length, null);
-                    yield return count;
-
-                    if (count.Exception != null)
-                    {
-                        throw count.Exception;
-                    }
-
-                    if (count.Result == 0)
-                    {
-                        break;
-                    }
-
-#if !SILVERLIGHT
-                    // note: silverlight memorystream doesn't support flush. other streams may support.
-                    responseStream.Flush();
-#endif
-                    // write data asynchronously.
-                    var write = Async.FromAsync(responseSaveStream.BeginWrite, responseSaveStream.EndWrite, buffer, 0, count.Result, null);
-                    yield return write;
-
-                    if (write.Exception != null)
-                    {
-                        throw write.Exception;
-                    }
-
-                    responseSaveStream.Flush();
-                }
-            }
-        }
-
-        public virtual void Execute(
-            IHttpWebRequest httpWebRequest,
-            Stream requestBody,
-            Action<ResponseReceivedEventArgs> responseReceivedCallback)
-        {
-            Async.ExecuteAndWait(ExecuteAsync(httpWebRequest, requestBody, responseReceivedCallback));
-        }
-
-        protected virtual IHttpWebRequest CreateNewHttpWebRequest(string requestUrl)
-        {
-            if (string.IsNullOrEmpty(requestUrl))
-            {
-                throw new ArgumentException("requestUrl is null or empty", "requestUrl");
-            }
-
-            return new HttpWebRequestWrapper((HttpWebRequest)WebRequest.Create(requestUrl));
-        }
-
         protected virtual void SetHttpWebRequestHeaders(IHttpWebRequest httpWebRequest, IEnumerable<Pair<string, string>> requestHeaders)
         {
             foreach (var requestHeader in requestHeaders)
@@ -282,12 +154,14 @@ namespace FluentHttp
                 {
                     httpWebRequest.ContentType = value;
                 }
-#if !WINDOWS_PHONE
                 else if (name.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                 {
+#if WINDOWS_PHONE
+                    throw new Exception("Cannot set content-length.");
+#else
                     httpWebRequest.ContentLength = Convert.ToInt64(value);
-                }
 #endif
+                }
                 else if (name.Equals("user-agent", StringComparison.OrdinalIgnoreCase))
                 {
                     httpWebRequest.UserAgent = value;
@@ -303,38 +177,335 @@ namespace FluentHttp
             }
         }
 
-        //internal static IList<Pair<string, string>> ExtractResponseHeaders(WebHeaderCollection headerCollection)
-        //{
-        //    var responseHeaders = new List<Pair<string, string>>();
-
-        //    for (int i = 0; i < headerCollection.Count; i++)
-        //    {
-        //        responseHeaders.Add(new Pair<string, string>(headerCollection.GetKey(i), headerCollection[i]));
-        //    }
-
-        //    return responseHeaders;
-        //}
-
-        /*
-        public static string AddStartingSlashIfNotPresent(string input)
+        public virtual void ExecuteAsync(IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
         {
-            if (string.IsNullOrEmpty(input))
+            if (httpWebRequest == null)
             {
-                return "/";
+                throw new ArgumentNullException("httpWebRequest");
             }
 
-            // if not null or empty
-            if (input[0] != '/')
+            if (requestBody != null && requestBody.Length != 0)
             {
-                // if doesn't start with / then add /
-                return "/" + input;
+                // we have a request body, so write it asynchronously.
+#if !WINDOWS_PHONE
+                httpWebRequest.ContentLength = requestBody.Length;
+#endif
+                BeginGetRequestStream(httpWebRequest, requestBody, callback, state);
             }
             else
             {
-                // else return the original input.
-                return input;
+                // asynchronously get the response from the http server.  
+                BeginGetResponse(httpWebRequest, requestBody, callback, state);
             }
         }
-        */
+
+        protected void BeginGetRequestStream(IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
+        {
+            httpWebRequest.BeginGetRequestStream(ar => RequestCallback(ar, httpWebRequest, requestBody, callback, state), null);
+        }
+
+        protected virtual void BeginGetResponse(IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
+        {
+            httpWebRequest.BeginGetResponse(ar => ResponseCallback(ar, httpWebRequest, requestBody, callback, state), null);
+        }
+
+        private void RequestCallback(IAsyncResult asyncResult, IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
+        {
+            Stream requestStream = null;
+            Exception exception = null;
+            IHttpWebResponse httpWebResponse = null;
+
+            try
+            {
+                requestStream = httpWebRequest.EndGetRequestStream(asyncResult);
+            }
+            catch (WebException ex)
+            {
+                var webException = new WebExceptionWrapper(ex);
+                httpWebResponse = webException.GetResponse();
+                exception = webException;
+            }
+            finally
+            {
+                if (exception == null)
+                {
+                    // we got the stream, so copy to the stream
+                    CopyRequestStream(httpWebRequest, requestBody, requestStream, callback, state);
+                }
+                else
+                {
+                    // there was error
+                    if (httpWebResponse == null)
+                    {
+                        if (callback != null)
+                            callback(new HttpWebHelperAsyncResult(httpWebRequest, null, exception, null, false, null, state));
+                    }
+                    else
+                    {
+                        var args = new ResponseReceivedEventArgs(httpWebResponse, exception, state);
+                        OnResponseReceived(args);
+                        ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream, callback, state);
+                    }
+                }
+            }
+        }
+
+        private void CopyRequestStream(IHttpWebRequest httpWebRequest, Stream requestBody, Stream requestStream, AsyncCallback callback, object state)
+        {
+            if (AsyncRequestStream)
+            {
+                // pure read/write async
+                CopyStreamAsync(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream,
+                    (source, destination, exception) =>
+                    {
+                        source.Close();
+
+                        if (exception == null)
+                        {
+                            BeginGetResponse(httpWebRequest, requestBody, callback, state);
+                        }
+                        else
+                        {
+                            if (callback != null)
+                                callback(new HttpWebHelperAsyncResult(httpWebRequest, null, exception, null, false, null, state));
+                        }
+                    });
+            }
+            else
+            {
+                // Read requestBody then write synchronously.
+                try
+                {
+                    CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
+                    requestStream.Close();
+                    BeginGetResponse(httpWebRequest, requestBody, callback, state);
+
+                }
+                catch (Exception ex)
+                {
+                    if (callback != null)
+                        callback(new HttpWebHelperAsyncResult(httpWebRequest, null, ex, null, false, null, state));
+                }
+            }
+        }
+
+        private void ResponseCallback(IAsyncResult asyncResult, IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
+        {
+            IHttpWebResponse httpWebResponse = null;
+            Exception exception = null;
+
+            try
+            {
+                httpWebResponse = httpWebRequest.EndGetResponse(asyncResult);
+            }
+            catch (WebException ex)
+            {
+                var webException = new WebExceptionWrapper(ex);
+                httpWebResponse = webException.GetResponse();
+                exception = webException;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            finally
+            {
+                if (httpWebResponse != null)
+                {
+                    var args = new ResponseReceivedEventArgs(httpWebResponse, exception, state);
+                    OnResponseReceived(args);
+                    ReadResponseStream(httpWebRequest, httpWebResponse, null, args.ResponseSaveStream, callback, state);
+                }
+                else
+                {
+                    if (callback != null)
+                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, null, state));
+                }
+            }
+        }
+
+        private void ReadResponseStream(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception innerException, Stream responseSaveStream, AsyncCallback callback, object state)
+        {
+            Stream responseStream = null;
+            Exception exception = null;
+
+            try
+            {
+                responseStream = httpWebResponse.GetResponseStream();
+            }
+            catch (WebException ex)
+            {
+                exception = new WebExceptionWrapper(ex);
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            finally
+            {
+                if (exception == null)
+                {
+                    CopyResponseStream(httpWebRequest, httpWebResponse, innerException, responseStream, responseSaveStream, callback, state);
+                }
+                else
+                {
+                    if (callback != null)
+                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, responseSaveStream, state));
+                }
+            }
+        }
+
+        private void CopyResponseStream(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception innerException, Stream responseStream, Stream responseSaveStream, AsyncCallback callback, object state)
+        {
+            if (AsyncResponseStream && responseSaveStream != null)
+            {
+                // pure read/write async
+                CopyStreamAsync(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream,
+                                (source, destination, exception) =>
+                                {
+                                    source.Close();
+                                    callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, responseSaveStream, state));
+                                });
+            }
+            else
+            {
+                try
+                {
+                    if (responseSaveStream == null)
+                        ReadStream(responseStream, FlushResponseStream);
+                    else
+                        CopyStream(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream);
+
+                    responseStream.Close();
+                    if (callback != null)
+                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, null, innerException, false, responseSaveStream, state));
+                }
+                catch (Exception ex)
+                {
+                    if (callback != null)
+                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, ex, null, false, responseSaveStream, state));
+                }
+            }
+        }
+
+        protected void OnResponseReceived(ResponseReceivedEventArgs args)
+        {
+            if (ResponseReceived != null)
+            {
+                ResponseReceived(this, args);
+            }
+        }
+
+        private void CopyStream(Stream input, Stream output, bool flushInput, bool flushOutput)
+        {
+            byte[] buffer = new byte[1024 * 4]; // 4 kb
+            while (true)
+            {
+                int read = input.Read(buffer, 0, buffer.Length);
+                if (flushInput)
+                    input.Flush();
+                if (read <= 0)
+                    return;
+                output.Write(buffer, 0, read);
+                if (flushOutput)
+                    output.Flush();
+            }
+        }
+
+        private void ReadStream(Stream input, bool flushInput)
+        {
+            byte[] buffer = new byte[1024 * 4]; // 4 kb
+            while (true)
+            {
+                int read = input.Read(buffer, 0, buffer.Length);
+                if (flushInput)
+                    input.Flush();
+                if (read <= 0)
+                    return;
+            }
+        }
+
+        private void CopyStreamAsync(Stream input, Stream output, bool flushInput, bool flushOutput, Action<Stream, Stream, Exception> completed)
+        {
+            byte[] buffer = new byte[1024 * 4];
+            var asyncOp = System.ComponentModel.AsyncOperationManager.CreateOperation(null);
+
+            Action<Exception> done = e =>
+            {
+                if (completed != null) asyncOp.Post(delegate
+                    {
+                        completed(input, output, e);
+                    }, null);
+            };
+
+            AsyncCallback rc = null;
+            rc = readResult =>
+            {
+                try
+                {
+                    int read = input.EndRead(readResult);
+                    if (read > 0)
+                    {
+                        if (flushInput) input.Flush();
+                        output.BeginWrite(buffer, 0, read, writeResult =>
+                        {
+                            try
+                            {
+                                output.EndWrite(writeResult);
+                                if (flushOutput) output.Flush();
+                                input.BeginRead(buffer, 0, buffer.Length, rc, null);
+                            }
+                            catch (Exception exc) { done(exc); }
+                        }, null);
+                    }
+                    else done(null);
+                }
+                catch (Exception exc) { done(exc); }
+            };
+
+            input.BeginRead(buffer, 0, buffer.Length, rc, null);
+        }
+
+        public static string ToString(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+#if HTTPWEBHELPER_TPL
+
+        public System.Threading.Tasks.Task<HttpWebHelperAsyncResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody, object state)
+        {
+            var tcs = new System.Threading.Tasks.TaskCompletionSource<HttpWebHelperAsyncResult>(state);
+
+            try
+            {
+                ExecuteAsync(httpWebRequest, requestBody,
+                             ar =>
+                             {
+                                 var asyncResult = (HttpWebHelperAsyncResult)ar;
+                                 if (asyncResult.IsCancelled) tcs.TrySetCanceled();
+                                 if (asyncResult.Exception != null) tcs.TrySetException(asyncResult.Exception);
+                                 else tcs.TrySetResult(asyncResult);
+                             }, state);
+
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+
+            return tcs.Task;
+        }
+
+        public System.Threading.Tasks.Task<HttpWebHelperAsyncResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody)
+        {
+            return ExecuteTaskAsync(httpWebRequest, requestBody, null);
+        }
+
+#endif
+
     }
 }

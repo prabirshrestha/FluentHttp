@@ -1,11 +1,9 @@
-
 namespace FluentHttp
 {
     using System;
     using System.ComponentModel;
     using System.IO;
     using System.Net;
-    using System.Text;
 
     /// <summary>
     /// Represents a Fluent Http Request.
@@ -91,22 +89,7 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string AddStartingSlashInNotPresent(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return "/";
-            }
-
-            // if not null or empty
-            if (input[0] != '/')
-            {
-                // if doesn't start with / then add /
-                return "/" + input;
-            }
-            else
-            {
-                // else return the original input.
-                return input;
-            }
+            return HttpWebHelper.AddStartingSlashIfNotPresent(input);
         }
 
         /// <summary>
@@ -488,21 +471,18 @@ namespace FluentHttp
             return _body;
         }
 
-        /// <summary>
-        /// Starts the http request.
-        /// </summary>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        /// <returns>
-        /// The async result.
-        /// </returns>
-        public virtual IAsyncResult BeginExecute(AsyncCallback callback, object state)
+        public void ExecuteAsync()
         {
-            // todo execute callback
+            ExecuteAsync(null);
+        }
+
+        public void ExecuteAsync(FluentHttpCallback callback)
+        {
+            ExecuteAsync(callback, null);
+        }
+
+        public void ExecuteAsync(FluentHttpCallback callback, object state)
+        {
             AuthenticateIfRequried();
 
             var requestUrl = BuildRequestUrl();
@@ -510,139 +490,84 @@ namespace FluentHttp
             var httpWebHelper = new HttpWebHelper();
 
             // todo add cookies
-            var headers = GetHeaders().GetHeaderCollection();
 
-#if FLUENT_HTTP_HEADER_NOCAST
+            var headers = GetHeaders().GetHeaderPairs();
             var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headers, null);
-#else
-            var headersPairList = new System.Collections.Generic.List<Pair<string, string>>();
-
-            foreach (var fluentHttpHeader in headers)
-                headersPairList.Add(fluentHttpHeader);
-
-            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headersPairList, null);
-#endif
 
             PrepareHttpWebRequest(httpWebRequest);
 
-            var asyncResult = new FluentHttpAsyncResult(this, callback, state);
+            FluentHttpResponse fluentHttpResponse = null;
 
-            var enumerableAsync = httpWebHelper.ExecuteAsync(
-                httpWebRequest,
-                GetBody().Stream,
-                responseHeadersReceived =>
+            httpWebHelper.ResponseReceived +=
+                (o, e) =>
                 {
-                    asyncResult.Response = new FluentHttpResponse(asyncResult.Request, responseHeadersReceived.Response);
-                    var args = new ResponseHeadersReceivedEventArgs(asyncResult.Response);
+                    fluentHttpResponse = new FluentHttpResponse(this, e.Response);
+                    var args = new ResponseHeadersReceivedEventArgs(fluentHttpResponse, state);
                     OnResponseHeadersRecived(args);
-                    responseHeadersReceived.ResponseSaveStream = args.ResponseSaveStream;
-                    asyncResult.Response.SaveStream = args.ResponseSaveStream;
-                });
+                    e.ResponseSaveStream = args.ResponseSaveStream;
+                    fluentHttpResponse.SaveStream = args.ResponseSaveStream;
+                };
 
-            AsyncEnumerator.Async.Run(
-                enumerableAsync.GetEnumerator(),
-                ex =>
+            httpWebHelper.ExecuteAsync(httpWebRequest, GetBody().Stream,
+                ar =>
                 {
-                    if (asyncResult.IsCompleted)
-                        throw ex;
-
-                    if (asyncResult.Response != null && ex != null)
-                        asyncResult.Response.ResponseStatus = ResponseStatus.Error;
-
-                    asyncResult.Exception = ex;
-                    asyncResult.IsCompleted = true;
-                    asyncResult.SetAsyncWaitHandle();
-
-                    if (asyncResult.Callback != null)
-                        asyncResult.Callback(asyncResult);
-
-                });
-
-            return asyncResult;
+                    if (callback != null)
+                    {
+                        var asyncResult = (HttpWebHelperAsyncResult)ar;
+                        var fluentHttpAsyncResult = new FluentHttpAsyncResult(this, fluentHttpResponse, state, null, ar.CompletedSynchronously, true, false, asyncResult.Exception, asyncResult.InnerException);
+                        callback(fluentHttpAsyncResult);
+                    }
+                }, null);
         }
 
-        /// <summary>
-        /// Ends the http request.
-        /// </summary>
-        /// <param name="asyncResult">
-        /// The async result.
-        /// </param>
-        /// <returns>
-        /// Returns the <see cref="FluentHttpResponse"/>.
-        /// </returns>
-        public virtual FluentHttpResponse EndExecute(IAsyncResult asyncResult)
+#if !SILVERLIGHT
+        public FluentHttpAsyncResult Execute()
         {
-            if (asyncResult == null)
-            {
-                throw new ArgumentNullException("asyncResult");
-            }
+            System.Threading.ManualResetEvent wait = new System.Threading.ManualResetEvent(false);
+            FluentHttpAsyncResult asyncResult = null;
 
-            var ar = asyncResult as FluentHttpAsyncResult;
-            if (ar == null)
-            {
-                throw new ArgumentException("asyncResult");
-            }
+            ExecuteAsync(ar => { asyncResult = ar; wait.Set(); });
+            wait.WaitOne();
 
-            // wait for the request to end
-            ar.AsyncWaitHandle.WaitOne();
-            ar.IsCompleted = true;
+            if (asyncResult.Exception == null)
+                return asyncResult;
 
-            // propagate the exception to the one who calls EndRequest.
-            if (ar.Exception != null)
-            {
-                throw ar.Exception;
-            }
-
-            ar.Response.ResponseStatus = ResponseStatus.Completed;
-
-            return ar.Response;
+            throw asyncResult.Exception;
         }
+#endif
 
 #if TPL
 
-        /// <summary>
-        /// Converts the <see cref="FluentHttpRequest"/> to Task.
-        /// </summary>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        /// <param name="taskCreationOptions">
-        /// The task creation options.
-        /// </param>
-        /// <returns>
-        /// Returns the task of <see cref="FluentHttpResponse"/>.
-        /// </returns>
-        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state, System.Threading.Tasks.TaskCreationOptions taskCreationOptions)
+        public System.Threading.Tasks.Task<FluentHttpAsyncResult> ExecuteTaskAsync(object state)
         {
-            return System.Threading.Tasks.Task.Factory.FromAsync<FluentHttpResponse>(BeginExecute, EndExecute, state, taskCreationOptions);
+            var tcs = new System.Threading.Tasks.TaskCompletionSource<FluentHttpAsyncResult>(state);
+
+            try
+            {
+                ExecuteAsync(ar =>
+                             {
+                                 if (ar.IsCancelled) tcs.TrySetCanceled();
+                                 if (ar.Exception != null) tcs.TrySetException(ar.Exception);
+                                 else tcs.TrySetResult(ar);
+                             }, state);
+
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+
+            return tcs.Task;
         }
 
-        /// <summary>
-        /// Converts the <see cref="FluentHttpRequest"/> to Task.
-        /// </summary>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        /// <returns>
-        /// Returns the task of <see cref="FluentHttpResponse"/>.
-        /// </returns>
-        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask(object state)
+        public System.Threading.Tasks.Task<FluentHttpAsyncResult> ExecuteTaskAsync()
         {
-            return this.ToTask(state, System.Threading.Tasks.TaskCreationOptions.None);
-        }
-
-        /// <summary>
-        /// Converts the <see cref="FluentHttpRequest"/> to Task.
-        /// </summary>
-        /// <returns>
-        /// Returns the task of <see cref="FluentHttpResponse"/>.
-        /// </returns>
-        public System.Threading.Tasks.Task<FluentHttpResponse> ToTask()
-        {
-            return this.ToTask(null);
+            return ExecuteTaskAsync(null);
         }
 
 #endif
+
+        //#endif
 
         /// <summary>
         /// Builds the request url.
@@ -653,29 +578,7 @@ namespace FluentHttp
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string BuildRequestUrl()
         {
-            var sb = new StringBuilder();
-
-            var baseUrl = GetBaseUrl();
-
-            if (string.IsNullOrEmpty(baseUrl))
-            {
-                throw new ArgumentNullException("baseUrl");
-            }
-
-            sb.Append(GetBaseUrl());
-            sb.Append(GetResourcePath());
-            sb.Append("?");
-
-            foreach (var qs in GetQueryStrings().GetQueryStringCollection())
-            {
-                // these querystrings are already url encoded.
-                sb.AppendFormat("{0}={1}&", qs.Name, qs.Value);
-            }
-
-            // remove the last & or ?
-            --sb.Length;
-
-            return sb.ToString();
+            return HttpWebHelper.BuildRequestUrl(GetBaseUrl(), GetResourcePath(), GetQueryStrings().GetQueryStringPairs());
         }
 
         /// <summary>

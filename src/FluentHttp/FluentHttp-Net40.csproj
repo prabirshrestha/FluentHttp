@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\Net40\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;TPL;FLUENT_HTTP_HEADER_NOCAST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;TPL;HTTPWEBHELPER_TPL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -54,7 +54,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\Net40\</OutputPath>
-    <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;TPL;FLUENT_HTTP_HEADER_NOCAST</DefineConstants>
+    <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;TPL;HTTPWEBHELPER_TPL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Net40\FluentHttp.xml</DocumentationFile>
@@ -94,15 +94,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FluentHttpAsyncResult.cs" />
-    <Compile Include="FluentHttpHeaders.cs" />
-    <Compile Include="FluentHttpRequestBody.cs" />
-    <Compile Include="FluentQueryStrings.cs" />
-    <Compile Include="HttpEncoder.cs" />
-    <Compile Include="HttpUtility.cs" />
-    <Compile Include="IFluentAuthenticator.cs" />
-    <Compile Include="Core\Async.cs" />
+    <Compile Include="CombinationStream.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />
+    <Compile Include="Core\HttpWebHelperAsyncResult.cs" />
     <Compile Include="Core\HttpWebRequestWrapper.cs" />
     <Compile Include="Core\HttpWebResponseWrapper.cs" />
     <Compile Include="Core\IHttpWebRequest.cs" />
@@ -110,13 +104,15 @@
     <Compile Include="Core\Pair.cs" />
     <Compile Include="Core\ResponseReceivedEventArgs.cs" />
     <Compile Include="Core\WebExceptionWrapper.cs" />
-    <Compile Include="FluentHttpRequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FluentHttpResponse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CombinationStream.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs" />
+    <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestBody.cs" />
+    <Compile Include="FluentHttpResponse.cs" />
+    <Compile Include="FluentQueryStrings.cs" />
+    <Compile Include="HttpEncoder.cs" />
+    <Compile Include="HttpUtility.cs" />
+    <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHeadersReceivedEventArgs.cs" />
     <Compile Include="ResponseStatus.cs" />
