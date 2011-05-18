@@ -17,7 +17,7 @@ namespace FluentHttp
         /// <summary>
         /// The http web request.
         /// </summary>
-        private readonly HttpWebRequest httpWebRequest;
+        private readonly HttpWebRequest _httpWebRequest;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpWebRequestWrapper"/> class.
@@ -32,7 +32,7 @@ namespace FluentHttp
                 throw new ArgumentNullException("httpWebRequest");
             }
 
-            this.httpWebRequest = httpWebRequest;
+            _httpWebRequest = httpWebRequest;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace FluentHttp
         /// </summary>
         public string Method
         {
-            get { return this.httpWebRequest.Method; }
-            set { this.httpWebRequest.Method = value; }
+            get { return _httpWebRequest.Method; }
+            set { _httpWebRequest.Method = value; }
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace FluentHttp
         /// </summary>
         public string ContentType
         {
-            get { return this.httpWebRequest.ContentType; }
-            set { this.httpWebRequest.ContentType = value; }
+            get { return _httpWebRequest.ContentType; }
+            set { _httpWebRequest.ContentType = value; }
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace FluentHttp
         /// </summary>
         public WebHeaderCollection Headers
         {
-            get { return this.httpWebRequest.Headers; }
-            set { this.httpWebRequest.Headers = value; }
+            get { return _httpWebRequest.Headers; }
+            set { _httpWebRequest.Headers = value; }
         }
 
 #if !WINDOWS_PHONE
@@ -68,8 +68,8 @@ namespace FluentHttp
         /// </summary>
         public long ContentLength
         {
-            get { return this.httpWebRequest.ContentLength; }
-            set { this.httpWebRequest.ContentLength = value; }
+            get { return _httpWebRequest.ContentLength; }
+            set { _httpWebRequest.ContentLength = value; }
         }
 #endif
 
@@ -78,8 +78,8 @@ namespace FluentHttp
         /// </summary>
         public string UserAgent
         {
-            get { return this.httpWebRequest.UserAgent; }
-            set { this.httpWebRequest.UserAgent = value; }
+            get { return _httpWebRequest.UserAgent; }
+            set { _httpWebRequest.UserAgent = value; }
         }
 
         /// <summary>
@@ -87,40 +87,34 @@ namespace FluentHttp
         /// </summary>
         public CookieContainer CookieContainer
         {
-            get { return this.httpWebRequest.CookieContainer; }
-            set { this.httpWebRequest.CookieContainer = value; }
+            get { return _httpWebRequest.CookieContainer; }
+            set { _httpWebRequest.CookieContainer = value; }
         }
-
-
 
         /// <summary>
         /// Gets or sets the credentials.
         /// </summary>
         public ICredentials Credentials
         {
-            get { return this.httpWebRequest.Credentials; }
-            set { this.httpWebRequest.Credentials = value; }
+            get { return _httpWebRequest.Credentials; }
+            set { _httpWebRequest.Credentials = value; }
         }
-
-
 
         /// <summary>
         /// Gets the request uri.
         /// </summary>
         public Uri RequestUri
         {
-            get { return this.httpWebRequest.RequestUri; }
+            get { return _httpWebRequest.RequestUri; }
         }
-
-
 
         /// <summary>
         /// Gets or sets the accept.
         /// </summary>
         public string Accept
         {
-            get { return this.httpWebRequest.Accept; }
-            set { this.httpWebRequest.Accept = value; }
+            get { return _httpWebRequest.Accept; }
+            set { _httpWebRequest.Accept = value; }
         }
 
 #if !SILVERLIGHT
@@ -129,8 +123,8 @@ namespace FluentHttp
         /// </summary>
         public IWebProxy Proxy
         {
-            get { return this.httpWebRequest.Proxy; }
-            set { this.httpWebRequest.Proxy = value; }
+            get { return _httpWebRequest.Proxy; }
+            set { _httpWebRequest.Proxy = value; }
         }
 
         /// <summary>
@@ -138,8 +132,8 @@ namespace FluentHttp
         /// </summary>
         public DateTime IfModifiedSince
         {
-            get { return this.httpWebRequest.IfModifiedSince; }
-            set { this.httpWebRequest.IfModifiedSince = value; }
+            get { return _httpWebRequest.IfModifiedSince; }
+            set { _httpWebRequest.IfModifiedSince = value; }
         }
 
         /// <summary>
@@ -147,8 +141,8 @@ namespace FluentHttp
         /// </summary>
         public string Referer
         {
-            get { return this.httpWebRequest.Referer; }
-            set { this.httpWebRequest.Referer = value; }
+            get { return _httpWebRequest.Referer; }
+            set { _httpWebRequest.Referer = value; }
         }
 
         /// <summary>
@@ -156,8 +150,8 @@ namespace FluentHttp
         /// </summary>
         public string TransferEncoding
         {
-            get { return this.httpWebRequest.TransferEncoding; }
-            set { this.httpWebRequest.TransferEncoding = value; }
+            get { return _httpWebRequest.TransferEncoding; }
+            set { _httpWebRequest.TransferEncoding = value; }
         }
 
         /// <summary>
@@ -165,8 +159,8 @@ namespace FluentHttp
         /// </summary>
         public int Timeout
         {
-            get { return this.httpWebRequest.Timeout; }
-            set { this.httpWebRequest.Timeout = value; }
+            get { return _httpWebRequest.Timeout; }
+            set { _httpWebRequest.Timeout = value; }
         }
 
         /// <summary>
@@ -174,8 +168,8 @@ namespace FluentHttp
         /// </summary>
         public DecompressionMethods AutomaticDecompression
         {
-            get { return this.httpWebRequest.AutomaticDecompression; }
-            set { this.httpWebRequest.AutomaticDecompression = value; }
+            get { return _httpWebRequest.AutomaticDecompression; }
+            set { _httpWebRequest.AutomaticDecompression = value; }
         }
 
         /// <summary>
@@ -183,8 +177,8 @@ namespace FluentHttp
         /// </summary>
         public string Expect
         {
-            get { return this.httpWebRequest.Expect; }
-            set { this.httpWebRequest.Expect = value; }
+            get { return _httpWebRequest.Expect; }
+            set { _httpWebRequest.Expect = value; }
         }
 
         /// <summary>
@@ -192,8 +186,8 @@ namespace FluentHttp
         /// </summary>
         public string Connection
         {
-            get { return this.httpWebRequest.Connection; }
-            set { this.httpWebRequest.Connection = value; }
+            get { return _httpWebRequest.Connection; }
+            set { _httpWebRequest.Connection = value; }
         }
 #endif
 
@@ -211,7 +205,7 @@ namespace FluentHttp
         /// </returns>
         public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {
-            return this.httpWebRequest.BeginGetResponse(callback, state);
+            return _httpWebRequest.BeginGetResponse(callback, state);
         }
 
         /// <summary>
@@ -228,7 +222,7 @@ namespace FluentHttp
         /// </returns>
         public IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
         {
-            return this.httpWebRequest.BeginGetRequestStream(callback, state);
+            return _httpWebRequest.BeginGetRequestStream(callback, state);
         }
 
         /// <summary>
@@ -242,7 +236,7 @@ namespace FluentHttp
         /// </returns>
         public IHttpWebResponse EndGetResponse(IAsyncResult asyncResult)
         {
-            var httpWebResponse = (HttpWebResponse)this.httpWebRequest.EndGetResponse(asyncResult);
+            var httpWebResponse = (HttpWebResponse)_httpWebRequest.EndGetResponse(asyncResult);
 
             return new HttpWebResponseWrapper(httpWebResponse);
         }
@@ -258,7 +252,7 @@ namespace FluentHttp
         /// </returns>
         public Stream EndGetRequestStream(IAsyncResult asyncResult)
         {
-            return this.httpWebRequest.EndGetRequestStream(asyncResult);
+            return _httpWebRequest.EndGetRequestStream(asyncResult);
         }
     }
 }

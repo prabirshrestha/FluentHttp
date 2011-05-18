@@ -30,9 +30,7 @@ namespace FluentHttp
                         throw new ArgumentException("requestUrl is null or empty", "requestUrl");
                     }
 
-                    return
-                        new HttpWebRequestWrapper(
-                            (System.Net.HttpWebRequest)WebRequest.Create(requestUrl));
+                    return new HttpWebRequestWrapper((HttpWebRequest)WebRequest.Create(requestUrl));
                 };
         }
 
