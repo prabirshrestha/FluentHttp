@@ -234,6 +234,11 @@ msbuild :clean_docs do |msb|
    msb.properties
 end
 
+desc "Create distribution package for documentations"
+task :dist_docs => [:dist_prepare, :docs] do
+   FileUtils.cp_r "#{build_config[:paths][:working]}documentation/.", "#{build_config[:paths][:dist]}documentation/"
+end
+
 directory "#{build_config[:paths][:working]}"
 directory "#{build_config[:paths][:working]}NuGet/"
 directory "#{build_config[:paths][:dist]}"
