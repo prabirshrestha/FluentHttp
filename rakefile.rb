@@ -226,6 +226,14 @@ msbuild :docs => [:net40] do |msb|
    msb.properties
 end
 
+msbuild :clean_docs do |msb|
+   msb.properties :configuration => build_config[:configuration]
+   msb.properties :DocumentationSourcePath => "#{build_config[:paths][:output]}Release/net40/" if build_config[:configuration] = :Release
+   msb.solution = build_config[:sln][:shfb]
+   msb.targets [:Clean]
+   msb.properties
+end
+
 directory "#{build_config[:paths][:working]}"
 directory "#{build_config[:paths][:working]}NuGet/"
 directory "#{build_config[:paths][:dist]}"
