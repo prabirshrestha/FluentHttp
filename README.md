@@ -108,4 +108,6 @@ be included manually which can be found [here](https://github.com/prabirshrestha
 		.OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
 ## License
-Apache License 2.0
+FluentHttp is intended to be used in both open-source and commercial environments.
+
+It is licensed under Apache License 2.0.
