@@ -95,5 +95,17 @@ But there is a fake synchrouns method which allows you to make async method sync
 
     var ar = request.Execute();
 
+## Using Authenticators
+To simplify authentication for http web requests, FluentHttp source includes some
+authenticators. (These authenticators are not part of the core FluentHttp.dll and must
+be included manually which can be found [here](https://github.com/prabirshrestha/FluentHttp/tree/master/src/FluentHttp.Tests/FluentAuthenticators).)
+
+	var request = new FluentHttpRequest()
+		.BaseUrl("https://graph.facebook.com")
+		.ResourcePath("/me")
+		.Method("GET")
+		.AuthenticateUsing(new OAuth2UriQueryPrameterAuthenticator(AccessToken))
+		.OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
+
 ## License
 Apache License 2.0

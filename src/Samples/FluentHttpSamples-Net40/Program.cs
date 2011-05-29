@@ -180,8 +180,7 @@ namespace FluentHttpSamples
                 .ResourcePath(postId)
                 .Method("DELETE")
                 .Headers(h => h.Add("User-Agent", "FluentHttp"))
-                .QueryStrings(q => q
-                                       .Add("oauth_token", AccessToken))
+                .AuthenticateUsing(new OAuth2UriQueryParameterAuthenticator(AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
