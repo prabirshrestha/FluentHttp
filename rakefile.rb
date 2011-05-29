@@ -76,7 +76,8 @@ task :configure do
 
 	nuspec_config = {
 		"FluentHttp" => {
-            :description => ".NET rest client for http web requests."
+            :title => "Fluent Http",
+			:description => ".NET rest client helper for http web requests."			
         }
 	}
     
@@ -238,4 +239,71 @@ task :dist_source => [:dist_prepare] do
    elsif (build_config[:vcs][:name] == 'hg') then
     sh "hg archive -tzip \"#{src_archive_name}\" -p \"#{PROJECT_NAME_SAFE}\""
    end
+end
+
+task :nuspec => ["#{build_config[:paths][:working]}", :libs] do
+	rm_rf "#{build_config[:paths][:working]}NuGet/"
+    mkdir "#{build_config[:paths][:working]}NuGet/"
+
+	Dir.entries(base_dir = "#{build_config[:paths][:build]}NuGet/").each do |name|
+		path = "#{base_dir}#{name}/"
+        dest_path = "#{build_config[:paths][:working]}NuGet/#{name}/"
+        if name == '.' or name == '..' then
+            next
+        end
+        FileUtils.cp_r path, dest_path
+		FileUtils.rm "#{dest_path}PLACEHOLDER" if File.exist?("#{dest_path}PLACEHOLDER")
+
+		nuspec do |nuspec|
+			config = nuspec_config[name]
+			nuspec.id = name
+			nuspec.title = config[:title]
+            nuspec.version = "#{build_config[:version][:full]}"
+            nuspec.authors = "#{build_config[:nuspec][:authors]}"
+            nuspec.description = config[:description]
+            nuspec.language = "en-US"
+            nuspec.licenseUrl = "https://github.com/prabirshrestha/FluentHttp/blob/master/LICENSE"
+			nuspec.requireLicenseAcceptance = "false"
+			nuspec.projectUrl = "https://github.com/prabirshrestha/FluentHttp"
+			nuspec.tags = "web,REST,HTTP,API,services,wrapper"
+			nuspec.output_file = "#{dest_path}/#{name}.nuspec"
+
+			if !config[:dependencies].nil? then
+                config[:dependencies].each do |d|
+                    nuspec.dependency d[:id], d[:version]
+                end
+            end
+		end
+	end
+
+	# copy libs for FluentHttp.dll
+    DaCopier.new([]).copy "#{build_config[:paths][:output]}Release", "#{build_config[:paths][:working]}NuGet/FluentHttp/lib/"    
+
+	# duplicate to SymbolSource folder
+	rm_rf "#{build_config[:paths][:working]}SymbolSource/"
+    mkdir "#{build_config[:paths][:working]}SymbolSource/" 
+	FileUtils.cp_r "#{build_config[:paths][:working]}NuGet/FluentHttp", "#{build_config[:paths][:working]}SymbolSource/FluentHttp"
+
+	# remove pdb files from original NuGetFolder as it is present in SymbolSource folder instead
+    FileUtils.rm Dir.glob("#{build_config[:paths][:working]}NuGet/*/**/*.pdb")
+
+	# prepare to copy src to SymbolSource folder
+    mkdir "#{build_config[:paths][:working]}SymbolSource/FluentHttp/src"
+
+	# copy the source codes
+    DaCopier.new(["^obj$","packages.config",".cd",".user",".suo"]).copy "#{build_config[:paths][:src]}FluentHttp/", "#{build_config[:paths][:working]}SymbolSource/FluentHttp/src/"
+end
+
+task :nuget => [:nuspec] do
+	# copy nuspec files from NuGet to SymbolSource
+	cp "#{build_config[:paths][:working]}NuGet/FluentHttp/FluentHttp.nuspec", "#{build_config[:paths][:working]}SymbolSource/FluentHttp/"
+
+	Dir["#{build_config[:paths][:working]}*/*/*.nuspec"].each do |name|
+        nugetpack :nuget do |nuget|
+            nuget.command = "#{build_config[:paths][:nuget]}"
+            nuget.nuspec  = name            
+            nuget.output = "#{build_config[:paths][:working]}" +
+                 (name.start_with?("#{build_config[:paths][:working]}NuGet") ? "NuGet/" : "SymbolSource")
+        end
+    end
 end

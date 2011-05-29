@@ -19,11 +19,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\Net35\</OutputPath>
+    <OutputPath>..\..\bin\Debug\net35-client\</OutputPath>
     <DefineConstants>TRACE;DEBUG;ASYNC_ENUMERATOR_INTERNAL;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\Net35\FluentHttp.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Debug\net35-client\FluentHttp.xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
@@ -52,11 +52,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\Net35\</OutputPath>
+    <OutputPath>..\..\bin\Release\net35-client\</OutputPath>
     <DefineConstants>TRACE;ASYNC_ENUMERATOR_INTERNAL;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\Net35\FluentHttp.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\net35-client\FluentHttp.xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>

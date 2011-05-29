@@ -39,3 +39,4 @@ lint.db
 Thumbs.db
 !libs/*/[Bb]in/
 dist/
+working/

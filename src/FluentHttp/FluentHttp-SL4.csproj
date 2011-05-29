@@ -29,13 +29,13 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Bin\Debug\SL4\</OutputPath>
+    <OutputPath>..\..\Bin\Debug\sl4\</OutputPath>
     <DefineConstants>TRACE;DEBUG;SILVERLIGHT;CODE_ANALYSIS</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\Bin\Debug\SL4\FluentHttp.XML</DocumentationFile>
+    <DocumentationFile>..\..\Bin\Debug\sl4\FluentHttp.xml</DocumentationFile>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -63,13 +63,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Bin\Release\SL4\</OutputPath>
+    <OutputPath>..\..\Bin\Release\sl4\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;CODE_ANALYSIS</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\Bin\Release\SL4\FluentHttp.XML</DocumentationFile>
+    <DocumentationFile>..\..\Bin\Release\sl4\FluentHttp.xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
