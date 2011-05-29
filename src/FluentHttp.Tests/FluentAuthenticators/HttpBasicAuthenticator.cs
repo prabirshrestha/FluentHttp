@@ -7,7 +7,7 @@ namespace FluentHttp.Authenticators
     /// <summary>
     /// Represents a http basic authenticator.
     /// </summary>
-    public class HttpBasicAuthenticator : IFluentAuthenticator
+    class HttpBasicAuthenticator : IFluentAuthenticator
     {
         /// <summary>
         /// The username.

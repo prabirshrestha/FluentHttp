@@ -78,6 +78,10 @@ task :configure do
 		"FluentHttp" => {
             :title => "Fluent Http",
 			:description => ".NET rest client helper for http web requests."			
+        },
+		"FluentHttp.HttpBasicAuthenticator" => {
+            :title => "Http Basic Authenticator for FluentHttp",
+			:description => "Http basic authenticator helper for FluentHttp."	
         }
 	}
     
@@ -323,6 +327,20 @@ task :nuspec => ["#{build_config[:paths][:working]}", :libs] do
 
 	# copy libs for FluentHttp.dll
     DaCopier.new([]).copy "#{build_config[:paths][:output]}Release", "#{build_config[:paths][:working]}NuGet/FluentHttp/lib/"    
+
+	# remove PLACEHOLDER files from FluentHttp/Authenticators/ folder
+	FileUtils.rm Dir.glob("#{build_config[:paths][:working]}NuGet/*/Content/FluentHttp/Authenticators/PLACEHOLDER")
+
+	# copy authenticator files
+	FileUtils.cp "#{build_config[:paths][:src]}FluentHttp.Tests/FluentAuthenticators/HttpBasicAuthenticator.cs", "#{build_config[:paths][:working]}NuGet/FluentHttp.HttpBasicAuthenticator/Content/FluentHttp/Authenticators/HttpBasicAuthenticator.cs.pp"
+
+	# change namespace for authenticators
+	authenticator_files = ["#{build_config[:paths][:working]}NuGet/FluentHttp.HttpBasicAuthenticator/Content/FluentHttp/Authenticators/HttpBasicAuthenticator.cs.pp"]
+	authenticator_files.each do |file_path|
+		s = nil
+		open(file_path,'r') { |f| s = f.read }
+		open(file_path,'w') { |f| f.puts s.gsub(/^namespace FluentHttp.Authenticators$/, "namespace $rootnamespace$.FluentHttp.Authenticators") }
+	end
 
 	# duplicate to SymbolSource folder
 	rm_rf "#{build_config[:paths][:working]}SymbolSource/"

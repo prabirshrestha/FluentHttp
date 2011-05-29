@@ -4,7 +4,7 @@ namespace FluentHttp.Authenticators
     /// <summary>
     /// Base class for OAuth2 Authenticators.
     /// </summary>
-    public abstract class OAuth2Authenticator : IFluentAuthenticator
+    abstract class OAuth2Authenticator : IFluentAuthenticator
     {
         /// <summary>
         /// The oauth 2 token.
@@ -38,7 +38,7 @@ namespace FluentHttp.Authenticators
     /// <summary>
     /// Authenticate the fluent http request using OAuth2 uri querystring parameter.
     /// </summary>
-    public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
+    class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2UriQueryParameterAuthenticator"/> class.
