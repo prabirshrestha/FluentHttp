@@ -241,6 +241,26 @@ task :dist_source => [:dist_prepare] do
    end
 end
 
+desc "Create distribution packages for libraries"
+task :dist_libs => [:dist_prepare, :nuget] do
+	 # copy nuget outputs
+    mkdir "#{build_config[:paths][:dist]}NuGet/"
+    mkdir "#{build_config[:paths][:dist]}SymbolSource/"
+    cp Dir["#{build_config[:paths][:working]}NuGet/*.nupkg"], "#{build_config[:paths][:dist]}NuGet/"
+    cp Dir["#{build_config[:paths][:working]}SymbolSource/*.nupkg"], "#{build_config[:paths][:dist]}SymbolSource/"
+
+	# copy binary .dll files
+    mkdir "#{build_config[:paths][:working]}Bin/"
+    FileUtils.cp_r "#{build_config[:paths][:working]}NuGet/FluentHttp/lib/.", "#{build_config[:paths][:working]}Bin/FluentHttp"
+
+	zip :dist_libs do |zip|
+        zip.directories_to_zip "#{build_config[:paths][:working]}Bin/"
+        zip.output_file = "#{PROJECT_NAME_SAFE}-#{build_config[:version][:long]}.bin.zip"
+        zip.output_path = "#{build_config[:paths][:dist]}"
+        zip.additional_files = ["#{build_config[:paths][:root]}LICENSE"]
+    end
+end
+
 task :nuspec => ["#{build_config[:paths][:working]}", :libs] do
 	rm_rf "#{build_config[:paths][:working]}NuGet/"
     mkdir "#{build_config[:paths][:working]}NuGet/"
