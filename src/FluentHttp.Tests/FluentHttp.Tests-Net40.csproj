@@ -96,23 +96,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FluentHttpRequest\BufferSize\GivenANewRequestWhenISetTheBufferSizeThen.cs" />
-    <Compile Include="FluentHttpRequest\Ctor\GivenABaseUrlThen.cs" />
-    <Compile Include="FluentHttpRequest\Method\GivenAVaildMethodThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenAnEmptyResourcePathThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenANullResourcePathThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenARequestWithResourcePathAlreadySetWhenISetANewResourcePathAsNullThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenARequestWithResourcePathAlreadySetWhenISetANewResourcePathThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenAResourcePathAsSlashThen.cs" />
-    <Compile Include="FluentHttpRequest\ResourcePath\GivenANonNullOrNonEmptyResourcePathStartingWihoutSlashThen.cs" />
-    <Compile Include="FluentHttpRequest\Timeout\WhenGivenANewRequestAndISetTimeoutThen.cs" />
+    <Compile Include="FluentAuthenticators\OAuth2Authenticator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenASingleLetterStringExceptSlashThen.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenAStringStartingWithSlashThen.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenAStringWithoutSlashThen.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenEmptyStringThen.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenNullStringThen.cs" />
-    <Compile Include="Utils\AddStartingSlashIfNotPresent\GivenSlashOnlyThen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
