@@ -67,6 +67,7 @@ task :configure do
             :sl4    => '',
             :net40  => '',
             :net35  => '',
+			:net20  => '',
 			:shfb   => '', # sandcastle help file builder doc project
         },
 		:nuspec => {
@@ -103,7 +104,8 @@ task :configure do
     build_config[:sln][:wp7]   = "#{build_config[:paths][:src]}FluentHttp-WP7.sln"
     build_config[:sln][:sl4]   = "#{build_config[:paths][:src]}FluentHttp-SL4.sln"
     build_config[:sln][:net40] = "#{build_config[:paths][:src]}FluentHttp-Net40.sln"
-    build_config[:sln][:net35] = "#{build_config[:paths][:src]}FluenttHttp-Net35.sln"    
+    build_config[:sln][:net35] = "#{build_config[:paths][:src]}FluentHttp-Net35.sln"    
+    build_config[:sln][:net20] = "#{build_config[:paths][:src]}FluentHttp-Net20.sln"    
     build_config[:sln][:shfb]  = "#{build_config[:paths][:src]}docs.shfbproj"
 
     if (ENABLE_HG_CHECK==true) then
@@ -185,6 +187,21 @@ msbuild :clean_net35 do |msb|
     msb.use :net35
 end
 
+desc "Build .NET 2.0 binaries"
+msbuild :net20 => [:clean_net20, :assemblyinfo_fluenthttp] do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net20]
+    msb.targets :Build
+    msb.use :net35
+end
+
+msbuild :clean_net20 do |msb|
+    msb.properties :configuration => build_config[:configuration]
+    msb.solution = build_config[:sln][:net20]
+    msb.targets :Clean
+    msb.use :net35
+end
+
 desc "Build Silverlight 4 binaries"
 msbuild :sl4 => [:clean_sl4, :assemblyinfo_fluenthttp] do |msb|
     msb.properties :configuration => build_config[:configuration]
@@ -212,7 +229,7 @@ msbuild :clean_wp7 do |msb|
 end
 
 desc "Build All Libraries (default)"
-task :libs => [:net35, :net40, :sl4,:wp7]
+task :libs => [:net20, :net35, :net40, :sl4,:wp7]
 
 desc "Clean All"
 task :clean => [:clean_net35, :clean_net40, :clean_sl4, :clean_wp7] do
@@ -278,7 +295,7 @@ end
 
 desc "Create distribution packages for libraries"
 task :dist_libs => [:dist_prepare, :nuget] do
-	 # copy nuget outputs
+	# copy nuget outputs
     mkdir "#{build_config[:paths][:dist]}NuGet/"
     mkdir "#{build_config[:paths][:dist]}SymbolSource/"
     cp Dir["#{build_config[:paths][:working]}NuGet/*.nupkg"], "#{build_config[:paths][:dist]}NuGet/"
@@ -292,7 +309,9 @@ task :dist_libs => [:dist_prepare, :nuget] do
         zip.directories_to_zip "#{build_config[:paths][:working]}Bin/"
         zip.output_file = "#{PROJECT_NAME_SAFE}-#{build_config[:version][:long]}.bin.zip"
         zip.output_path = "#{build_config[:paths][:dist]}"
-        zip.additional_files = ["#{build_config[:paths][:root]}LICENSE"]
+        zip.additional_files = ["#{build_config[:paths][:root]}LICENSE",
+								"#{build_config[:paths][:root]}README.md",
+								"#{build_config[:paths][:root]}VERSION"]
     end
 end
 
