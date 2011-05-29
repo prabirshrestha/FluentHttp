@@ -23,7 +23,7 @@ namespace FluentHttpSamples
 
             Get();
 
-            //var postId = Post("message from fluent http");
+            //var postId = Post("message from \nfluent http");
 
             //Console.WriteLine("Check if message was posted in fb.com");
             //Console.ReadKey();
@@ -146,9 +146,13 @@ namespace FluentHttpSamples
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream))
                 .Body(body =>
-                      body.Append(String.Format("{0}={1}", FluentHttpRequest.UrlEncode("message"), message)));
+                          {
+                              var parameters = new Dictionary<string, object>();
+                              parameters["message"] = message;
+                              AttachRequestBodyAndUpdateHeader(body.Request, parameters, null);
+                          });
 
-            // Execute the request. Call EndRequest immediately so it behaves synchronously.
+            // Execute the request.
             var ar = request.Execute();
 
             // seek the save stream to beginning.
@@ -278,6 +282,9 @@ namespace FluentHttpSamples
             if (request == null)
                 throw new ArgumentNullException("request");
 
+            if (parameters == null)
+                return;
+
             if (string.IsNullOrEmpty(boundary))
                 boundary = DateTime.Now.Ticks.ToString("x", CultureInfo.InvariantCulture);
 
@@ -287,7 +294,38 @@ namespace FluentHttpSamples
             {
                 request.Headers(h => h.Add("Content-Type", "application/x-www-form-urlencoded"));
 
-                throw new NotImplementedException();
+                var sb = new StringBuilder();
+
+                bool isFirst = true;
+                foreach (var key in parameters.Keys)
+                {
+                    if (isFirst)
+                        isFirst = false;
+                    else
+                        sb.Append("&");
+
+                    if (parameters[key] != null)
+                    {
+                        // Format Object As Json And Remove leading and trailing parenthesis
+                        string jsonValue = SimpleJson.SimpleJson.SerializeObject(parameters[key]);
+                        jsonValue = SimpleJson.SimpleJson.EscapeToJavascriptString(jsonValue);
+
+                        if (jsonValue.StartsWith("\"", StringComparison.Ordinal))
+                            jsonValue = jsonValue.Substring(1, jsonValue.Length - 1);
+
+                        if (jsonValue.EndsWith("\"", StringComparison.Ordinal))
+                            jsonValue = jsonValue.Substring(0, jsonValue.Length - 1);
+
+                        if (!string.IsNullOrEmpty(jsonValue))
+                            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}", FluentHttpRequest.UrlEncode(key), FluentHttpRequest.UrlEncode(jsonValue));
+                    }
+                    else
+                    {
+                        sb.Append(key);
+                    }
+
+                    request.Body(body => body.Append(sb.ToString()));
+                }
             }
             else
             {
