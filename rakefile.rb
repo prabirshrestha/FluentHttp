@@ -282,6 +282,10 @@ task :dist_libs => [:dist_prepare, :nuget] do
     end
 end
 
+desc "Create distribution packages"
+task :dist => [:dist_prepare, :dist_libs, :dist_source, :dist_docs] do
+end
+
 task :nuspec => ["#{build_config[:paths][:working]}", :libs] do
 	rm_rf "#{build_config[:paths][:working]}NuGet/"
     mkdir "#{build_config[:paths][:working]}NuGet/"
