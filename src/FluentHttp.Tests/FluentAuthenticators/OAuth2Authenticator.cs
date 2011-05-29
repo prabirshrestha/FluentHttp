@@ -44,4 +44,17 @@ namespace FluentHttp.Authenticators
             fluentHttpRequest.Headers(headers => headers.Add("Authorization", string.Concat("OAuth ", OAuthToken)));
         }
     }
+
+    public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
+    {
+        public OAuth2UriQueryParameterAuthenticator(string oauthToken)
+            : base(oauthToken)
+        {
+        }
+
+        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
+        {
+            fluentHttpRequest.QueryStrings(qs => qs.Add("oauth_token", OAuthToken));
+        }
+    }
 }
