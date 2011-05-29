@@ -91,7 +91,7 @@ Note: supported only in .NET 4.0
 
 ### Making synchronous requests
 Unlike most of the rest libraries, FluentHttp only supports async web requests. 
-But there is a fake synchrouns method which allows you to make async method synchronous.
+But there is a fake synchronous method which allows you to make async method synchronous.
 
     var ar = request.Execute();
 
