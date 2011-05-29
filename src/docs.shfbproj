@@ -25,9 +25,9 @@
       <DocumentationSource sourceFile="..\bin\Release\net40-client\FluentHttp.dll" xmlns="" />
       <DocumentationSource sourceFile="..\bin\Release\net40-client\FluentHttp.xml" xmlns="" />
     </DocumentationSources>
-    <WebsiteSdkLinkType>None</WebsiteSdkLinkType>
-    <MSHelpViewerSdkLinkType>None</MSHelpViewerSdkLinkType>
-    <MSHelp2SdkLinkType>None</MSHelp2SdkLinkType>
+    <WebsiteSdkLinkType>Msdn</WebsiteSdkLinkType>
+    <MSHelpViewerSdkLinkType>Msdn</MSHelpViewerSdkLinkType>
+    <MSHelp2SdkLinkType>Msdn</MSHelp2SdkLinkType>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional
