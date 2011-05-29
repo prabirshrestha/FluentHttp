@@ -31,4 +31,17 @@ namespace FluentHttp.Authenticators
         /// <param name="fluentHttpRequest">The fluent http request.</param>
         public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
     }
+
+    public class OAuth2AuthorizationRequestHeaderAuthenticator : OAuth2Authenticator
+    {
+        public OAuth2AuthorizationRequestHeaderAuthenticator(string oauthToken)
+            : base(oauthToken)
+        {
+        }
+
+        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
+        {
+            fluentHttpRequest.Headers(headers => headers.Add("Authorization", string.Concat("OAuth ", OAuthToken)));
+        }
+    }
 }
