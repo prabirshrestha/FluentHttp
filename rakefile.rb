@@ -77,11 +77,18 @@ task :configure do
 	nuspec_config = {
 		"FluentHttp" => {
             :title => "Fluent Http",
-			:description => ".NET rest client helper for http web requests."			
+			:description => ".NET rest client helper for http web requests."		
         },
 		"FluentHttp.HttpBasicAuthenticator" => {
             :title => "Http Basic Authenticator for FluentHttp",
 			:description => "Http basic authenticator helper for FluentHttp.",
+			:dependencies => [
+               { :id => "FluentHttp", :version => "#{build_config[:version][:full]}" }
+            ]
+        },
+		"FluentHttp.OAuth2Authenticator" => {
+            :title => "OAuth2 Authenticator for FluentHttp",
+			:description => "OAuth2 authenticator helper for FluentHttp.",
 			:dependencies => [
                { :id => "FluentHttp", :version => "#{build_config[:version][:full]}" }
             ]
@@ -336,9 +343,12 @@ task :nuspec => ["#{build_config[:paths][:working]}", :libs] do
 
 	# copy authenticator files
 	FileUtils.cp "#{build_config[:paths][:src]}FluentHttp.Tests/FluentAuthenticators/HttpBasicAuthenticator.cs", "#{build_config[:paths][:working]}NuGet/FluentHttp.HttpBasicAuthenticator/Content/FluentHttp/Authenticators/HttpBasicAuthenticator.cs.pp"
+	FileUtils.cp "#{build_config[:paths][:src]}FluentHttp.Tests/FluentAuthenticators/OAuth2Authenticator.cs", "#{build_config[:paths][:working]}NuGet/FluentHttp.OAuth2Authenticator/Content/FluentHttp/Authenticators/OAuth2Authenticator.cs.pp"
 
 	# change namespace for authenticators
-	authenticator_files = ["#{build_config[:paths][:working]}NuGet/FluentHttp.HttpBasicAuthenticator/Content/FluentHttp/Authenticators/HttpBasicAuthenticator.cs.pp"]
+	authenticator_files = [
+		"#{build_config[:paths][:working]}NuGet/FluentHttp.HttpBasicAuthenticator/Content/FluentHttp/Authenticators/HttpBasicAuthenticator.cs.pp",
+		"#{build_config[:paths][:working]}NuGet/FluentHttp.OAuth2Authenticator/Content/FluentHttp/Authenticators/OAuth2Authenticator.cs.pp"]
 	authenticator_files.each do |file_path|
 		s = nil
 		open(file_path,'r') { |f| s = f.read }
