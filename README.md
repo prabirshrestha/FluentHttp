@@ -10,8 +10,8 @@ a rest client wrapper, such as for Facebook, Github, Twitter, Google etc.)
 
 * .NET 4.0 (client profile supported) ~50kb
 * .NET 3.5 (client profile supported) ~50kb
-* Silverlight 4.0  ~31kb
-* Windows Phone 7  ~19kb
+* Silverlight 4.0  ~30kb
+* Windows Phone 7  ~30kb
 * Mono
 
 ## Getting Started
@@ -20,7 +20,7 @@ Reference appropriate FluentHttp.dll depending on your framework.
 ## Samples
 Here are some samples to get started with on FluentHttp.
 
-### Using with BeginXXX and EndXXX pattern
+### Using async callbacks
 
 	private static void GetAsync()
 	{
@@ -37,19 +37,19 @@ Here are some samples to get started with on FluentHttp.
 									.Add("fields", "name,first_name,last_name")
 									.Add("format", "json"))
 			.Proxy(WebRequest.DefaultWebProxy)
-			.OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+			.OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
-		request.BeginExecute(ar =>
-									{
-										var response = request.EndExecute(ar);
+		request.ExecuteAsync(ar =>
+                                {
+                                    var response = ar.Response;
 
-										// seek the save stream to beginning.
-										response.SaveStream.Seek(0, SeekOrigin.Begin);
+                                    // seek the save stream to beginning.
+                                    response.SaveStream.Seek(0, SeekOrigin.Begin);
 
-										// Print the response
-										Console.WriteLine("GetAsync: ");
-										Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
-									}, null);
+                                    // Print the response
+                                    Console.WriteLine("GetAsync: ");
+                                    Console.WriteLine(FluentHttpRequest.ToString(response.SaveStream));
+                                });
 	}
 
 ### Using with Task Parallel Library (TPL)
@@ -70,14 +70,15 @@ Note: supported only in .NET 4.0
 									.Add("fields", "name,first_name,last_name")
 									.Add("format", "json"))
 			.Proxy(WebRequest.DefaultWebProxy)
-			.OnResponseHeadersReceived((o, e) => e.ResponseSaveStream = responseSaveStream);
+			.OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
-		var task = request.ToTask();
+		var task = request.ExecuteTaskAsync();
 
 		task.ContinueWith(
 			t =>
 			{
-				var response = t.Result;
+				var ar = t.Result;
+				var response = ar.Response;
 
 				// seek the save stream to beginning.
 				response.SaveStream.Seek(0, SeekOrigin.Begin);
@@ -89,11 +90,10 @@ Note: supported only in .NET 4.0
 	}
 
 ### Making synchronous requests
-Unlike most of the rest libraries, FluentHttp only supports async web requests. But you 
-can still make it behave like a synchronous request by calling EndExecute right after BeginExecute.
+Unlike most of the rest libraries, FluentHttp only supports async web requests. 
+But there is a fake synchrouns method which allows you to make async method synchronsou.
 
-    // Execute the request then call EndRequest immediately so it behaves synchronously.
-    var response = request.EndExecute(request.BeginExecute(null, null));
+    var ar = request.Execute();
 
 ## License
 Apache License 2.0
