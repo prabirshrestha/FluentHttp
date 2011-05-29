@@ -5,6 +5,10 @@ namespace FluentHttp
     using System.IO;
     using System.Net;
 
+    public delegate IHttpWebRequest FluentHttpWebRequestFactoryDelegate(FluentHttpRequest request, string url);
+
+    public delegate IFluentAuthenticator FluentHttpAuthenticatorDelegate();
+
     /// <summary>
     /// Represents a Fluent Http Request.
     /// </summary>
@@ -28,7 +32,7 @@ namespace FluentHttp
         /// <summary>
         /// The http web request factory.
         /// </summary>
-        private Func<FluentHttpRequest, string, IHttpWebRequest> _httpWebRequestFactory;
+        private FluentHttpWebRequestFactoryDelegate _httpWebRequestFactory;
 
         /// <summary>
         /// The fluent http headers.
@@ -242,7 +246,7 @@ namespace FluentHttp
         /// The fluent http request.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public FluentHttpRequest HttpWebRequestFactory(Func<FluentHttpRequest, string, IHttpWebRequest> httpWebRequestFactory)
+        public FluentHttpRequest HttpWebRequestFactory(FluentHttpWebRequestFactoryDelegate httpWebRequestFactory)
         {
             _httpWebRequestFactory = httpWebRequestFactory;
             return this;
@@ -255,7 +259,7 @@ namespace FluentHttp
         /// Func method for creating HttpWebRequest.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual Func<FluentHttpRequest, string, IHttpWebRequest> GetHttpWebRequestFactory()
+        public virtual FluentHttpWebRequestFactoryDelegate GetHttpWebRequestFactory()
         {
             return _httpWebRequestFactory;
         }
@@ -346,7 +350,7 @@ namespace FluentHttp
         /// <returns>
         /// The fluent http request.
         /// </returns>
-        public FluentHttpRequest AuthenticateUsing(Func<IFluentAuthenticator> authenticator)
+        public FluentHttpRequest AuthenticateUsing(FluentHttpAuthenticatorDelegate authenticator)
         {
             return authenticator != null ? AuthenticateUsing(authenticator()) : this;
         }

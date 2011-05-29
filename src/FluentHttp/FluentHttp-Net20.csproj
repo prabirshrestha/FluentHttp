@@ -35,14 +35,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CombinationStream.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />
     <Compile Include="Core\HttpWebHelperAsyncResult.cs" />
     <Compile Include="Core\HttpWebRequestWrapper.cs" />
@@ -52,7 +47,17 @@
     <Compile Include="Core\Pair.cs" />
     <Compile Include="Core\ResponseReceivedEventArgs.cs" />
     <Compile Include="Core\WebExceptionWrapper.cs" />
+    <Compile Include="FluentHttpAsyncResult.cs" />
+    <Compile Include="FluentHttpHeaders.cs" />
+    <Compile Include="FluentHttpRequest.cs" />
+    <Compile Include="FluentHttpRequestBody.cs" />
+    <Compile Include="FluentHttpResponse.cs" />
+    <Compile Include="FluentQueryStrings.cs" />
+    <Compile Include="HttpEncoder.cs" />
+    <Compile Include="HttpUtility.cs" />
+    <Compile Include="IFluentAuthenticator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseHeadersReceivedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
