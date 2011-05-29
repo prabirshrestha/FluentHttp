@@ -1,4 +1,8 @@
 require File.join(File.dirname(__FILE__), 'libs/albacore/albacore.rb')
+require File.join(File.dirname(__FILE__), 'libs/albacore/dacopier.rb')
+
+require 'find'
+require 'fileutils'
 
 task :default => [:libs]
 
@@ -7,11 +11,17 @@ PROJECT_NAME_SAFE = "FluentHttp"
 LOG               = false
 ENABLE_HG_CHECK   = false
 #ENV['NIGHTLY']   = 'false'
+#ENV['NUGET_FLUENTHTTP_API_KEY'] = ''
 
 build_config = nil
+nuspec_config = nil
 
 task :configure do
     # do configuration stuffs here
+
+	Albacore.configure do |config|
+		config.log_level = :verbose if LOG
+	end
         
     root_path    = "#{File.dirname(__FILE__)}/"
     base_version = 0
@@ -21,13 +31,21 @@ task :configure do
     end
     
     build_config = {
-        :log        => false,
-        :paths      => {
-            :root   => root_path,
-            :src    => "#{root_path}src/",
-            :output => "#{root_path}bin/",
-            :build  => "#{root_path}build/",
-            :dist   => "#{root_path}dist/"
+        :log			=> false,
+        :paths			=> {
+            :root		=> root_path,
+            :src		=> "#{root_path}src/",
+            :output		=> "#{root_path}bin/",
+            :build		=> "#{root_path}build/",
+            :dist		=> "#{root_path}dist/",
+			:tools		=> "#{root_path}libs/",
+			:working	=> "#{root_path}working/",
+			:doc		=> "#{root_path}docs/",
+			:packages	=> '',
+            :nuget		=> '',
+            :xunit		=> {
+                :x86_console_path => ''
+            }
         },
         :version    => {
             :base   => "#{base_version}",
@@ -50,17 +68,27 @@ task :configure do
             :sl4    => '',
             :net40  => '',
             :net35  => '',
-        }        
+        },
+		:nuspec => {
+            :authors => "Prabir Shrestha",
+        }
     }
+
+	nuspec_config = {
+		"FluentHttp" => {
+            :description => ".NET rest client for http web requests."
+        }
+	}
     
+	build_config[:paths][:packages]  = "#{build_config[:paths][:src]}packages/"
+	build_config[:paths][:nuget]  = "#{build_config[:paths][:packages]}NuGet.CommandLine.1.3.20425.372/Tools/NuGet.exe"
+
+	build_config[:paths][:xunit][:x86_console_path]  = "#{build_config[:paths][:tools]}xunit/xunit.console.clr4.x86.exe"
+
     build_config[:sln][:wp7]   = "#{build_config[:paths][:src]}FluentHttp-WP7.sln"
     build_config[:sln][:sl4]   = "#{build_config[:paths][:src]}FluentHttp-SL4.sln"
     build_config[:sln][:net40] = "#{build_config[:paths][:src]}FluentHttp-Net40.sln"
     build_config[:sln][:net35] = "#{build_config[:paths][:src]}FluenttHttp-Net35.sln"    
-    
-    #Albacore configure do |config|
-    #    config log_level = :verbose if build_config[:log]
-    #end
     
     if (ENABLE_HG_CHECK==true) then
         begin
@@ -115,9 +143,6 @@ Rake::Task["configure"].invoke
 
 desc "Build .NET 4 binaries"
 msbuild :net40 => [:clean_net40, :assemblyinfo_fluenthttp] do |msb|
-    # temporary hack for bug caused by code contracts
-    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
-    
     msb.properties :configuration => build_config[:configuration]
     msb.solution = build_config[:sln][:net40]
     msb.targets :Build
@@ -131,29 +156,21 @@ end
 
 desc "Build .NET 3.5 binaries"
 msbuild :net35 => [:clean_net35, :assemblyinfo_fluenthttp] do |msb|
-    # temporary hack for bug caused by code contracts
-    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
-    
     msb.properties :configuration => build_config[:configuration]
     msb.solution = build_config[:sln][:net35]
     msb.targets :Build
-    #msb.use :net35
-    # compile .net 3.5 libraries using msbuild 4.0 in order to generate the code contract libraries.
-    # seems like if we use .net 3.5, it does not generate the code contracts.
+    msb.use :net35
 end
 
 msbuild :clean_net35 do |msb|
     msb.properties :configuration => build_config[:configuration]
     msb.solution = build_config[:sln][:net35]
     msb.targets :Clean
-    #msb.use :net35
+    msb.use :net35
 end
 
 desc "Build Silverlight 4 binaries"
 msbuild :sl4 => [:clean_sl4, :assemblyinfo_fluenthttp] do |msb|
-    # temporary hack for bug caused by code contracts
-    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
-   
     msb.properties :configuration => build_config[:configuration]
     msb.solution = build_config[:sln][:sl4]
     msb.targets :Build
@@ -167,9 +184,6 @@ end
 
 desc "Build Windows Phone 7 binaries"
 msbuild :wp7 => [:clean_wp7, :assemblyinfo_fluenthttp] do |msb|
-    # temporary hack for bug caused by code contracts
-    FileUtils.rm_rf "#{build_config[:paths][:src]}FluentHttp/obj/"
-    
     msb.properties :configuration => build_config[:configuration]
     msb.solution = build_config[:sln][:wp7]
     msb.targets :Build
@@ -187,7 +201,8 @@ task :libs => [:net35, :net40, :sl4,:wp7]
 desc "Clean All"
 task :clean => [:clean_net35, :clean_net40, :clean_sl4, :clean_wp7] do
    FileUtils.rm_rf build_config[:paths][:output]
-   FileUtils.rm_rf build_config[:paths][:dist]    
+   FileUtils.rm_rf build_config[:paths][:dist] 
+   FileUtils.rm_rf build_config[:paths][:working]          
 end
 
 assemblyinfo :assemblyinfo_fluenthttp do |asm|
@@ -199,4 +214,28 @@ assemblyinfo :assemblyinfo_fluenthttp do |asm|
     asm.company_name = "Prabir Shrestha"
     asm.copyright = "Apache License v2.0"
     asm.com_visible = false
+end
+
+
+directory "#{build_config[:paths][:working]}"
+directory "#{build_config[:paths][:working]}NuGet/"
+directory "#{build_config[:paths][:dist]}"
+directory "#{build_config[:paths][:dist]}NuGet"
+
+task :dist_prepare do
+	rm_rf "#{build_config[:paths][:dist]}"
+    mkdir "#{build_config[:paths][:dist]}"
+
+	rm_rf "#{build_config[:paths][:working]}"
+	mkdir "#{build_config[:paths][:working]}"
+end
+
+desc "Create zip archive of the source files"
+task :dist_source => [:dist_prepare] do
+   src_archive_name = "#{build_config[:paths][:dist]}#{PROJECT_NAME_SAFE}-#{build_config[:version][:long]}.src.zip"
+   if (build_config[:vcs][:name] == 'git') then
+    sh "git archive HEAD --format=zip > \"#{src_archive_name}\""
+   elsif (build_config[:vcs][:name] == 'hg') then
+    sh "hg archive -tzip \"#{src_archive_name}\" -p \"#{PROJECT_NAME_SAFE}\""
+   end
 end
