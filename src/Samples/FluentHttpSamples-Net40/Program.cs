@@ -321,7 +321,7 @@ namespace FluentHttpSamples
                     }
                     else
                     {
-                        sb.Append(key);
+                        sb.Append(FluentHttpRequest.UrlEncode(key));
                     }
 
                     request.Body(body => body.Append(sb.ToString()));
