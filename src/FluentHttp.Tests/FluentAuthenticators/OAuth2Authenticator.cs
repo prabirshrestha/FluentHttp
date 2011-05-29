@@ -29,19 +29,30 @@ namespace FluentHttp.Authenticators
         }
 
         /// <summary>
-        /// Authenticate the fluent http request using OAuth2.
+        /// Authenticates the fluent http request using OAuth2.
         /// </summary>
         /// <param name="fluentHttpRequest">The fluent http request.</param>
         public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
     }
 
+    /// <summary>
+    /// Authenticate the fluent http request using OAuth2 uri querystring parameter.
+    /// </summary>
     public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OAuth2UriQueryParameterAuthenticator"/> class.
+        /// </summary>
+        /// <param name="oauthToken">The oauth 2 token.</param>
         public OAuth2UriQueryParameterAuthenticator(string oauthToken)
             : base(oauthToken)
         {
         }
 
+        /// <summary>
+        /// Authenticate the fluent http request using OAuth2 uri querystring parameter.
+        /// </summary>
+        /// <param name="fluentHttpRequest">The fluent http request.</param>
         public override void Authenticate(FluentHttpRequest fluentHttpRequest)
         {
             fluentHttpRequest.QueryStrings(qs => qs.Add("oauth_token", OAuthToken));
