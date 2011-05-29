@@ -38,7 +38,7 @@ task :configure do
             :output		=> "#{root_path}bin/",
             :build		=> "#{root_path}build/",
             :dist		=> "#{root_path}dist/",
-			:tools		=> "#{root_path}libs/",
+			:tools		=> "#{root_path}tools/",
 			:working	=> "#{root_path}working/",
 			:packages	=> '',
             :nuget		=> '',
