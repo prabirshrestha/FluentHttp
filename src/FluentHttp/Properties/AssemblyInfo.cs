@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
-
 [assembly: AssemblyTitle("FluentHttp")]
 [assembly: AssemblyDescription("Fluent http wrapper for .NET")]
 [assembly: AssemblyCompany("Prabir Shrestha")]
