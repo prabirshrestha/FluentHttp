@@ -1,6 +1,9 @@
 ﻿
 namespace FluentHttp.Authenticators
 {
+    /// <summary>
+    /// Base class for OAuth2 Authenticators.
+    /// </summary>
     public abstract class OAuth2Authenticator : IFluentAuthenticator
     {
         /// <summary>
@@ -30,19 +33,6 @@ namespace FluentHttp.Authenticators
         /// </summary>
         /// <param name="fluentHttpRequest">The fluent http request.</param>
         public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
-    }
-
-    public class OAuth2AuthorizationRequestHeaderAuthenticator : OAuth2Authenticator
-    {
-        public OAuth2AuthorizationRequestHeaderAuthenticator(string oauthToken)
-            : base(oauthToken)
-        {
-        }
-
-        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
-        {
-            fluentHttpRequest.Headers(headers => headers.Add("Authorization", string.Concat("OAuth ", OAuthToken)));
-        }
     }
 
     public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
