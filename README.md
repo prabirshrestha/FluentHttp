@@ -10,6 +10,7 @@ a rest client wrapper, such as for Facebook, Github, Twitter, Google etc.)
 
 * .NET 4.0 (client profile supported) ~50kb
 * .NET 3.5 (client profile supported) ~50kb
+* .NET 2.0 ~50kb
 * Silverlight 4.0  ~30kb
 * Windows Phone 7  ~30kb
 * Mono
@@ -110,4 +111,4 @@ be included manually which can be found [here](https://github.com/prabirshrestha
 ## License
 FluentHttp is intended to be used in both open-source and commercial environments.
 
-It is licensed under Apache License 2.0.
+FluentHttp is licensed under Apache License 2.0.
