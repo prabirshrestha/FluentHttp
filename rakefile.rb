@@ -40,7 +40,6 @@ task :configure do
             :dist		=> "#{root_path}dist/",
 			:tools		=> "#{root_path}libs/",
 			:working	=> "#{root_path}working/",
-			:doc		=> "#{root_path}docs/",
 			:packages	=> '',
             :nuget		=> '',
             :xunit		=> {
@@ -68,6 +67,7 @@ task :configure do
             :sl4    => '',
             :net40  => '',
             :net35  => '',
+			:shfb   => '', # sandcastle help file builder doc project
         },
 		:nuspec => {
             :authors => "Prabir Shrestha",
@@ -90,7 +90,8 @@ task :configure do
     build_config[:sln][:sl4]   = "#{build_config[:paths][:src]}FluentHttp-SL4.sln"
     build_config[:sln][:net40] = "#{build_config[:paths][:src]}FluentHttp-Net40.sln"
     build_config[:sln][:net35] = "#{build_config[:paths][:src]}FluenttHttp-Net35.sln"    
-    
+    build_config[:sln][:shfb]  = "#{build_config[:paths][:src]}docs.shfbproj"
+
     if (ENABLE_HG_CHECK==true) then
         begin
             build_config[:vcs][:rev_id] = `hg id -i`.chomp.chop # remove the +
@@ -217,6 +218,13 @@ assemblyinfo :assemblyinfo_fluenthttp do |asm|
     asm.com_visible = false
 end
 
+msbuild :docs => [:net40] do |msb|
+   msb.properties :configuration => build_config[:configuration]
+   msb.properties :DocumentationSourcePath => "#{build_config[:paths][:output]}Release/net40/" if build_config[:configuration] = :Release
+   msb.solution = build_config[:sln][:shfb]
+   msb.targets [:Clean,:Rebuild]
+   msb.properties
+end
 
 directory "#{build_config[:paths][:working]}"
 directory "#{build_config[:paths][:working]}NuGet/"
