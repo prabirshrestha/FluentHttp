@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\FluentHttpSamples-Net40\MediaObject.cs">
+      <Link>MediaObject.cs</Link>
+    </Compile>
     <Compile Include="..\FluentHttpSamples-Net40\Program.cs">
       <Link>Program.cs</Link>
     </Compile>

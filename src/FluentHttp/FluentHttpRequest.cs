@@ -502,7 +502,7 @@ namespace FluentHttp
                 (o, e) =>
                 {
                     fluentHttpResponse = new FluentHttpResponse(this, e.Response);
-                    var args = new ResponseHeadersReceivedEventArgs(fluentHttpResponse, state);
+                    var args = new ResponseHeadersReceivedEventArgs(fluentHttpResponse, e.Exception, state);
                     OnResponseHeadersRecived(args);
                     e.ResponseSaveStream = fluentHttpResponse.SaveStream;
                 };
@@ -601,7 +601,7 @@ namespace FluentHttp
         {
             _headers = new FluentHttpHeaders();
             _queryStrings = new FluentQueryStrings();
-            _body = new FluentHttpRequestBody();
+            _body = new FluentHttpRequestBody(this);
         }
 
         /// <summary>

@@ -14,6 +14,11 @@ namespace FluentHttp
         private readonly FluentHttpResponse _response;
 
         /// <summary>
+        /// The exception
+        /// </summary>
+        private readonly Exception _exception;
+
+        /// <summary>
         /// The async state.
         /// </summary>
         private readonly object _asyncState;
@@ -25,10 +30,19 @@ namespace FluentHttp
         /// The response.
         /// </param>
         /// <param name="asyncState">The async state</param>
-        public ResponseHeadersReceivedEventArgs(FluentHttpResponse response, object asyncState)
+        public ResponseHeadersReceivedEventArgs(FluentHttpResponse response, Exception exception, object asyncState)
         {
             _response = response;
+            _exception = exception;
             _asyncState = asyncState;
+        }
+
+        /// <summary>
+        /// Gets the exception.
+        /// </summary>
+        public Exception Exception
+        {
+            get { return _exception; }
         }
 
         /// <summary>

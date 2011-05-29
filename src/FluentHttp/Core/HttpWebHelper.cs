@@ -312,7 +312,7 @@ namespace FluentHttp
                 {
                     var args = new ResponseReceivedEventArgs(httpWebResponse, exception, state);
                     OnResponseReceived(args);
-                    ReadResponseStream(httpWebRequest, httpWebResponse, null, args.ResponseSaveStream, callback, state);
+                    ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream, callback, state);
                 }
                 else
                 {

@@ -12,6 +12,11 @@ namespace FluentHttp
     public class FluentHttpRequestBody
     {
         /// <summary>
+        /// Fluent http request.
+        /// </summary>
+        private readonly FluentHttpRequest _request;
+
+        /// <summary>
         /// Internal collection of streams.
         /// </summary>
         private readonly List<Stream> _streams;
@@ -19,9 +24,18 @@ namespace FluentHttp
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentHttpRequestBody"/> class.
         /// </summary>
-        public FluentHttpRequestBody()
+        public FluentHttpRequestBody(FluentHttpRequest request)
         {
+            _request = request;
             _streams = new List<Stream>();
+        }
+
+        /// <summary>
+        /// Gets the <see cref="FluentHttpRequest"/>.
+        /// </summary>
+        public FluentHttpRequest Request
+        {
+            get { return _request; }
         }
 
         /// <summary>
