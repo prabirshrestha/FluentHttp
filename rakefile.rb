@@ -1,5 +1,5 @@
-require File.join(File.dirname(__FILE__), 'libs/albacore/albacore.rb')
-require File.join(File.dirname(__FILE__), 'libs/albacore/dacopier.rb')
+require File.join(File.dirname(__FILE__), 'build/albacore/albacore.rb')
+require File.join(File.dirname(__FILE__), 'build/dacopier.rb')
 
 require 'find'
 require 'fileutils'

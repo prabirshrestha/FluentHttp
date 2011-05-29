@@ -85,15 +85,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TechTalk.SpecFlow">
-      <HintPath>..\..\libs\specflow\TechTalk.SpecFlow.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit">
-      <HintPath>..\..\libs\xunit\xunit.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.extensions">
-      <HintPath>..\..\libs\xunit\xunit.extensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FluentAuthenticators\HttpBasicAuthenticator.cs" />
