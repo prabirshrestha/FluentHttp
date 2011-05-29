@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rubygems/gem_runner'
 require 'rubygems/exceptions'
 
+#http://gist.github.com/236148
 required_version = Gem::Requirement.new "> 1.8.5"
 
 unless required_version.satisfied_by? Gem.ruby_version then
@@ -21,7 +22,12 @@ def install(lib)
   end
 end
 
-gems = ['rake','net-ssh','net-sftp','rubyzip']
-
 puts "Installing required dependencies"
-gems.each { |gem| install gem}
+#install 'rake'
+install 'net-ssh'
+install 'net-sftp'
+install 'rubyzip'
+#install 'jeweler'
+#install 'rspec'
+#install 'derickbailey-notamock'
+#install 'jekyll'
