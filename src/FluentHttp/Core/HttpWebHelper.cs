@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.IO;
-
+﻿
 namespace FluentHttp
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.IO;
+
+    internal delegate IHttpWebRequest HttpWebRequestFactoryDelegate(string url);
+
+    internal delegate void StreamCopyCompletedDelegate(Stream input, Stream output, Exception exception);
+
     internal class HttpWebHelper
     {
-        protected readonly Func<string, IHttpWebRequest> HttpWebRequestFactory;
+        protected readonly HttpWebRequestFactoryDelegate HttpWebRequestFactory;
 
         public event EventHandler<ResponseReceivedEventArgs> ResponseReceived;
 
@@ -34,7 +39,7 @@ namespace FluentHttp
                 };
         }
 
-        public HttpWebHelper(Func<string, IHttpWebRequest> httpWebRequestFactory)
+        public HttpWebHelper(HttpWebRequestFactoryDelegate httpWebRequestFactory)
         {
             if (httpWebRequestFactory == null)
             {
@@ -423,7 +428,7 @@ namespace FluentHttp
             }
         }
 
-        private void CopyStreamAsync(Stream input, Stream output, bool flushInput, bool flushOutput, Action<Stream, Stream, Exception> completed)
+        private void CopyStreamAsync(Stream input, Stream output, bool flushInput, bool flushOutput, StreamCopyCompletedDelegate completed)
         {
             byte[] buffer = new byte[1024 * 4];
             var asyncOp = System.ComponentModel.AsyncOperationManager.CreateOperation(null);

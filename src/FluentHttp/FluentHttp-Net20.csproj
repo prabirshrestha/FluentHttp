@@ -43,6 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\HttpWebHelper.cs" />
+    <Compile Include="Core\HttpWebHelperAsyncResult.cs" />
+    <Compile Include="Core\HttpWebRequestWrapper.cs" />
+    <Compile Include="Core\HttpWebResponseWrapper.cs" />
+    <Compile Include="Core\IHttpWebRequest.cs" />
+    <Compile Include="Core\IHttpWebResponse.cs" />
+    <Compile Include="Core\Pair.cs" />
+    <Compile Include="Core\ResponseReceivedEventArgs.cs" />
+    <Compile Include="Core\WebExceptionWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
