@@ -3,6 +3,7 @@ namespace FluentHttp.Authenticators
 {
     using System;
     using System.Text;
+    using global::FluentHttp;
 
     /// <summary>
     /// Represents a http basic authenticator.

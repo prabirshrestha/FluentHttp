@@ -1,6 +1,8 @@
 ﻿
 namespace FluentHttp.Authenticators
 {
+    using global::FluentHttp;
+
     /// <summary>
     /// Base class for OAuth2 Authenticators.
     /// </summary>

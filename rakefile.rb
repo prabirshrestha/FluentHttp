@@ -81,7 +81,10 @@ task :configure do
         },
 		"FluentHttp.HttpBasicAuthenticator" => {
             :title => "Http Basic Authenticator for FluentHttp",
-			:description => "Http basic authenticator helper for FluentHttp."	
+			:description => "Http basic authenticator helper for FluentHttp.",
+			:dependencies => [
+               { :id => "FluentHttp", :version => "#{build_config[:version][:full]}" }
+            ]
         }
 	}
     
