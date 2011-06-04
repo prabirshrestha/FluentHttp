@@ -17,6 +17,7 @@ namespace FluentHttp.Authenticators
         public abstract void Authenticate(FluentHttpRequest fluentHttpRequest);
     }
 
+    /// <remarks>http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-05</remarks>
     abstract class OAuth2BearerAuthenticator : OAuth2Authenticator
     {
         private readonly string _bearerToken;
@@ -41,6 +42,7 @@ namespace FluentHttp.Authenticators
         }
     }
 
+    /// <remarks>http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-05#section-2.1</remarks>
     class OAuth2AuthorizationRequestHeaderBearerAuthenticator : OAuth2BearerAuthenticator
     {
         /// <summary>
@@ -64,6 +66,7 @@ namespace FluentHttp.Authenticators
 
 #if FLUENTHTTP_OAuth2UriQueryParameterBearerAuthenticator
 
+    /// <remarks>http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-05#section-2.3</remarks>
     class OAuth2UriQueryParameterBearerAuthenticator : OAuth2BearerAuthenticator
     {
         /// <summary>
