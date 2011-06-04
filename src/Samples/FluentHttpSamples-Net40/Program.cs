@@ -6,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using FluentHttp;
-using FluentHttp.Authenticators;
 
 namespace FluentHttpSamples
 {
@@ -141,8 +140,9 @@ namespace FluentHttpSamples
                 .ResourcePath("/me/feed")
                 .Method("POST")
                 .Headers(h => h.Add("User-Agent", "FluentHttp"))
-                .QueryStrings(q => q.Add("format", "json"))
-                .AuthenticateUsing(new OAuth2UriQueryParameterAuthenticator(AccessToken))
+                .QueryStrings(q => q
+                    .Add("format", "json")
+                    .Add("access_token", AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream))
                 .Body(body =>
@@ -179,8 +179,8 @@ namespace FluentHttpSamples
                 .BaseUrl("https://graph.facebook.com")
                 .ResourcePath(postId)
                 .Method("DELETE")
+                .QueryStrings(qs => qs.Add("access_token", AccessToken))
                 .Headers(h => h.Add("User-Agent", "FluentHttp"))
-                .AuthenticateUsing(new OAuth2UriQueryParameterAuthenticator(AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream));
 
@@ -211,7 +211,7 @@ namespace FluentHttpSamples
                 .ResourcePath("/me/photos")
                 .Method("POST")
                 .Headers(h => h.Add("User-Agent", "FluentHttp"))
-                .AuthenticateUsing(new OAuth2UriQueryParameterAuthenticator(AccessToken))
+                .QueryStrings(qs => qs.Add("access_token", AccessToken))
                 .Proxy(WebRequest.DefaultWebProxy)
                 .OnResponseHeadersReceived((o, e) => e.SaveResponseIn(responseSaveStream))
                 .Body(body => AttachRequestBodyAndUpdateHeader(body.Request, parameters, null));
