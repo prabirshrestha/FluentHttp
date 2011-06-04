@@ -1,4 +1,5 @@
-﻿
+﻿// #define FLUENTHTTP_OAuth2UriQueryParameterBearerAuthenticator
+
 namespace FluentHttp.Authenticators
 {
     using System;
@@ -40,6 +41,29 @@ namespace FluentHttp.Authenticators
         }
     }
 
+    class OAuth2AuthorizationRequestHeaderBearerAuthenticator : OAuth2BearerAuthenticator
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderBearerAuthenticator"/> class.
+        /// </summary>
+        /// <param name="bearerToken">The oauth 2 bearer_token.</param>
+        public OAuth2AuthorizationRequestHeaderBearerAuthenticator(string bearerToken)
+            : base(bearerToken)
+        {
+        }
+
+        /// <summary>
+        /// Authenticate the fluent http request using OAuth2 authorization header bearer_token.
+        /// </summary>
+        /// <param name="fluentHttpRequest">The fluent http request.</param>
+        public override void Authenticate(FluentHttpRequest fluentHttpRequest)
+        {
+            fluentHttpRequest.Headers(h => h.Add("Authorization", string.Concat("Bearer ", BearerToken)));
+        }
+    }
+
+#if FLUENTHTTP_OAuth2UriQueryParameterBearerAuthenticator
+
     class OAuth2UriQueryParameterBearerAuthenticator : OAuth2BearerAuthenticator
     {
         /// <summary>
@@ -60,4 +84,5 @@ namespace FluentHttp.Authenticators
             fluentHttpRequest.QueryStrings(qs => qs.Add("bearer_token", BearerToken));
         }
     }
+#endif
 }

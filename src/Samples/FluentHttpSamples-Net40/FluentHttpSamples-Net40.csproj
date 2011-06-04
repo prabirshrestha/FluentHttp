@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TPL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TPL;FLUENTHTTP_OAuth2UriQueryParameterBearerAuthenticator</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;TPL</DefineConstants>
+    <DefineConstants>TRACE;TPL;FLUENTHTTP_OAuth2UriQueryParameterBearerAuthenticator</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
