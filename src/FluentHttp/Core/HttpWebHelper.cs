@@ -66,7 +66,8 @@ namespace FluentHttp
             }
 
             sb.Append(baseUrl);
-            sb.Append(AddStartingSlashIfNotPresent(resourcePath));
+            if (!string.IsNullOrEmpty(resourcePath))
+                sb.Append(AddStartingSlashIfNotPresent(resourcePath));
             sb.Append("?");
 
             if (queryStrings != null)
