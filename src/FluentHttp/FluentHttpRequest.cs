@@ -139,6 +139,46 @@ namespace FluentHttp
         }
 
         /// <summary>
+        /// Html decode the input string.
+        /// </summary>
+        /// <param name="input">
+        /// The string to decode.
+        /// </param>
+        /// <returns>
+        /// The html decoded string.
+        /// </returns>
+        public static string HtmlDecode(string input)
+        {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.HtmlDecode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.HtmlDecode(input);
+#else
+            return External.HttpUtility.HtmlDecode(input);
+#endif
+        }
+
+        /// <summary>
+        /// Html encode the input string.
+        /// </summary>
+        /// <param name="input">
+        /// The string to encode.
+        /// </param>
+        /// <returns>
+        /// The html encoded string.
+        /// </returns>
+        public static string HtmlEncode(string input)
+        {
+#if WINDOWS_PHONE
+            return System.Net.HttpUtility.HtmlEncode(input);
+#elif SILVERLIGHT
+            return System.Windows.Browser.HttpUtility.HtmlEncode(input);
+#else
+            return External.HttpUtility.HtmlEncode(input);
+#endif
+        }
+
+        /// <summary>
         /// Converts stream to string.
         /// </summary>
         /// <param name="stream">
@@ -177,6 +217,91 @@ namespace FluentHttp
             }
 
             return merged;
+        }
+
+        /// <summary>
+        /// Parse a URL query and fragment parameters into a key-value bundle.
+        /// </summary>
+        /// <param name="query">
+        /// The URL query to parse.
+        /// </param>
+        /// <returns>
+        /// Returns a dictionary of keys and values for the querystring.
+        /// </returns>
+        public static void ParseUrlQueryString(string query, out IEnumerable<Pair<string, string>> queryStrings)
+        {
+            var qs = new List<Pair<string, string>>();
+            queryStrings = qs;
+
+            // if string is null, empty or whitespace
+            if (string.IsNullOrEmpty(query) || query.Trim().Length == 0)
+            {
+                return;
+            }
+
+            string decoded = HtmlDecode(query);
+            int decodedLength = decoded.Length;
+            int namePos = 0;
+            bool first = true;
+
+            while (namePos <= decodedLength)
+            {
+                int valuePos = -1, valueEnd = -1;
+                for (int q = namePos; q < decodedLength; q++)
+                {
+                    if (valuePos == -1 && decoded[q] == '=')
+                    {
+                        valuePos = q + 1;
+                    }
+                    else if (decoded[q] == '&')
+                    {
+                        valueEnd = q;
+                        break;
+                    }
+                }
+
+                if (first)
+                {
+                    first = false;
+                    if (decoded[namePos] == '?')
+                    {
+                        namePos++;
+                    }
+                }
+
+                string name, value;
+                if (valuePos == -1)
+                {
+                    name = null;
+                    valuePos = namePos;
+                }
+                else
+                {
+                    name = UrlDecode(decoded.Substring(namePos, valuePos - namePos - 1));
+                }
+
+                if (valueEnd < 0)
+                {
+                    namePos = -1;
+                    valueEnd = decoded.Length;
+                }
+                else
+                {
+                    namePos = valueEnd + 1;
+                }
+
+                value = UrlDecode(decoded.Substring(valuePos, valueEnd - valuePos));
+
+                if (!string.IsNullOrEmpty(name))
+                {
+                    qs.Add(new Pair<string, string>(name, value));
+                }
+
+                if (namePos == -1)
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>
