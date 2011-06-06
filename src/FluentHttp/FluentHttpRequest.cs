@@ -631,12 +631,12 @@ namespace FluentHttp
             ExecuteAsync(null);
         }
 
-        public void ExecuteAsync(FluentHttpCallback callback)
+        public void ExecuteAsync(FluentHttpAsyncCallback callback)
         {
             ExecuteAsync(callback, null);
         }
 
-        public void ExecuteAsync(FluentHttpCallback callback, object state)
+        public void ExecuteAsync(FluentHttpAsyncCallback callback, object state)
         {
             AuthenticateIfRequried();
 

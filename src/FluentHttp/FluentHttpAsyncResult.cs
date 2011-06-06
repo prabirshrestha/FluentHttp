@@ -4,7 +4,11 @@ namespace FluentHttp
     using System;
     using System.Threading;
 
-    public delegate void FluentHttpCallback(FluentHttpAsyncResult asyncResult);
+    /// <summary>
+    /// Async callback for Fluent Http requests.
+    /// </summary>
+    /// <param name="asyncResult">The async result.</param>
+    public delegate void FluentHttpAsyncCallback(FluentHttpAsyncResult asyncResult);
 
     /// <summary>
     /// Represents the fluent http async result.
