@@ -4,7 +4,7 @@
 FluentHttp is a light weight library aimed to ease the development for your rest client with
 consistent api throughout different frameworks whether you are using .net 4.0 or silverlight or
 window phone. (It is not aimed to be used directly by the developers, but rather for creating 
-a rest client wrapper, such as for Facebook, Github, Twitter, Google etc.)
+a http client wrapper, such as for Facebook, Github, Twitter, Google etc.)
 
 ## Supported Frameworks
 
@@ -91,10 +91,17 @@ Note: supported only in .NET 4.0
 	}
 
 ### Making synchronous requests
-Unlike most of the rest libraries, FluentHttp only supports async web requests. 
-But there is a fake synchronous method which allows you to make async method synchronous.
+Synchronous request can be made by calling the Execute() method. Exception is thrown
+incase any error occurs. Execute() methods returns the same async result as ExecuteAsync().
 
-    var ar = request.Execute();
+	try
+	{
+		var ar = request.Execute();
+	}
+	catch
+	{
+		// catch exception	
+	}
 
 ## Using Authenticators
 To simplify authentication for http web requests, FluentHttp source includes some
