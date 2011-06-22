@@ -152,5 +152,13 @@ namespace FluentHttp
         /// The request stream.
         /// </returns>
         Stream EndGetRequestStream(IAsyncResult asyncResult);
+
+#if !SILVERLIGHT
+
+        IHttpWebResponse GetResponse();
+
+        Stream GetRequestStream();
+
+#endif
     }
 }

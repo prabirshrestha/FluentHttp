@@ -254,5 +254,20 @@ namespace FluentHttp
         {
             return _httpWebRequest.EndGetRequestStream(asyncResult);
         }
+
+#if !SILVERLIGHT
+
+        public IHttpWebResponse GetResponse()
+        {
+            return new HttpWebResponseWrapper((HttpWebResponse)_httpWebRequest.GetResponse());
+        }
+
+        public Stream GetRequestStream()
+        {
+            return _httpWebRequest.GetRequestStream();
+        }
+
+#endif
+
     }
 }

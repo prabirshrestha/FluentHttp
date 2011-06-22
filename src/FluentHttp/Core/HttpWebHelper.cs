@@ -203,6 +203,150 @@ namespace FluentHttp
             }
         }
 
+#if !SILVERLIGHT
+
+        public virtual HttpWebHelperResult Execute(IHttpWebRequest httpWebRequest, Stream requestBody)
+        {
+            if (httpWebRequest == null)
+            {
+                throw new ArgumentNullException("httpWebRequest");
+            }
+
+            if (requestBody != null && requestBody.Length != 0)
+            {
+                // we have a request body, so write it synchronously.
+#if !WINDOWS_PHONE
+                httpWebRequest.ContentLength = requestBody.Length;
+#endif
+                return WriteAndGetReponse(httpWebRequest, requestBody);
+            }
+            else
+            {
+                // synchronously get the response from the http server.
+                return GetResponse(httpWebRequest, requestBody);
+            }
+        }
+
+        private HttpWebHelperResult WriteAndGetReponse(IHttpWebRequest httpWebRequest, Stream requestBody)
+        {
+            Stream requestStream = null;
+            Exception exception = null;
+            IHttpWebResponse httpWebResponse = null;
+            HttpWebHelperResult result;
+
+            try
+            {
+                requestStream = httpWebRequest.GetRequestStream();
+            }
+            catch (WebException ex)
+            {
+                var webException = new WebExceptionWrapper(ex);
+                httpWebResponse = webException.GetResponse();
+                exception = webException;
+            }
+            finally
+            {
+                if (exception == null)
+                {
+                    // we got the stream, so copy to the stream
+                    result = CopyRequestStream(httpWebRequest, requestBody, requestStream);
+                }
+                else
+                {
+                    // there was an error
+                    if (httpWebResponse == null)
+                    {
+                        result = new HttpWebHelperResult(httpWebRequest, null, exception, null, false, true, null, null);
+                    }
+                    else
+                    {
+                        var args = new ResponseReceivedEventArgs(httpWebResponse, exception, null);
+                        OnResponseReceived(args);
+                        result = GetResponse(httpWebRequest, requestBody);
+                    }
+                }
+            }
+
+            if (result.Exception != null)
+            {
+                throw result.Exception;
+            }
+
+            return result;
+        }
+
+        private HttpWebHelperResult CopyRequestStream(IHttpWebRequest httpWebRequest, Stream requestBody, Stream requestStream)
+        {
+            CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
+            requestStream.Close();
+            return GetResponse(httpWebRequest, requestBody);
+        }
+
+        private HttpWebHelperResult GetResponse(IHttpWebRequest httpWebRequest, Stream requestBody)
+        {
+            IHttpWebResponse httpWebResponse = null;
+            Exception exception = null;
+            HttpWebHelperResult httpWebHelperAsyncResult = null;
+
+            try
+            {
+                httpWebResponse = httpWebRequest.GetResponse();
+            }
+            catch (WebException ex)
+            {
+                var webException = new WebExceptionWrapper(ex);
+                httpWebResponse = webException.GetResponse();
+                exception = webException;
+            }
+            finally
+            {
+                if (httpWebResponse != null)
+                {
+                    var args = new ResponseReceivedEventArgs(httpWebResponse, exception, null);
+                    OnResponseReceived(args);
+                    httpWebHelperAsyncResult = ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream);
+                }
+                else if (exception != null)
+                {
+                    throw exception;
+                }
+            }
+
+            return httpWebHelperAsyncResult;
+        }
+
+        private HttpWebHelperResult ReadResponseStream(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception innerException, Stream responseSaveStream)
+        {
+            Stream responseStream = null;
+            Exception exception = null;
+
+            try
+            {
+                responseStream = httpWebResponse.GetResponseStream();
+            }
+            catch (WebException ex)
+            {
+                exception = new WebExceptionWrapper(ex);
+            }
+
+            if (exception == null)
+            {
+                return CopyResponseStream(httpWebRequest, httpWebResponse, innerException, responseStream, responseSaveStream);
+            }
+
+            throw exception;
+        }
+
+        private HttpWebHelperResult CopyResponseStream(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception innerException, Stream responseStream, Stream responseSaveStream)
+        {
+            CopyStream(responseStream, responseSaveStream, false, false);
+            responseStream.Close();
+
+            return new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, true, responseSaveStream, null);
+        }
+
+#endif
+
         protected void BeginGetRequestStream(IHttpWebRequest httpWebRequest, Stream requestBody, AsyncCallback callback, object state)
         {
             httpWebRequest.BeginGetRequestStream(ar => RequestCallback(ar, httpWebRequest, requestBody, callback, state), null);
@@ -238,11 +382,11 @@ namespace FluentHttp
                 }
                 else
                 {
-                    // there was error
+                    // there was an error
                     if (httpWebResponse == null)
                     {
                         if (callback != null)
-                            callback(new HttpWebHelperAsyncResult(httpWebRequest, null, exception, null, false, null, state));
+                            callback(new HttpWebHelperResult(httpWebRequest, null, exception, null, false, false, null, state));
                     }
                     else
                     {
@@ -271,7 +415,7 @@ namespace FluentHttp
                         else
                         {
                             if (callback != null)
-                                callback(new HttpWebHelperAsyncResult(httpWebRequest, null, exception, null, false, null, state));
+                                callback(new HttpWebHelperResult(httpWebRequest, null, exception, null, false, false, null, state));
                         }
                     });
             }
@@ -288,7 +432,7 @@ namespace FluentHttp
                 catch (Exception ex)
                 {
                     if (callback != null)
-                        callback(new HttpWebHelperAsyncResult(httpWebRequest, null, ex, null, false, null, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, null, ex, null, false, false, null, state));
                 }
             }
         }
@@ -323,7 +467,7 @@ namespace FluentHttp
                 else
                 {
                     if (callback != null)
-                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, null, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, false, null, state));
                 }
             }
         }
@@ -354,7 +498,7 @@ namespace FluentHttp
                 else
                 {
                     if (callback != null)
-                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, responseSaveStream, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, false, responseSaveStream, state));
                 }
             }
         }
@@ -368,7 +512,7 @@ namespace FluentHttp
                                 (source, destination, exception) =>
                                 {
                                     source.Close();
-                                    callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, exception, null, false, responseSaveStream, state));
+                                    callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, false, responseSaveStream, state));
                                 });
             }
             else
@@ -382,12 +526,12 @@ namespace FluentHttp
 
                     responseStream.Close();
                     if (callback != null)
-                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, null, innerException, false, responseSaveStream, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, false, responseSaveStream, state));
                 }
                 catch (Exception ex)
                 {
                     if (callback != null)
-                        callback(new HttpWebHelperAsyncResult(httpWebRequest, httpWebResponse, ex, null, false, responseSaveStream, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, ex, null, false, false, responseSaveStream, state));
                 }
             }
         }

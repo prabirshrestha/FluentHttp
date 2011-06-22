@@ -101,7 +101,7 @@
   <ItemGroup>
     <Compile Include="CombinationStream.cs" />
     <Compile Include="Core\HttpWebHelper.cs" />
-    <Compile Include="Core\HttpWebHelperAsyncResult.cs" />
+    <Compile Include="Core\HttpWebHelperResult.cs" />
     <Compile Include="Core\HttpWebRequestWrapper.cs" />
     <Compile Include="Core\HttpWebResponseWrapper.cs" />
     <Compile Include="Core\IHttpWebRequest.cs" />

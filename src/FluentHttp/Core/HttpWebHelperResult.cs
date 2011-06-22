@@ -4,23 +4,25 @@ using System.IO;
 
 namespace FluentHttp
 {
-    internal class HttpWebHelperAsyncResult : IAsyncResult
+    internal class HttpWebHelperResult : IAsyncResult
     {
         private readonly IHttpWebRequest _httpWebRequest;
         private readonly IHttpWebResponse _httpWebResponse;
         private readonly Exception _exception;
         private readonly Exception _innerException;
         private readonly bool _isCancelled;
+        private readonly bool _completeSynchronsouly;
         private readonly Stream _responseSaveStream;
         private readonly object _state;
 
-        public HttpWebHelperAsyncResult(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception exception, Exception innerException, bool isCancelled, Stream responseSaveStream, object state)
+        public HttpWebHelperResult(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception exception, Exception innerException, bool isCancelled, bool completeSynchronsouly, Stream responseSaveStream, object state)
         {
             _httpWebRequest = httpWebRequest;
             _httpWebResponse = httpWebResponse;
             _exception = exception;
             _innerException = innerException;
             _isCancelled = isCancelled;
+            _completeSynchronsouly = completeSynchronsouly;
             _responseSaveStream = responseSaveStream;
             _state = state;
         }
@@ -72,7 +74,7 @@ namespace FluentHttp
 
         public bool CompletedSynchronously
         {
-            get { return false; }
+            get { return _completeSynchronsouly; }
         }
     }
 }

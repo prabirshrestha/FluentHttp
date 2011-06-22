@@ -9,6 +9,10 @@ namespace FluentHttp
 
     public delegate IHttpWebRequest FluentHttpWebRequestFactoryDelegate(FluentHttpRequest request, string url);
 
+    /// <summary>
+    /// The fluent authenticator delegate.
+    /// </summary>
+    /// <returns>The Fluent Authenticator</returns>
     public delegate IFluentAuthenticator FluentHttpAuthenticatorDelegate();
 
     /// <summary>
@@ -217,91 +221,6 @@ namespace FluentHttp
             }
 
             return merged;
-        }
-
-        /// <summary>
-        /// Parse a URL query and fragment parameters into a key-value bundle.
-        /// </summary>
-        /// <param name="query">
-        /// The URL query to parse.
-        /// </param>
-        /// <returns>
-        /// Returns a dictionary of keys and values for the querystring.
-        /// </returns>
-        public static void ParseUrlQueryString(string query, out IEnumerable<Pair<string, string>> queryStrings)
-        {
-            var qs = new List<Pair<string, string>>();
-            queryStrings = qs;
-
-            // if string is null, empty or whitespace
-            if (string.IsNullOrEmpty(query) || query.Trim().Length == 0)
-            {
-                return;
-            }
-
-            string decoded = HtmlDecode(query);
-            int decodedLength = decoded.Length;
-            int namePos = 0;
-            bool first = true;
-
-            while (namePos <= decodedLength)
-            {
-                int valuePos = -1, valueEnd = -1;
-                for (int q = namePos; q < decodedLength; q++)
-                {
-                    if (valuePos == -1 && decoded[q] == '=')
-                    {
-                        valuePos = q + 1;
-                    }
-                    else if (decoded[q] == '&')
-                    {
-                        valueEnd = q;
-                        break;
-                    }
-                }
-
-                if (first)
-                {
-                    first = false;
-                    if (decoded[namePos] == '?')
-                    {
-                        namePos++;
-                    }
-                }
-
-                string name, value;
-                if (valuePos == -1)
-                {
-                    name = null;
-                    valuePos = namePos;
-                }
-                else
-                {
-                    name = UrlDecode(decoded.Substring(namePos, valuePos - namePos - 1));
-                }
-
-                if (valueEnd < 0)
-                {
-                    namePos = -1;
-                    valueEnd = decoded.Length;
-                }
-                else
-                {
-                    namePos = valueEnd + 1;
-                }
-
-                value = UrlDecode(decoded.Substring(valuePos, valueEnd - valuePos));
-
-                if (!string.IsNullOrEmpty(name))
-                {
-                    qs.Add(new Pair<string, string>(name, value));
-                }
-
-                if (namePos == -1)
-                {
-                    break;
-                }
-            }
         }
 
         /// <summary>
@@ -548,10 +467,10 @@ namespace FluentHttp
         }
 
         /// <summary>
-        /// Sets the credentails.
+        /// Sets the credentials.
         /// </summary>
         /// <param name="credentials">
-        /// The credentails.
+        /// The credentials.
         /// </param>
         /// <returns>
         /// The fluent http request.
@@ -618,7 +537,7 @@ namespace FluentHttp
         /// Gets the request body.
         /// </summary>
         /// <returns>
-        /// The resquest body.
+        /// The request body.
         /// </returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual FluentHttpRequestBody GetBody()
@@ -667,7 +586,7 @@ namespace FluentHttp
                 {
                     if (callback != null)
                     {
-                        var asyncResult = (HttpWebHelperAsyncResult)ar;
+                        var asyncResult = (HttpWebHelperResult)ar;
                         var fluentHttpAsyncResult = new FluentHttpAsyncResult(this, fluentHttpResponse, state, null, ar.CompletedSynchronously, true, false, asyncResult.Exception, asyncResult.InnerException);
                         callback(fluentHttpAsyncResult);
                     }
@@ -675,8 +594,37 @@ namespace FluentHttp
         }
 
 #if !SILVERLIGHT
+
         public FluentHttpAsyncResult Execute()
         {
+            AuthenticateIfRequried();
+
+            var requestUrl = BuildRequestUrl();
+
+            var httpWebHelper = new HttpWebHelper();
+
+            // todo add cookies
+
+            var headers = GetHeaders().GetHeaderPairs();
+            var httpWebRequest = httpWebHelper.CreateHttpWebRequest(requestUrl, GetMethod(), headers, null);
+
+            PrepareHttpWebRequest(httpWebRequest);
+
+            FluentHttpResponse fluentHttpResponse = null;
+
+            httpWebHelper.ResponseReceived +=
+                (o, e) =>
+                {
+                    fluentHttpResponse = new FluentHttpResponse(this, e.Response);
+                    var args = new ResponseHeadersReceivedEventArgs(fluentHttpResponse, e.Exception, null);
+                    OnResponseHeadersRecived(args);
+                    e.ResponseSaveStream = fluentHttpResponse.SaveStream;
+                };
+
+            var httpWebHelperResult = httpWebHelper.Execute(httpWebRequest, GetBody().Stream);
+            return new FluentHttpAsyncResult(this, fluentHttpResponse, null, null, httpWebHelperResult.CompletedSynchronously, true, false, httpWebHelperResult.Exception, httpWebHelperResult.InnerException);
+
+            /*
             System.Threading.ManualResetEvent wait = new System.Threading.ManualResetEvent(false);
             FluentHttpAsyncResult asyncResult = null;
 
@@ -687,6 +635,7 @@ namespace FluentHttp
                 return asyncResult;
 
             throw asyncResult.Exception;
+            */
         }
 #endif
 
@@ -720,8 +669,6 @@ namespace FluentHttp
         }
 
 #endif
-
-        //#endif
 
         /// <summary>
         /// Builds the request url.
