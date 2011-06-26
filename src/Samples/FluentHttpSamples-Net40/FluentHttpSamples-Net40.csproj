@@ -55,13 +55,13 @@
     <Compile Include="SimpleJson.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\FluentHttp\FluentHttp-Net40.csproj">
       <Project>{5AF9DCDE-0433-4377-9A85-DDAEC49D4CC7}</Project>
       <Name>FluentHttp-Net40</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

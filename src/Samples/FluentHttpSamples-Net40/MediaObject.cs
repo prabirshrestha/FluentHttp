@@ -27,7 +27,7 @@ namespace FluentHttpSamples
         /// Sets the value of the media object.
         /// </summary>
         /// <param name="value">The media object value.</param>
-        /// <returns>Facebook Media Object</returns>
+        /// <returns>Media Object</returns>
         public MediaObject SetValue(byte[] value)
         {
             _value = value;
