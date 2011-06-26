@@ -262,14 +262,9 @@ namespace FluentHttp
                     {
                         var args = new ResponseReceivedEventArgs(httpWebResponse, exception, null);
                         OnResponseReceived(args);
-                        result = GetResponse(httpWebRequest, requestBody);
+                        result = ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream);
                     }
                 }
-            }
-
-            if (result.Exception != null)
-            {
-                throw result.Exception;
             }
 
             return result;
@@ -277,8 +272,16 @@ namespace FluentHttp
 
         private HttpWebHelperResult CopyRequestStream(IHttpWebRequest httpWebRequest, Stream requestBody, Stream requestStream)
         {
-            CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
-            requestStream.Close();
+            try
+            {
+                CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
+                requestStream.Close();
+            }
+            catch (Exception ex)
+            {
+                return new HttpWebHelperResult(httpWebRequest, null, ex, null, false, false, null, null);
+            }
+
             return GetResponse(httpWebRequest, requestBody);
         }
 
@@ -298,6 +301,10 @@ namespace FluentHttp
                 httpWebResponse = webException.GetResponse();
                 exception = webException;
             }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
             finally
             {
                 if (httpWebResponse != null)
@@ -306,9 +313,9 @@ namespace FluentHttp
                     OnResponseReceived(args);
                     httpWebHelperAsyncResult = ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream);
                 }
-                else if (exception != null)
+                else
                 {
-                    throw exception;
+                    httpWebHelperAsyncResult = new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, true, null, null);
                 }
             }
 
@@ -329,20 +336,22 @@ namespace FluentHttp
                 exception = new WebExceptionWrapper(ex);
             }
 
-            if (exception == null)
-            {
-                return CopyResponseStream(httpWebRequest, httpWebResponse, innerException, responseStream, responseSaveStream);
-            }
-
-            throw exception;
+            return exception == null ? CopyResponseStream(httpWebRequest, httpWebResponse, innerException, responseStream, responseSaveStream) : new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, innerException, false, true, responseSaveStream, null);
         }
 
         private HttpWebHelperResult CopyResponseStream(IHttpWebRequest httpWebRequest, IHttpWebResponse httpWebResponse, Exception innerException, Stream responseStream, Stream responseSaveStream)
         {
-            CopyStream(responseStream, responseSaveStream, false, false);
-            responseStream.Close();
+            try
+            {
+                CopyStream(responseStream, responseSaveStream, false, false);
+                responseStream.Close();
 
-            return new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, true, responseSaveStream, null);
+                return new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, true, responseSaveStream, null);
+            }
+            catch (Exception ex)
+            {
+                return new HttpWebHelperResult(httpWebRequest, httpWebResponse, ex, innerException, false, true, responseSaveStream, null);
+            }
         }
 
 #endif
@@ -427,7 +436,6 @@ namespace FluentHttp
                     CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
                     requestStream.Close();
                     BeginGetResponse(httpWebRequest, requestBody, callback, state);
-
                 }
                 catch (Exception ex)
                 {

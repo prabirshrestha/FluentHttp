@@ -91,17 +91,18 @@ Note: supported only in .NET 4.0
 	}
 
 ### Making synchronous requests
-Synchronous request can be made by calling the Execute() method. Exception is thrown
-incase any error occurs. Execute() methods returns the same async result as ExecuteAsync().
+Synchronous request can be made by calling the Execute() method. Exception is NOT thrown
+when error occurs. Execute() methods behaves exactly the same way as async result of ExecuteAsync().
+Make sure to check if exception has occurred. (This allows you to have same methods to process the
+response from both the synchronous and asynchronous methods using the same method.)
 
-	try
-	{
-		var ar = request.Execute();
-	}
-	catch
-	{
-		// catch exception	
-	}
+	var ar = request.Execute();
+	
+	if(ar.Exception != null)
+		throw ar.Exception;
+	else
+		// process the response.
+
 
 ## Using Authenticators
 To simplify authentication for http web requests, FluentHttp source includes some

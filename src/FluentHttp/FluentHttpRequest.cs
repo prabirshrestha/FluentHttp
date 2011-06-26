@@ -622,7 +622,7 @@ namespace FluentHttp
                 };
 
             var httpWebHelperResult = httpWebHelper.Execute(httpWebRequest, GetBody().Stream);
-            return new FluentHttpAsyncResult(this, fluentHttpResponse, null, null, httpWebHelperResult.CompletedSynchronously, true, false, httpWebHelperResult.Exception, httpWebHelperResult.InnerException);
+            return new FluentHttpAsyncResult(this, fluentHttpResponse, null, null, true, true, false, httpWebHelperResult.Exception, httpWebHelperResult.InnerException);
 
             /*
             System.Threading.ManualResetEvent wait = new System.Threading.ManualResetEvent(false);
