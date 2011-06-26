@@ -11,6 +11,7 @@
     <RootNamespace>FluentHttp_Net35</RootNamespace>
     <AssemblyName>FluentHttp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<BaseIntermediateOutputPath>..\..\Working\obj\FluentHttp\net35-client\</BaseIntermediateOutputPath>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>

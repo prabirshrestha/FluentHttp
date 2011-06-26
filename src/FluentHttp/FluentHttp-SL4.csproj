@@ -13,6 +13,7 @@
     <AssemblyName>FluentHttp</AssemblyName>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<BaseIntermediateOutputPath>..\..\Working\obj\FluentHttp\sl4\</BaseIntermediateOutputPath>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
     <SilverlightApplication>false</SilverlightApplication>
     <ValidateXaml>true</ValidateXaml>

@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<package xmlns='http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd'>
+    <metadata>
+        <id>FluentHttp</id>
+        <version><%= version_full %></version>
+        <title/>
+        <authors>Prabir Shrestha</authors>
+        <description>.NET rest client helper for http web requests.</description>
+        <language>en-US</language>
+        <licenseUrl>https://github.com/prabirshrestha/FluentHttp/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/prabirshrestha/FluentHttp/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <tags>FluentHttp,web,REST,HTTP,API,services,wrapper</tags>
+    </metadata>
+	<files>
+		<file src="..\..\Bin\Release\net40-client\*.*" target = "lib\net40-client" />
+		<file src="..\..\Bin\Release\net35-client\*.*" target = "lib\net35-client" />
+		<file src="..\..\Bin\Release\net20\*.*" target = "lib\net20" />
+		<file src="..\..\Bin\Release\sl4\*.*" target = "lib\sl4" />
+		<file src="..\..\Bin\Release\sl3-wp\*.*" target = "lib\sl3-wp" />
+		<file src="..\..\src\FluentHttp\**\*.cs" target = "src" />
+	</files>
+</package>

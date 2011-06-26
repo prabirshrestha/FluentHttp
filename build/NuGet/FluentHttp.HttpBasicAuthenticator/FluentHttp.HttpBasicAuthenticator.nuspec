@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<package xmlns='http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd'>
+    <metadata>
+        <id>FluentHttp.HttpBasicAuthenticator</id>
+        <version><%= version_full %></version>
+        <title/>
+        <authors>Prabir Shrestha</authors>
+        <description>HttpBasic authenticator for FluentHttp.</description>
+        <language>en-US</language>
+        <licenseUrl>https://github.com/prabirshrestha/FluentHttp/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/prabirshrestha/FluentHttp/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <tags>FluentHttp,httpbasic,web,REST,HTTP,API,services,wrapper</tags>
+        <dependencies>
+            <dependency id='FluentHttp' version='<%= version_full %>'/>
+        </dependencies>
+    </metadata>
+	<files>
+		<file src="..\..\working\NuGet\HttpBasicAuthenticator.cs.pp" target = "content\FluentHttp\Authenticators\" />
+	</files>
+</package>

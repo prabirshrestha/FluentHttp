@@ -11,6 +11,7 @@
     <RootNamespace>FluentHttp</RootNamespace>
     <AssemblyName>FluentHttp</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+	<BaseIntermediateOutputPath>..\..\Working\obj\FluentHttp\net20\</BaseIntermediateOutputPath>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
