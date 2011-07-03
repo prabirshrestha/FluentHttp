@@ -16,13 +16,13 @@ namespace FluentHttpSamples
         [STAThread]
         private static void Main(string[] args)
         {
-//            GetAsync();
+            GetAsync();
 
-//#if TPL
-//            GetAsyncWithTask();
-//#endif
+#if TPL
+            GetAsyncWithTask();
+#endif
 
-//            Get();
+            Get();
 
             //var postId = Post("message from \nfluent http");
 
@@ -35,7 +35,7 @@ namespace FluentHttpSamples
             //UploadPhoto(@"C:\Users\Public\Pictures\Sample Pictures\Koala.jpg", "koala.jpg", "image/jpeg",
             //            "Uploaded using FluentHttp");
 
-            // check .net40 sample to see file downloading with cancellation and progress
+            // note: check .net40 sample to see file downloading with cancellation and progress
             //var fileDownloader = new FileDownloader();
             //fileDownloader.ShowDialog();
 

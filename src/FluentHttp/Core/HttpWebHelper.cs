@@ -10,9 +10,9 @@ namespace FluentHttp
 
     internal delegate void StreamCopyCompletedDelegate(Stream input, Stream output, bool cancelled, Exception exception);
 
-    internal delegate bool CancelDelegate(HttpWebHelper webHelper);
-
     internal delegate void Action<T1, T2>(T1 arg1, T2 arg2);
+
+    public delegate bool HttpWebRequestCancelDelegate();
 
     internal class HttpWebHelper
     {
@@ -28,8 +28,8 @@ namespace FluentHttp
         public bool AsyncRequestStream { get; set; }
         public bool AsyncResponseStream { get; set; }
 
-        private CancelDelegate _cancelFunc;
-        public void CancelIf(CancelDelegate cancelFunc)
+        private HttpWebRequestCancelDelegate _cancelFunc;
+        public void Cancel(HttpWebRequestCancelDelegate cancelFunc)
         {
             lock (this)
             {
@@ -39,7 +39,7 @@ namespace FluentHttp
 
         public bool IsCancelled
         {
-            get { return _cancelFunc != null && _cancelFunc(this); }
+            get { return _cancelFunc != null && _cancelFunc(); }
         }
 
         public HttpWebHelper()

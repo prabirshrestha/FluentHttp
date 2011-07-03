@@ -67,9 +67,9 @@ namespace FluentHttp
         private bool _flushResponseSaveStream;
 
         /// <summary>
-        /// Is cancelled.
+        /// Cancel delegate.
         /// </summary>
-        private bool _isCancelled;
+        private HttpWebRequestCancelDelegate _cancelDelegate;
 
 #if !SILVERLIGHT
 
@@ -610,9 +610,14 @@ namespace FluentHttp
 
         public void Cancel()
         {
+            Cancel(() => true);
+        }
+
+        public void Cancel(HttpWebRequestCancelDelegate cancelDelegate)
+        {
             lock (this)
             {
-                _isCancelled = true;
+                _cancelDelegate = cancelDelegate;
             }
         }
 
@@ -797,7 +802,7 @@ namespace FluentHttp
         /// <param name="httpWebHelper"></param>
         private void PrepareHttpWebHelper(HttpWebHelper httpWebHelper)
         {
-            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
+            httpWebHelper.Cancel(() => _cancelDelegate != null && _cancelDelegate());
 
             httpWebHelper.FlushRequestStream = FlushRequestStream();
             httpWebHelper.FlushResponseStream = FlushResponseStream();

@@ -23,6 +23,10 @@ namespace FluentHttpSamples
 
                 _fluentHttpRequest = new FluentHttpRequest()
                     .BaseUrl(txtDownloadUrl.Text)
+                    .FlushRequestReadStream(true)
+                    .FlushRequestStream(true)
+                    .FlushResponseStream(true)
+                    .FlushResponseSaveStream(true)
                     .OnResponseHeadersReceived(
                         (o, args) =>
                         {
