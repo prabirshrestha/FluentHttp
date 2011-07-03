@@ -60,6 +60,17 @@ namespace FluentHttp
         /// </summary>
         private IFluentAuthenticator _authenticator;
 
+        private bool _flushRequestStream;
+        private bool _flushResponseStream;
+
+        private bool _flushRequestReadStream;
+        private bool _flushResponseSaveStream;
+
+        /// <summary>
+        /// Is cancelled.
+        /// </summary>
+        private bool _isCancelled;
+
 #if !SILVERLIGHT
 
         /// <summary>
@@ -71,11 +82,6 @@ namespace FluentHttp
         /// The credentials
         /// </summary>
         private ICredentials _credentials;
-
-        /// <summary>
-        /// Is cancelled.
-        /// </summary>
-        private bool _isCancelled;
 
 #endif
 
@@ -550,6 +556,58 @@ namespace FluentHttp
             return _body;
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest FlushRequestStream(bool flush)
+        {
+            _flushRequestStream = flush;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool FlushRequestStream()
+        {
+            return _flushRequestStream;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest FlushResponseStream(bool flush)
+        {
+            _flushResponseStream = flush;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool FlushResponseStream()
+        {
+            return _flushResponseStream;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest FlushRequestReadStream(bool flush)
+        {
+            _flushRequestReadStream = flush;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool FlushRequestReadStream()
+        {
+            return _flushRequestReadStream;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest FlushResponseSaveStream(bool flush)
+        {
+            _flushResponseSaveStream = flush;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool FlushResponseSaveStream()
+        {
+            return _flushResponseSaveStream;
+        }
+
         public void Cancel()
         {
             lock (this)
@@ -575,7 +633,7 @@ namespace FluentHttp
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
-            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
+            PrepareHttpWebHelper(httpWebHelper);
 
             // todo add cookies
 
@@ -616,7 +674,7 @@ namespace FluentHttp
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
-            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
+            PrepareHttpWebHelper(httpWebHelper);
 
             // todo add cookies
 
@@ -731,6 +789,21 @@ namespace FluentHttp
             {
                 authenticator.Authenticate(this);
             }
+        }
+
+        /// <summary>
+        /// Prepares http web helper
+        /// </summary>
+        /// <param name="httpWebHelper"></param>
+        private void PrepareHttpWebHelper(HttpWebHelper httpWebHelper)
+        {
+            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
+
+            httpWebHelper.FlushRequestStream = FlushRequestStream();
+            httpWebHelper.FlushResponseStream = FlushResponseStream();
+
+            httpWebHelper.FlushRequestReadStream = FlushRequestReadStream();
+            httpWebHelper.FlushResponseSaveStream = FlushResponseSaveStream();
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace FluentHttpSamples
                     (ar =>
                          {
                              stream.Dispose();
-                             
+
                              if (ar.Exception != null)
                              {
                                  MessageBox.Show(ar.Exception.Message);
@@ -61,7 +61,7 @@ namespace FluentHttpSamples
 
         void notifier_WriteProgressChanged(object sender, WriteProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            this.BeginInvoke(new MethodInvoker(() => progressBar1.Value = e.ProgressPercentage));
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

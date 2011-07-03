@@ -8,11 +8,11 @@ a http client wrapper, such as for Facebook, Github, Twitter, Google etc.)
 
 ## Supported Frameworks
 
-* .NET 4.0 (client profile supported) ~50kb
-* .NET 3.5 (client profile supported) ~50kb
-* .NET 2.0 ~50kb
-* Silverlight 4.0  ~30kb
-* Windows Phone 7  ~30kb
+* .NET 4.0 (client profile supported) ~55kb
+* .NET 3.5 (client profile supported) ~55kb
+* .NET 2.0 ~55kb
+* Silverlight 4.0  ~35kb
+* Windows Phone 7  ~35kb
 * Mono
 
 ## Getting Started
@@ -20,6 +20,9 @@ Reference appropriate FluentHttp.dll depending on your framework.
 
 ## Samples
 Here are some samples to get started with on FluentHttp.
+
+**Make sure to check out [Github .NET SDK](https://github.com/prabirshrestha/github)
+for full sample on using FluentHttp.**
 
 ### Using async callbacks
 

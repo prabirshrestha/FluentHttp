@@ -10,7 +10,7 @@ namespace FluentHttp
 
     internal delegate void StreamCopyCompletedDelegate(Stream input, Stream output, bool cancelled, Exception exception);
 
-    internal delegate bool CancelDelegate(HttpWebHelper webHelper, IHttpWebRequest request, IHttpWebResponse response, object state);
+    internal delegate bool CancelDelegate(HttpWebHelper webHelper);
 
     internal delegate void Action<T1, T2>(T1 arg1, T2 arg2);
 
@@ -23,13 +23,13 @@ namespace FluentHttp
         public bool FlushResponseStream { get; set; }
         public bool FlushResponseSaveStream { get; set; }
         public bool FlushRequestStream { get; set; }
-        public bool FlushInputRequestBody { get; set; }
+        public bool FlushRequestReadStream { get; set; }
 
         public bool AsyncRequestStream { get; set; }
         public bool AsyncResponseStream { get; set; }
 
-        private Func<HttpWebHelper, bool> _cancelFunc;
-        public void CancelIf(Func<HttpWebHelper, bool> cancelFunc)
+        private CancelDelegate _cancelFunc;
+        public void CancelIf(CancelDelegate cancelFunc)
         {
             lock (this)
             {
@@ -303,7 +303,7 @@ namespace FluentHttp
             try
             {
                 HttpWebHelperResult httpWebHelperResult = null;
-                if (!CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream))
+                if (!CopyStream(requestBody, requestStream, FlushRequestReadStream, FlushRequestStream))
                     httpWebHelperResult = new HttpWebHelperResult(httpWebRequest, null, null, null, true, true, null, null);
                 requestStream.Close();
                 if (httpWebRequest != null)
@@ -443,7 +443,7 @@ namespace FluentHttp
             if (AsyncRequestStream)
             {
                 // pure read/write async
-                CopyStreamAsync(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream,
+                CopyStreamAsync(requestBody, requestStream, FlushRequestReadStream, FlushRequestStream,
                     (source, destination, cancelled, exception) =>
                     {
                         source.Close();
@@ -473,7 +473,7 @@ namespace FluentHttp
                 try
                 {
                     HttpWebHelperResult result = null;
-                    if (!CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream))
+                    if (!CopyStream(requestBody, requestStream, FlushRequestReadStream, FlushRequestStream))
                         result = new HttpWebHelperResult(httpWebRequest, null, null, null, true, false, null, state);
                     requestStream.Close();
 
