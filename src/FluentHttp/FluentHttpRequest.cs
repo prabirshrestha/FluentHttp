@@ -66,6 +66,9 @@ namespace FluentHttp
         private bool _flushRequestReadStream;
         private bool _flushResponseSaveStream;
 
+        private bool _asyncRequestStream;
+        private bool _asyncResponseStream;
+
         /// <summary>
         /// Cancel delegate.
         /// </summary>
@@ -557,6 +560,32 @@ namespace FluentHttp
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest AsyncRequestStream(bool isAsync)
+        {
+            _asyncRequestStream = isAsync;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool AsyncRequestStream()
+        {
+            return _asyncRequestStream;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public FluentHttpRequest AsyncResponseStream(bool isAsync)
+        {
+            _asyncResponseStream = isAsync;
+            return this;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool AsyncResponseStream()
+        {
+            return _asyncResponseStream;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public FluentHttpRequest FlushRequestStream(bool flush)
         {
             _flushRequestStream = flush;
@@ -809,6 +838,9 @@ namespace FluentHttp
 
             httpWebHelper.FlushRequestReadStream = FlushRequestReadStream();
             httpWebHelper.FlushResponseSaveStream = FlushResponseSaveStream();
+
+            httpWebHelper.AsyncRequestStream = AsyncRequestStream();
+            httpWebHelper.AsyncResponseStream = AsyncResponseStream();
         }
 
         /// <summary>

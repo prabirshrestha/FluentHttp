@@ -44,7 +44,6 @@ namespace FluentHttp
 
         public HttpWebHelper()
         {
-            Init();
             HttpWebRequestFactory =
                 requestUrl =>
                 {
@@ -64,14 +63,7 @@ namespace FluentHttp
                 throw new ArgumentNullException("httpWebRequestFactory");
             }
 
-            Init();
             HttpWebRequestFactory = httpWebRequestFactory;
-        }
-
-        private void Init()
-        {
-            FlushResponseStream = true;
-            FlushResponseSaveStream = true;
         }
 
         public static string BuildRequestUrl(string baseUrl, string resourcePath, IEnumerable<Pair<string, string>> queryStrings)
