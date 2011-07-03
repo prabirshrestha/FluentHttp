@@ -575,17 +575,17 @@ namespace FluentHttp
             {
                 try
                 {
-                    bool cancelled = false;
+                    bool notCancelled = false;
                     if (responseSaveStream == null)
                         ReadStream(responseStream, FlushResponseStream);
                     else
                     {
-                        cancelled = CopyStream(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream);
+                        notCancelled = CopyStream(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream);
                     }
 
                     responseStream.Close();
                     if (callback != null)
-                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, cancelled, false, responseSaveStream, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, !notCancelled, false, responseSaveStream, state));
                 }
                 catch (Exception ex)
                 {

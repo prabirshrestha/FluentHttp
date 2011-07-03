@@ -601,7 +601,7 @@ namespace FluentHttp
                     if (callback != null)
                     {
                         var asyncResult = (HttpWebHelperResult)ar;
-                        var fluentHttpAsyncResult = new FluentHttpAsyncResult(this, fluentHttpResponse, state, null, ar.CompletedSynchronously, true, false, asyncResult.Exception, asyncResult.InnerException);
+                        var fluentHttpAsyncResult = new FluentHttpAsyncResult(this, fluentHttpResponse, state, null, ar.CompletedSynchronously, asyncResult.IsCompleted, asyncResult.IsCancelled, asyncResult.Exception, asyncResult.InnerException);
                         callback(fluentHttpAsyncResult);
                     }
                 }, null);
