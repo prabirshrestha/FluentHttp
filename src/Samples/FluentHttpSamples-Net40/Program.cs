@@ -13,6 +13,7 @@ namespace FluentHttpSamples
     {
         private const string AccessToken = "";
 
+        [STAThread]
         private static void Main(string[] args)
         {
             GetAsync();
@@ -33,6 +34,9 @@ namespace FluentHttpSamples
 
             //UploadPhoto(@"C:\Users\Public\Pictures\Sample Pictures\Koala.jpg", "koala.jpg", "image/jpeg",
             //            "Uploaded using FluentHttp");
+
+            var fileDownloader = new FileDownloader();
+            fileDownloader.ShowDialog();
 
             Console.ReadKey();
         }
