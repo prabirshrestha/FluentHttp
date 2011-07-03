@@ -8,7 +8,11 @@ namespace FluentHttp
 
     internal delegate IHttpWebRequest HttpWebRequestFactoryDelegate(string url);
 
-    internal delegate void StreamCopyCompletedDelegate(Stream input, Stream output, Exception exception);
+    internal delegate void StreamCopyCompletedDelegate(Stream input, Stream output, bool cancelled, Exception exception);
+
+    internal delegate bool CancelDelegate(HttpWebHelper webHelper, IHttpWebRequest request, IHttpWebResponse response, object state);
+
+    internal delegate void Action<T1, T2>(T1 arg1, T2 arg2);
 
     internal class HttpWebHelper
     {
@@ -23,6 +27,20 @@ namespace FluentHttp
 
         public bool AsyncRequestStream { get; set; }
         public bool AsyncResponseStream { get; set; }
+
+        private Func<HttpWebHelper, bool> _cancelFunc;
+        public void CancelIf(Func<HttpWebHelper, bool> cancelFunc)
+        {
+            lock (this)
+            {
+                _cancelFunc = cancelFunc;
+            }
+        }
+
+        public bool IsCancelled
+        {
+            get { return _cancelFunc != null && _cancelFunc(this); }
+        }
 
         public HttpWebHelper()
         {
@@ -188,6 +206,11 @@ namespace FluentHttp
                 throw new ArgumentNullException("httpWebRequest");
             }
 
+            if (IsCancelled)
+            {
+                throw new Exception("Cannot start cancelled request.");
+            }
+
             if (requestBody != null && requestBody.Length != 0)
             {
                 // we have a request body, so write it asynchronously.
@@ -212,6 +235,11 @@ namespace FluentHttp
                 throw new ArgumentNullException("httpWebRequest");
             }
 
+            if (IsCancelled)
+            {
+                throw new Exception("Cannot start cancelled request.");
+            }
+
             if (requestBody != null && requestBody.Length != 0)
             {
                 // we have a request body, so write it synchronously.
@@ -223,7 +251,7 @@ namespace FluentHttp
             else
             {
                 // synchronously get the response from the http server.
-                return GetResponse(httpWebRequest, requestBody);
+                return GetResponse(httpWebRequest);
             }
         }
 
@@ -274,22 +302,26 @@ namespace FluentHttp
         {
             try
             {
-                CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
+                HttpWebHelperResult httpWebHelperResult = null;
+                if (!CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream))
+                    httpWebHelperResult = new HttpWebHelperResult(httpWebRequest, null, null, null, true, true, null, null);
                 requestStream.Close();
+                if (httpWebRequest != null)
+                    return httpWebHelperResult;
             }
             catch (Exception ex)
             {
                 return new HttpWebHelperResult(httpWebRequest, null, ex, null, false, false, null, null);
             }
 
-            return GetResponse(httpWebRequest, requestBody);
+            return GetResponse(httpWebRequest);
         }
 
-        private HttpWebHelperResult GetResponse(IHttpWebRequest httpWebRequest, Stream requestBody)
+        private HttpWebHelperResult GetResponse(IHttpWebRequest httpWebRequest)
         {
             IHttpWebResponse httpWebResponse = null;
             Exception exception = null;
-            HttpWebHelperResult httpWebHelperAsyncResult = null;
+            HttpWebHelperResult httpWebHelperAsyncResult;
 
             try
             {
@@ -311,11 +343,11 @@ namespace FluentHttp
                 {
                     var args = new ResponseReceivedEventArgs(httpWebResponse, exception, null);
                     OnResponseReceived(args);
-                    httpWebHelperAsyncResult = ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream);
+                    httpWebHelperAsyncResult = IsCancelled ? new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, true, true, args.ResponseSaveStream, null) : ReadResponseStream(httpWebRequest, httpWebResponse, exception, args.ResponseSaveStream);
                 }
                 else
                 {
-                    httpWebHelperAsyncResult = new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, true, null, null);
+                    httpWebHelperAsyncResult = new HttpWebHelperResult(httpWebRequest, null, exception, null, false, true, null, null);
                 }
             }
 
@@ -343,10 +375,9 @@ namespace FluentHttp
         {
             try
             {
-                CopyStream(responseStream, responseSaveStream, false, false);
+                HttpWebHelperResult httpWebHelperResult = !CopyStream(responseStream, responseSaveStream, false, false) ? new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, true, true, responseSaveStream, null) : new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, true, responseSaveStream, null);
                 responseStream.Close();
-
-                return new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, true, responseSaveStream, null);
+                return httpWebHelperResult;
             }
             catch (Exception ex)
             {
@@ -413,18 +444,26 @@ namespace FluentHttp
             {
                 // pure read/write async
                 CopyStreamAsync(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream,
-                    (source, destination, exception) =>
+                    (source, destination, cancelled, exception) =>
                     {
                         source.Close();
 
                         if (exception == null)
                         {
-                            BeginGetResponse(httpWebRequest, requestBody, callback, state);
+                            if (cancelled)
+                            {
+                                if (callback != null)
+                                    callback(new HttpWebHelperResult(httpWebRequest, null, null, null, cancelled, false, null, state));
+                            }
+                            else
+                            {
+                                BeginGetResponse(httpWebRequest, requestBody, callback, state);
+                            }
                         }
                         else
                         {
                             if (callback != null)
-                                callback(new HttpWebHelperResult(httpWebRequest, null, exception, null, false, false, null, state));
+                                callback(new HttpWebHelperResult(httpWebRequest, null, exception, null, cancelled, false, null, state));
                         }
                     });
             }
@@ -433,9 +472,18 @@ namespace FluentHttp
                 // Read requestBody then write synchronously.
                 try
                 {
-                    CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream);
+                    HttpWebHelperResult result = null;
+                    if (!CopyStream(requestBody, requestStream, FlushInputRequestBody, FlushRequestStream))
+                        result = new HttpWebHelperResult(httpWebRequest, null, null, null, true, false, null, state);
                     requestStream.Close();
-                    BeginGetResponse(httpWebRequest, requestBody, callback, state);
+
+                    if (result == null)
+                        BeginGetResponse(httpWebRequest, requestBody, callback, state);
+                    else
+                    {
+                        if (callback != null)
+                            callback(result);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -517,7 +565,7 @@ namespace FluentHttp
             {
                 // pure read/write async
                 CopyStreamAsync(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream,
-                                (source, destination, exception) =>
+                                (source, destination, cancelled, exception) =>
                                 {
                                     source.Close();
                                     callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, exception, null, false, false, responseSaveStream, state));
@@ -527,14 +575,17 @@ namespace FluentHttp
             {
                 try
                 {
+                    bool cancelled = false;
                     if (responseSaveStream == null)
                         ReadStream(responseStream, FlushResponseStream);
                     else
-                        CopyStream(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream);
+                    {
+                        cancelled = CopyStream(responseStream, responseSaveStream, FlushResponseStream, FlushResponseSaveStream);
+                    }
 
                     responseStream.Close();
                     if (callback != null)
-                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, false, false, responseSaveStream, state));
+                        callback(new HttpWebHelperResult(httpWebRequest, httpWebResponse, null, innerException, cancelled, false, responseSaveStream, state));
                 }
                 catch (Exception ex)
                 {
@@ -552,8 +603,10 @@ namespace FluentHttp
             }
         }
 
-        private void CopyStream(Stream input, Stream output, bool flushInput, bool flushOutput)
+        private bool CopyStream(Stream input, Stream output, bool flushInput, bool flushOutput)
         {
+            if (IsCancelled)
+                return false;
             byte[] buffer = new byte[1024 * 4]; // 4 kb
             while (true)
             {
@@ -561,10 +614,12 @@ namespace FluentHttp
                 if (flushInput)
                     input.Flush();
                 if (read <= 0)
-                    return;
+                    return true;
                 output.Write(buffer, 0, read);
                 if (flushOutput)
                     output.Flush();
+                if (IsCancelled)
+                    return false;
             }
         }
 
@@ -586,11 +641,11 @@ namespace FluentHttp
             byte[] buffer = new byte[1024 * 4];
             var asyncOp = System.ComponentModel.AsyncOperationManager.CreateOperation(null);
 
-            Action<Exception> done = e =>
+            Action<bool, Exception> done = (c, e) =>
             {
                 if (completed != null) asyncOp.Post(delegate
                     {
-                        completed(input, output, e);
+                        completed(input, output, c, e);
                     }, null);
             };
 
@@ -609,14 +664,17 @@ namespace FluentHttp
                             {
                                 output.EndWrite(writeResult);
                                 if (flushOutput) output.Flush();
-                                input.BeginRead(buffer, 0, buffer.Length, rc, null);
+                                if (IsCancelled)
+                                    done(true, null);
+                                else
+                                    input.BeginRead(buffer, 0, buffer.Length, rc, null);
                             }
-                            catch (Exception exc) { done(exc); }
+                            catch (Exception exc) { done(false, exc); }
                         }, null);
                     }
-                    else done(null);
+                    else done(false, null);
                 }
-                catch (Exception exc) { done(exc); }
+                catch (Exception exc) { done(false, exc); }
             };
 
             input.BeginRead(buffer, 0, buffer.Length, rc, null);
@@ -632,16 +690,16 @@ namespace FluentHttp
 
 #if HTTPWEBHELPER_TPL
 
-        public System.Threading.Tasks.Task<HttpWebHelperAsyncResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody, object state)
+        public System.Threading.Tasks.Task<HttpWebHelperResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody, object state)
         {
-            var tcs = new System.Threading.Tasks.TaskCompletionSource<HttpWebHelperAsyncResult>(state);
+            var tcs = new System.Threading.Tasks.TaskCompletionSource<HttpWebHelperResult>(state);
 
             try
             {
                 ExecuteAsync(httpWebRequest, requestBody,
                              ar =>
                              {
-                                 var asyncResult = (HttpWebHelperAsyncResult)ar;
+                                 var asyncResult = (HttpWebHelperResult)ar;
                                  if (asyncResult.IsCancelled) tcs.TrySetCanceled();
                                  if (asyncResult.Exception != null) tcs.TrySetException(asyncResult.Exception);
                                  else tcs.TrySetResult(asyncResult);
@@ -656,7 +714,7 @@ namespace FluentHttp
             return tcs.Task;
         }
 
-        public System.Threading.Tasks.Task<HttpWebHelperAsyncResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody)
+        public System.Threading.Tasks.Task<HttpWebHelperResult> ExecuteTaskAsync(IHttpWebRequest httpWebRequest, Stream requestBody)
         {
             return ExecuteTaskAsync(httpWebRequest, requestBody, null);
         }

@@ -64,7 +64,7 @@ namespace FluentHttp
         /// <summary>
         /// Sets the response stream.
         /// </summary>
-        /// <param name="stream">The stream to save reponse into.</param>
+        /// <param name="stream">The stream to save response into.</param>
         public void SaveResponseIn(Stream stream)
         {
             Response.SaveStream = stream;

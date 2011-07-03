@@ -72,6 +72,11 @@ namespace FluentHttp
         /// </summary>
         private ICredentials _credentials;
 
+        /// <summary>
+        /// Is cancelled.
+        /// </summary>
+        private bool _isCancelled;
+
 #endif
 
         /// <summary>
@@ -545,6 +550,14 @@ namespace FluentHttp
             return _body;
         }
 
+        public void Cancel()
+        {
+            lock (this)
+            {
+                _isCancelled = true;
+            }
+        }
+
         public void ExecuteAsync()
         {
             ExecuteAsync(null);
@@ -562,6 +575,7 @@ namespace FluentHttp
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
+            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
 
             // todo add cookies
 
@@ -602,6 +616,7 @@ namespace FluentHttp
             var requestUrl = BuildRequestUrl();
 
             var httpWebHelper = new HttpWebHelper();
+            httpWebHelper.CancelIf(httpwebhelper => _isCancelled);
 
             // todo add cookies
 
@@ -622,7 +637,7 @@ namespace FluentHttp
                 };
 
             var httpWebHelperResult = httpWebHelper.Execute(httpWebRequest, GetBody().Stream);
-            return new FluentHttpAsyncResult(this, fluentHttpResponse, null, null, true, true, false, httpWebHelperResult.Exception, httpWebHelperResult.InnerException);
+            return new FluentHttpAsyncResult(this, fluentHttpResponse, null, null, httpWebHelperResult.CompletedSynchronously, httpWebHelperResult.IsCompleted, httpWebHelperResult.IsCancelled, httpWebHelperResult.Exception, httpWebHelperResult.InnerException);
 
             /*
             System.Threading.ManualResetEvent wait = new System.Threading.ManualResetEvent(false);

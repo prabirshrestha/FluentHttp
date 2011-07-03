@@ -57,7 +57,7 @@ namespace FluentHttp
         {
             get { return _innerException; }
         }
-        
+
         /// <summary>
         /// Gets the <see cref="FluentHttpResponse"/>.
         /// </summary>
