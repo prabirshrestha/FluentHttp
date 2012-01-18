@@ -743,7 +743,7 @@ namespace FluentHttp
                     ar =>
                     {
                         Stream stream = null;
-                        Exception exception = null;
+                        WebExceptionWrapper exception = null;
 
                         try
                         {
