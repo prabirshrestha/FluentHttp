@@ -762,7 +762,7 @@ namespace FluentHttp
                             exception = new WebExceptionWrapper(new WebException("An error occurred performing a http web request.", ex));
                         }
 
-                        OnOpenWriteCompleted(new OpenWriteCompletedEventArgs(stream, exception, false, userToken));
+                        OnOpenWriteCompleted(new OpenWriteCompletedEventArgs(stream, exception, exception != null && exception.Status == WebExceptionStatus.RequestCanceled, userToken));
                     }, userToken);
             }
             catch (WebException webException)
