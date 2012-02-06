@@ -166,6 +166,10 @@ namespace FluentHttp
                     httpWebRequest.ContentLength = Convert.ToInt64(value);
 #endif
                 }
+                else if(name.Equals("accept", StringComparison.OrdinalIgnoreCase))
+                {
+                    httpWebRequest.Accept = value;
+                }
                 else if (name.Equals("user-agent", StringComparison.OrdinalIgnoreCase))
                 {
                     httpWebRequest.UserAgent = value;
